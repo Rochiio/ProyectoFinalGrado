@@ -1,0 +1,15 @@
+¿Qué quiero hacer?
+
+Abril - Back / Mayo - Front
+
+
+Planificacion
+
+Notificaciones en tiempo real / WebSocket --> Cuando una colonia se la ha llevado una asociación de adopciones.
+Api Rest.
+BDD.
+Micro-servicios.
+
+Documentacion
+Descripción - lunes 27, requisitos - 03, requisitos funcionales qué queremos que haga el app, requisitos no funcionales restricciones de la app, analizar la competencia - 03,
+elección tecnológica - 03, 
