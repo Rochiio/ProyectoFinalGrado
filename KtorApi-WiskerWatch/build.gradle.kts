@@ -26,14 +26,14 @@ val ktor_swagger_ui_version: String by project
 
 val cache_version: String by project
 
+
 plugins {
-    kotlin("jvm") version "1.8.20"
-    id("io.ktor.plugin") version "2.2.4"
-    kotlin("plugin.serialization") version "1.8.20"
-    id("com.google.devtools.ksp") version "1.8.0-1.0.9"
+    kotlin("jvm") version "1.8.0"
+    id("io.ktor.plugin") version "2.2.2"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
+    id("com.google.devtools.ksp") version "1.8.0-1.0.8"
     id("org.jetbrains.dokka") version "1.7.20"
 }
-
 
 group = "com.example"
 version = "0.0.1"
@@ -44,43 +44,23 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-
 repositories {
     mavenCentral()
-    google()
     maven("https://jitpack.io")
 }
 
-
-// Use KSP Generated sources
-sourceSets.main {
-    java.srcDirs("build/generated/ksp/main/kotlin")
-}
-
 dependencies {
-    //KSP
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.8.0-1.0.9")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
-
-    //Koin
-    compileOnly("io.insert-koin:koin-core:$koin_version")
-    compileOnly("io.insert-koin:koin-annotations:$koin_ksp_version")
-    ksp("io.insert-koin:koin-ksp-compiler:$koin_ksp_version")
-
     // Content validation
     implementation("io.ktor:ktor-server-request-validation:$ktor_version")
 
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
 
-    //Auth
-    implementation("io.ktor:ktor-server-auth-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktor_version")
-
-    // Content Negotiation
+    //Content Negotiation
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
 
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+    implementation("ch.qos.logback:logback-classic:$logbackclassic_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
@@ -90,11 +70,17 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common-jvm:$ktor_version")
 
     // Certificados SSL y TSL
-    implementation("io.ktor:ktor-network-tls-certificates:2.2.4")
+    implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:$logbackclassic_version")
     implementation("io.github.microutils:kotlin-logging-jvm:$micrologging_version")
+
+    // Koin
+    implementation("io.insert-koin:koin-ktor:$koin_ktor_version")
+    implementation("io.insert-koin:koin-logger-slf4j:$koin_ktor_version")
+    implementation("io.insert-koin:koin-annotations:$koin_ksp_version")
+    ksp("io.insert-koin:koin-ksp-compiler:$koin_ksp_version")
 
     // BCrypt
     implementation("org.mindrot:jbcrypt:$bcrypt_version")
@@ -128,5 +114,13 @@ dependencies {
     // Corrutinas Mongo
     implementation("org.litote.kmongo:kmongo-coroutine:4.7.2")
 
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+sourceSets.main {
+    java.srcDirs("build/generated/ksp/main/kotlin")
 }
 
