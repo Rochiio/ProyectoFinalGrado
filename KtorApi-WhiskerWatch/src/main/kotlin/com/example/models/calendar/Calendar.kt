@@ -16,5 +16,5 @@ data class Calendar(
     val uuid: UUID = UUID.randomUUID(),
     @Serializable(with = UUIDSerializer::class)
     var mapsUUID: UUID,
-    var listTasks: MutableList<String>
+    var listTasksUuid: MutableList<String>
 )

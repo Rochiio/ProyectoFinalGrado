@@ -13,6 +13,6 @@ data class Maps(
     val id: String = newId<Maps>().toString(),
     @Serializable(with = UUIDSerializer::class)
     val uuid:UUID = UUID.randomUUID(),
-    val latitude: String,
-    val longitude: String
+    var latitude: String,
+    var longitude: String
 )

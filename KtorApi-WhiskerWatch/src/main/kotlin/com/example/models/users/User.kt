@@ -13,9 +13,9 @@ data class User(
     val id: String = newId<User>().toString(),
     @Serializable(with = UUIDSerializer::class)
     val uuid: UUID =UUID.randomUUID(),
-    val name: String,
-    val email: String,
-    val password: String,
-    val username: String,
-    val rol: Rol = Rol.USER
+    var name: String,
+    var email: String,
+    var password: String,
+    var username: String,
+    var rol: Rol = Rol.USER
 )
