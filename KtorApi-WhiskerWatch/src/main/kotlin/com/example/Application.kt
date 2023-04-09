@@ -1,9 +1,6 @@
 package com.example
 
-import com.example.plugins.configureKoin
-import com.example.plugins.configureRouting
-import com.example.plugins.configureSecurity
-import com.example.plugins.configureSerialization
+import com.example.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 
@@ -14,6 +11,6 @@ fun Application.module() {
     configureSecurity()
     configureSerialization()
     configureRouting()
-    //configureValidation()
+    configureValidation()
     //configureSwagger()
 }
