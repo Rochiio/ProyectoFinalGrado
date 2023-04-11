@@ -1,0 +1,80 @@
+package com.example.services.forum
+
+import com.example.dto.ForumCreateDto
+import com.example.exception.ForumBadRequestException
+import com.example.exception.ForumNotFoundException
+import com.example.exception.MapsNotFoundException
+import com.example.exception.UUIDBadRequestException
+import com.example.mappers.toListMessages
+import com.example.models.forum.Forum
+import com.example.repositories.forum.ForumRepository
+import com.example.utils.toUUID
+import kotlinx.coroutines.flow.toList
+import org.koin.core.annotation.Single
+import java.util.*
+
+@Single
+class ForumService(
+    private val forumRepository: ForumRepository
+) {
+
+    suspend fun findByMapsUuid(uuid: UUID): Forum {
+        return forumRepository.findByMapsUuid(uuid)
+            ?: throw MapsNotFoundException("No se ha encontrado un foro con uuid de mapa $uuid")
+    }
+
+    suspend fun findByUuid(uuid: UUID): Forum {
+        return forumRepository.findByUUID(uuid)
+            ?: throw ForumNotFoundException("No se ha encontrado un foro con uuid $uuid")
+    }
+
+    suspend fun saveForum(forum: ForumCreateDto): Forum {
+        try {
+            val created = Forum(
+                mapsUuid = forum.mapsUuid.toUUID(),
+                listMessages = forum.listMessages.toListMessages().toMutableList()
+            )
+            return forumRepository.save(created)
+        } catch (e: UUIDBadRequestException) {
+            throw ForumBadRequestException(e.message.toString())
+        }
+    }
+
+    suspend fun updateForum(forum: ForumCreateDto, uuidForum: UUID): Forum {
+        val find = forumRepository.findByUUID(uuidForum)
+        find?.let {
+            try {
+                val list = it.listMessages
+                val newList = forum.listMessages.toListMessages()
+                val updated = Forum(
+                    id = it.id, uuid = it.uuid,
+                    mapsUuid = forum.mapsUuid.toUUID(),
+                    listMessages = (list + newList).toMutableList()
+                )
+                return forumRepository.update(updated)
+            } catch (e: UUIDBadRequestException) {
+                throw ForumBadRequestException(e.message.toString())
+            }
+        } ?: run {
+            throw ForumNotFoundException("No se ha encontrado un foro con uuid $uuidForum")
+        }
+    }
+
+    suspend fun deleteForum(uuid: UUID): Boolean {
+        val find = forumRepository.findByUUID(uuid)
+        find?.let {
+            return forumRepository.delete(it)
+        }?: run{
+            throw ForumNotFoundException("No se ha encontrado un foro con uuid $uuid")
+        }
+    }
+
+    suspend fun findAllForums(): List<Forum>{
+        return forumRepository.findAll().toList()
+    }
+
+    suspend fun deleteAllForums(): Boolean{
+        return forumRepository.deleteAll()
+    }
+
+}
