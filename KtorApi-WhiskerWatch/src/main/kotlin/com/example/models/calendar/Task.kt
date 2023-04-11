@@ -1,6 +1,5 @@
 package com.example.models.calendar
 
-import com.example.models.forum.ForumMessages
 import com.example.serializer.LocalDateSerializer
 import com.example.serializer.UUIDSerializer
 import kotlinx.serialization.Contextual
@@ -13,7 +12,7 @@ import java.util.*
 @Serializable
 data class Task(
     @BsonId @Contextual
-    val id: String = newId<ForumMessages>().toString(),
+    val id: String = newId<Task>().toString(),
     @Serializable(with = UUIDSerializer::class)
     val uuid: UUID = UUID.randomUUID(),
     @Serializable( with = LocalDateSerializer::class)

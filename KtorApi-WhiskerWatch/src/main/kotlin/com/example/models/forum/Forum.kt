@@ -10,7 +10,7 @@ import java.util.*
 @Serializable
 data class  Forum(
     @BsonId @Contextual
-    val id: String = newId<ForumMessages>().toString(),
+    val id: String = newId<Forum>().toString(),
     @Serializable(with = UUIDSerializer::class)
     val uuid: UUID = UUID.randomUUID(),
     @Serializable(with = UUIDSerializer::class)
