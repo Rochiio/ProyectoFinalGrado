@@ -14,13 +14,13 @@ class CalendarRepositoryImpl: CalendarRepository {
     private val logger = KotlinLogging.logger{}
     private val dbMongo = MongoDbManager.database
 
-    override suspend fun findByMapsUuid(uuid: UUID): Calendar? {
+    override suspend fun findByMapsUuid(uuid: String): Calendar? {
         logger.info { "Buscando calendario por el uuid del mapa" }
         return dbMongo.getCollection<Calendar>()
             .findOne(Calendar::mapsUUID eq uuid)
     }
 
-    override suspend fun findByUUID(uuid: UUID): Calendar? {
+    override suspend fun findByUUID(uuid: String): Calendar? {
         logger.info { "Buscando calendario por UUID" }
         return dbMongo.getCollection<Calendar>()
             .findOne(Calendar::uuid eq uuid)

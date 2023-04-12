@@ -4,6 +4,6 @@ import com.example.models.forum.Forum
 import com.example.repositories.ICrud
 import java.util.*
 
-interface ForumRepository: ICrud<Forum, UUID> {
-    suspend fun findByMapsUuid(uuid: UUID): Forum?
+interface ForumRepository: ICrud<Forum, String> {
+    suspend fun findByMapsUuid(uuid: String): Forum?
 }

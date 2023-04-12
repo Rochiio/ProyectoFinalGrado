@@ -13,7 +13,7 @@ class MapsService(
     private val mapRepository: MapRepository
 ) {
 
-    suspend fun findMapByUuid(uuid: UUID): Maps{
+    suspend fun findMapByUuid(uuid: String): Maps{
         return mapRepository.findByUUID(uuid)
             ?: throw MapsNotFoundException("No se ha encontrado un mapa con el uuid $uuid")
     }
@@ -23,7 +23,7 @@ class MapsService(
         return mapRepository.save(created)
     }
 
-    suspend fun updateMap(map: MapsCreateDto, uuidMap: UUID): Maps{
+    suspend fun updateMap(map: MapsCreateDto, uuidMap: String): Maps{
         val find = mapRepository.findByUUID(uuidMap)
         find?.let {
             val updated = Maps(id = it.id, uuid = it.uuid, latitude = map.latitude, longitude = map.longitude)
@@ -33,7 +33,7 @@ class MapsService(
         }
     }
 
-    suspend fun deleteMap(uuid: UUID): Boolean{
+    suspend fun deleteMap(uuid: String): Boolean{
         val find = mapRepository.findByUUID(uuid)
         find?.let{
             return mapRepository.delete(it)

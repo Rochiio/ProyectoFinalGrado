@@ -20,7 +20,7 @@ class UserRepositoryImpl: UserRepository {
             .findOne(User::email eq email)
     }
 
-    override suspend fun findByUUID(uuid: UUID): User? {
+    override suspend fun findByUUID(uuid: String): User? {
         logger.info{"Buscando usuario por UUID"}
         return dbMongo.getCollection<User>()
             .findOne(User::uuid eq uuid)

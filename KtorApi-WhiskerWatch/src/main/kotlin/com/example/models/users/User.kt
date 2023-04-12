@@ -1,6 +1,5 @@
 package com.example.models.users
 
-import com.example.serializer.UUIDSerializer
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.bson.codecs.pojo.annotations.BsonId
@@ -11,8 +10,7 @@ import java.util.*
 data class User(
     @BsonId @Contextual
     val id: String = newId<User>().toString(),
-    @Serializable(with = UUIDSerializer::class)
-    val uuid: UUID =UUID.randomUUID(),
+    val uuid: String =UUID.randomUUID().toString(),
     var name: String,
     var email: String,
     var password: String,

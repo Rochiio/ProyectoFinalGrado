@@ -4,5 +4,5 @@ import com.example.models.calendar.Task
 import com.example.repositories.ICrud
 import java.util.*
 
-interface TaskRepository: ICrud<Task, UUID> {
+interface TaskRepository: ICrud<Task, String> {
 }

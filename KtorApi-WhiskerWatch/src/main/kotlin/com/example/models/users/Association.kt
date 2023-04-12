@@ -10,8 +10,7 @@ import java.util.*
 data class Association(
     @BsonId @Contextual
     val id: String = newId<Association>().toString(),
-    @Serializable(with = com.example.serializer.UUIDSerializer::class)
-    val uuid: UUID = UUID.randomUUID(),
+    val uuid: String = UUID.randomUUID().toString(),
     var name: String,
     var email: String,
     var username: String,

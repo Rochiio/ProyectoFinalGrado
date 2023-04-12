@@ -4,5 +4,5 @@ import com.example.models.Maps
 import com.example.repositories.ICrud
 import java.util.*
 
-interface MapRepository: ICrud<Maps, UUID> {
+interface MapRepository: ICrud<Maps, String> {
 }

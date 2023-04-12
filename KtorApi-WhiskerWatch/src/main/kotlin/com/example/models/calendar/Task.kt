@@ -13,8 +13,7 @@ import java.util.*
 data class Task(
     @BsonId @Contextual
     val id: String = newId<Task>().toString(),
-    @Serializable(with = UUIDSerializer::class)
-    val uuid: UUID = UUID.randomUUID(),
+    val uuid: String = UUID.randomUUID().toString(),
     @Serializable( with = LocalDateSerializer::class)
     var date: LocalDate,
     var task: String

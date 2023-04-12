@@ -1,6 +1,5 @@
 package com.example.models.calendar
 
-import com.example.serializer.UUIDSerializer
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.bson.codecs.pojo.annotations.BsonId
@@ -11,9 +10,7 @@ import java.util.*
 data class Calendar(
     @BsonId @Contextual
     val id: String = newId<Calendar>().toString(),
-    @Serializable(with = UUIDSerializer::class)
-    val uuid: UUID = UUID.randomUUID(),
-    @Serializable(with = UUIDSerializer::class)
-    var mapsUUID: UUID,
+    val uuid: String = UUID.randomUUID().toString(),
+    var mapsUUID: String,
     var listTasks: MutableList<Task>
 )

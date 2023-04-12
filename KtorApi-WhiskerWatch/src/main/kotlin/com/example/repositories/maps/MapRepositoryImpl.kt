@@ -14,7 +14,7 @@ class MapRepositoryImpl: MapRepository {
     private val logger = KotlinLogging.logger{}
     private val dbMongo = MongoDbManager.database
 
-    override suspend fun findByUUID(uuid: UUID): Maps? {
+    override suspend fun findByUUID(uuid: String): Maps? {
         logger.info { "Buscando mapa por UUID" }
         return dbMongo.getCollection<Maps>()
             .findOne(Maps::uuid eq uuid)

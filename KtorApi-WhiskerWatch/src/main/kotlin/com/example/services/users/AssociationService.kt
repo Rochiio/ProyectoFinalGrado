@@ -21,7 +21,7 @@ class AssociationService(
             ?: throw AssociationNotFoundException("No se ha encontrado una asociación con email $email")
     }
 
-    suspend fun findAssociationByUuid(uuid: UUID): Association{
+    suspend fun findAssociationByUuid(uuid: String): Association{
         return associationRepository.findByUUID(uuid)
             ?: throw AssociationNotFoundException("No se ha encontrado una asociación con uuid $uuid")
     }
@@ -33,7 +33,7 @@ class AssociationService(
         return associationRepository.save(created )
     }
 
-    suspend fun updateAssociation(association: AssociationCreateDto, uuidAssociation: UUID): Association{
+    suspend fun updateAssociation(association: AssociationCreateDto, uuidAssociation: String): Association{
         val find = associationRepository.findByUUID(uuidAssociation)
         find?.let {
             val updated = Association(id = it.id, uuid = it.uuid, name = association.name, email = association.email,
@@ -45,7 +45,7 @@ class AssociationService(
         }
     }
 
-    suspend fun deleteAssociation(uuid: UUID): Boolean{
+    suspend fun deleteAssociation(uuid: String): Boolean{
         val find = associationRepository.findByUUID(uuid)
         find?.let {
             return associationRepository.delete(it)

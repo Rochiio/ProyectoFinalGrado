@@ -7,24 +7,22 @@ import com.example.exception.CalendarNotFoundException
 import com.example.exception.UUIDBadRequestException
 import com.example.mappers.toListTasks
 import com.example.models.calendar.Calendar
-import com.example.models.calendar.Calendar as Calendario
 import com.example.repositories.calendar.CalendarRepository
-import com.example.utils.toUUID
 import kotlinx.coroutines.flow.toList
 import org.koin.core.annotation.Single
-import java.util.*
+import com.example.models.calendar.Calendar as Calendario
 
 @Single
 class CalendarService(
     private val calendarRepository: CalendarRepository
 ) {
 
-    suspend fun findCalendarByMapsUuid(uuid: UUID): Calendario {
+    suspend fun findCalendarByMapsUuid(uuid: String): Calendario {
         return calendarRepository.findByMapsUuid(uuid)
             ?: throw CalendarNotFoundException("No se ha encontrado un calendario con uuid de mapa $uuid")
     }
 
-    suspend fun findCalendarByUuid(uuid: UUID):Calendario{
+    suspend fun findCalendarByUuid(uuid: String):Calendario{
         return calendarRepository.findByUUID(uuid)
             ?: throw CalendarNotFoundException("No se ha encontrado un calendario con uuid $uuid")
     }
@@ -32,7 +30,7 @@ class CalendarService(
     suspend fun saveCalendar(calendar: CalendarCreateDto): Calendario{
         try {
             val created = Calendario(
-                mapsUUID = calendar.mapsUUID.toUUID(),
+                mapsUUID = calendar.mapsUUID,
                 listTasks = calendar.listTasks.toListTasks().toMutableList()
             )
             return calendarRepository.save(created)
@@ -41,13 +39,13 @@ class CalendarService(
         }
     }
 
-    suspend fun updateCalendar(calendar: CalendarCreateDto, uuidCalendar: UUID): Calendario{
+    suspend fun updateCalendar(calendar: CalendarCreateDto, uuidCalendar: String): Calendario{
         val find = calendarRepository.findByUUID(uuidCalendar)
         find?.let {
             try{
                 val list = it.listTasks
                 val newList = calendar.listTasks.toListTasks()
-                val updated = Calendario(id = it.id, uuid = it.uuid, mapsUUID = calendar.mapsUUID.toUUID(),
+                val updated = Calendario(id = it.id, uuid = it.uuid, mapsUUID = calendar.mapsUUID,
                     listTasks = (list + newList).toMutableList())
                 return calendarRepository.update(updated)
             }catch (e: UUIDBadRequestException){
@@ -58,7 +56,7 @@ class CalendarService(
         }
     }
 
-    suspend fun deleteCalendar(uuid: UUID): Boolean{
+    suspend fun deleteCalendar(uuid: String): Boolean{
         val find = calendarRepository.findByUUID(uuid)
         find?.let {
             return calendarRepository.delete(it)

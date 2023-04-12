@@ -1,6 +1,5 @@
 package com.example.models.forum
 
-import com.example.serializer.UUIDSerializer
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.bson.codecs.pojo.annotations.BsonId
@@ -11,9 +10,7 @@ import java.util.*
 data class  Forum(
     @BsonId @Contextual
     val id: String = newId<Forum>().toString(),
-    @Serializable(with = UUIDSerializer::class)
-    val uuid: UUID = UUID.randomUUID(),
-    @Serializable(with = UUIDSerializer::class)
-    var mapsUuid: UUID,
+    val uuid: String = UUID.randomUUID().toString(),
+    var mapsUuid: String,
     var listMessages: MutableList<ForumMessages>
 )

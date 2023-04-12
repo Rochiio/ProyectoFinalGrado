@@ -33,7 +33,7 @@ class UserService(
      * @throws UserNotFoundException siu no se encuentra ningun usuario con ese UUID.
      * @return el usuario encontrado.
      */
-    suspend fun findUserByUuid(uuid: UUID): User {
+    suspend fun findUserByUuid(uuid: String): User {
         return userRepository.findByUUID(uuid)
             ?: throw UserNotFoundException("No se ha encontrado un usuario con uuid $uuid")
     }
@@ -56,7 +56,7 @@ class UserService(
      * @throws UserNotFoundException no se encuentra usuario.
      * @return usuario actualizado.
      */
-    suspend fun updateUser(user: UserCreateDto, uuidUser: UUID): User{
+    suspend fun updateUser(user: UserCreateDto, uuidUser: String): User{
         val find = userRepository.findByUUID(uuidUser)
         find?.let {
             val update = User(id = it.id, uuid = it.uuid, name = user.name, email = user.email,
@@ -73,7 +73,7 @@ class UserService(
      * @throws UserNotFoundException si no se encuentra el usuario.
      * @return si se ha eliminado correctamente el usuario.
      */
-    suspend fun deleteUser(uuid: UUID): Boolean{
+    suspend fun deleteUser(uuid: String): Boolean{
         val find = userRepository.findByUUID(uuid)
         find?.let {
             return userRepository.delete(it)

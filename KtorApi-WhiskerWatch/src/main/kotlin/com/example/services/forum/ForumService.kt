@@ -18,12 +18,12 @@ class ForumService(
     private val forumRepository: ForumRepository
 ) {
 
-    suspend fun findByMapsUuid(uuid: UUID): Forum {
+    suspend fun findByMapsUuid(uuid: String): Forum {
         return forumRepository.findByMapsUuid(uuid)
             ?: throw MapsNotFoundException("No se ha encontrado un foro con uuid de mapa $uuid")
     }
 
-    suspend fun findByUuid(uuid: UUID): Forum {
+    suspend fun findByUuid(uuid: String): Forum {
         return forumRepository.findByUUID(uuid)
             ?: throw ForumNotFoundException("No se ha encontrado un foro con uuid $uuid")
     }
@@ -31,7 +31,7 @@ class ForumService(
     suspend fun saveForum(forum: ForumCreateDto): Forum {
         try {
             val created = Forum(
-                mapsUuid = forum.mapsUuid.toUUID(),
+                mapsUuid = forum.mapsUuid,
                 listMessages = forum.listMessages.toListMessages().toMutableList()
             )
             return forumRepository.save(created)
@@ -40,7 +40,7 @@ class ForumService(
         }
     }
 
-    suspend fun updateForum(forum: ForumCreateDto, uuidForum: UUID): Forum {
+    suspend fun updateForum(forum: ForumCreateDto, uuidForum: String): Forum {
         val find = forumRepository.findByUUID(uuidForum)
         find?.let {
             try {
@@ -48,7 +48,7 @@ class ForumService(
                 val newList = forum.listMessages.toListMessages()
                 val updated = Forum(
                     id = it.id, uuid = it.uuid,
-                    mapsUuid = forum.mapsUuid.toUUID(),
+                    mapsUuid = forum.mapsUuid,
                     listMessages = (list + newList).toMutableList()
                 )
                 return forumRepository.update(updated)
@@ -60,7 +60,7 @@ class ForumService(
         }
     }
 
-    suspend fun deleteForum(uuid: UUID): Boolean {
+    suspend fun deleteForum(uuid: String): Boolean {
         val find = forumRepository.findByUUID(uuid)
         find?.let {
             return forumRepository.delete(it)

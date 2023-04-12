@@ -21,7 +21,7 @@ class AssociationRepositoryImpl: AssociationRepository {
             .findOne(Association::email eq email)
     }
 
-    override suspend fun findByUUID(uuid: UUID): Association? {
+    override suspend fun findByUUID(uuid: String): Association? {
         logger.info { "Buscando asociación por UUID" }
         return dbMongo.getCollection<Association>()
             .findOne(Association::uuid eq uuid)

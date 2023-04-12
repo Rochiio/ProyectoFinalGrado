@@ -11,8 +11,7 @@ import java.util.*
 data class Maps(
     @BsonId @Contextual
     val id: String = newId<Maps>().toString(),
-    @Serializable(with = UUIDSerializer::class)
-    val uuid:UUID = UUID.randomUUID(),
+    val uuid: String = UUID.randomUUID().toString(),
     var latitude: String,
     var longitude: String
 )
