@@ -4,6 +4,7 @@ package com.example.services.calendar
 import com.example.dto.CalendarCreateDto
 import com.example.exception.CalendarBadRequestException
 import com.example.exception.CalendarNotFoundException
+import com.example.exception.MapsNotFoundException
 import com.example.exception.UUIDBadRequestException
 import com.example.mappers.toListTasks
 import com.example.models.calendar.Calendar
@@ -19,7 +20,7 @@ class CalendarService(
 
     suspend fun findCalendarByMapsUuid(uuid: String): Calendario {
         return calendarRepository.findByMapsUuid(uuid)
-            ?: throw CalendarNotFoundException("No se ha encontrado un calendario con uuid de mapa $uuid")
+            ?: throw MapsNotFoundException("No se ha encontrado un calendario con uuid de mapa $uuid")
     }
 
     suspend fun findCalendarByUuid(uuid: String):Calendario{
@@ -28,29 +29,21 @@ class CalendarService(
     }
 
     suspend fun saveCalendar(calendar: CalendarCreateDto): Calendario{
-        try {
-            val created = Calendario(
-                mapsUUID = calendar.mapsUUID,
-                listTasks = calendar.listTasks.toListTasks().toMutableList()
-            )
-            return calendarRepository.save(created)
-        }catch (e: UUIDBadRequestException){
-            throw CalendarBadRequestException(e.message.toString())
-        }
+        val created = Calendario(
+            mapsUUID = calendar.mapsUUID,
+            listTasks = calendar.listTasks.toListTasks().toMutableList()
+        )
+        return calendarRepository.save(created)
     }
 
     suspend fun updateCalendar(calendar: CalendarCreateDto, uuidCalendar: String): Calendario{
         val find = calendarRepository.findByUUID(uuidCalendar)
         find?.let {
-            try{
-                val list = it.listTasks
-                val newList = calendar.listTasks.toListTasks()
-                val updated = Calendario(id = it.id, uuid = it.uuid, mapsUUID = calendar.mapsUUID,
-                    listTasks = (list + newList).toMutableList())
-                return calendarRepository.update(updated)
-            }catch (e: UUIDBadRequestException){
-                throw CalendarBadRequestException(e.message.toString())
-            }
+            val list = it.listTasks
+            val newList = calendar.listTasks.toListTasks()
+            val updated = Calendario(id = it.id, uuid = it.uuid, mapsUUID = calendar.mapsUUID,
+                listTasks = (list + newList).toMutableList())
+            return calendarRepository.update(updated)
         }?: run{
             throw CalendarNotFoundException("No se ha encontrado un calendario con uuid $uuidCalendar")
         }

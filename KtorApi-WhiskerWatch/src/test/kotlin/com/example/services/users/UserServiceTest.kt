@@ -12,6 +12,7 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.*
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 
+@ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class UserServiceTest {
     @MockK
@@ -46,6 +48,8 @@ class UserServiceTest {
 
         val find = service.findUserByEmail(test.email)
         assertAll(
+            { assertEquals(test.id, find.id) },
+            { assertEquals(test.uuid, find.uuid)},
             { assertEquals(test.name, find.name) },
             { assertEquals(test.email, find.email) },
             { assertEquals(test.password, find.password) },
@@ -72,6 +76,8 @@ class UserServiceTest {
 
         val find = service.findUserByUuid(test.uuid)
         assertAll(
+            { assertEquals(test.id, find.id) },
+            { assertEquals(test.uuid, find.uuid)},
             { assertEquals(test.name, find.name) },
             { assertEquals(test.email, find.email) },
             { assertEquals(test.password, find.password) },
@@ -99,6 +105,8 @@ class UserServiceTest {
 
         val created = service.saveUser(createTest)
         assertAll(
+            { assertEquals(test.id, created.id) },
+            { assertEquals(test.uuid, created.uuid)},
             { assertEquals(test.name, created.name) },
             { assertEquals(test.email, created.email) },
             { assertEquals(test.password, created.password) },
@@ -118,6 +126,8 @@ class UserServiceTest {
 
         val updated = service.updateUser(createTest, test.uuid)
         assertAll(
+            { assertEquals(test.id, updated.id) },
+            { assertEquals(test.uuid, updated.uuid)},
             { assertEquals(test.name, updated.name) },
             { assertEquals(test.email, updated.email) },
             { assertEquals(test.password, updated.password) },
@@ -169,6 +179,8 @@ class UserServiceTest {
         val find = service.findAllUsers()
         assertAll(
             { assertTrue(find.isNotEmpty()) },
+            { assertEquals(test.id, find[0].id) },
+            { assertEquals(test.uuid, find[0].uuid)},
             { assertEquals(test.name, find[0].name) },
             { assertEquals(test.email, find[0].email) },
             { assertEquals(test.password, find[0].password) },

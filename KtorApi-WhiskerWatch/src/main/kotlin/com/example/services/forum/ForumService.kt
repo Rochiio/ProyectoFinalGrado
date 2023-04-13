@@ -29,32 +29,24 @@ class ForumService(
     }
 
     suspend fun saveForum(forum: ForumCreateDto): Forum {
-        try {
-            val created = Forum(
-                mapsUuid = forum.mapsUuid,
-                listMessages = forum.listMessages.toListMessages().toMutableList()
-            )
-            return forumRepository.save(created)
-        } catch (e: UUIDBadRequestException) {
-            throw ForumBadRequestException(e.message.toString())
-        }
+        val created = Forum(
+            mapsUuid = forum.mapsUuid,
+            listMessages = forum.listMessages.toListMessages().toMutableList()
+        )
+        return forumRepository.save(created)
     }
 
     suspend fun updateForum(forum: ForumCreateDto, uuidForum: String): Forum {
         val find = forumRepository.findByUUID(uuidForum)
         find?.let {
-            try {
-                val list = it.listMessages
-                val newList = forum.listMessages.toListMessages()
-                val updated = Forum(
-                    id = it.id, uuid = it.uuid,
-                    mapsUuid = forum.mapsUuid,
-                    listMessages = (list + newList).toMutableList()
-                )
-                return forumRepository.update(updated)
-            } catch (e: UUIDBadRequestException) {
-                throw ForumBadRequestException(e.message.toString())
-            }
+            val list = it.listMessages
+            val newList = forum.listMessages.toListMessages()
+            val updated = Forum(
+                id = it.id, uuid = it.uuid,
+                mapsUuid = forum.mapsUuid,
+                listMessages = (list + newList).toMutableList()
+            )
+            return forumRepository.update(updated)
         } ?: run {
             throw ForumNotFoundException("No se ha encontrado un foro con uuid $uuidForum")
         }

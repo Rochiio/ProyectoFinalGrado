@@ -80,6 +80,7 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koin_ktor_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_ktor_version")
     implementation("io.insert-koin:koin-annotations:$koin_ksp_version")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     ksp("io.insert-koin:koin-ksp-compiler:$koin_ksp_version")
 
     // BCrypt
