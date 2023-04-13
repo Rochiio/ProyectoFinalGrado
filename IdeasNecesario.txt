@@ -5,7 +5,7 @@ Abril - Back / Mayo - Front
 
 Planificacion
 
-Notificaciones en tiempo real / WebSocket --> Cuando una colonia se la ha llevado una asociación de adopciones.
+Notificaciones en tiempo real / WebSocket
 Api Rest.
 BDD.
 Micro-servicios.
