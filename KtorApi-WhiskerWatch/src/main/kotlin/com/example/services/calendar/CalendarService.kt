@@ -2,10 +2,8 @@ package com.example.services.calendar
 
 
 import com.example.dto.CalendarCreateDto
-import com.example.exception.CalendarBadRequestException
 import com.example.exception.CalendarNotFoundException
 import com.example.exception.MapsNotFoundException
-import com.example.exception.UUIDBadRequestException
 import com.example.mappers.toListTasks
 import com.example.models.calendar.Calendar
 import com.example.repositories.calendar.CalendarRepository

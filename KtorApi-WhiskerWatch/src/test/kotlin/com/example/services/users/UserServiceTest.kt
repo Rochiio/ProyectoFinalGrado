@@ -1,6 +1,7 @@
 package com.example.services.users
 
 import com.example.dto.UserCreateDto
+import com.example.exception.UserBadRequestException
 import com.example.exception.UserNotFoundException
 import com.example.models.users.Rol
 import com.example.models.users.User
@@ -101,6 +102,7 @@ class UserServiceTest {
     @Test
     fun saveUser() = runTest {
         coEvery { repository.save(any()) } returns test
+        coEvery { repository.findByEmail(any()) } returns null
         coEvery { bcryptService.encryptPassword(any()) } returns test.password
 
         val created = service.saveUser(createTest)
@@ -115,11 +117,23 @@ class UserServiceTest {
         )
 
         coVerify(exactly = 1) { repository.save(any()) }
+        coVerify(exactly = 1) { repository.findByEmail(any()) }
         coVerify(exactly = 1) { bcryptService.encryptPassword(any()) }
     }
 
     @Test
+    fun saveUserExists() = runTest {
+        coEvery { repository.findByEmail(any()) } returns test
+
+        val exception = assertThrows<UserBadRequestException> { service.saveUser(createTest) }
+        assertEquals("Ya existe un usuario con email ${test.email}", exception.message)
+
+        coVerify(exactly = 1) {repository.findByEmail(any())}
+    }
+
+    @Test
     fun updateUser() = runTest {
+        coEvery { repository.findByEmail(any()) } returns null
         coEvery { repository.findByUUID(test.uuid) } returns test
         coEvery { bcryptService.encryptPassword(any()) } returns test.password
         coEvery { repository.update(test) } returns test
@@ -135,6 +149,7 @@ class UserServiceTest {
             { assertEquals(test.rol, updated.rol) }
         )
 
+        coVerify(exactly = 1) { repository.findByEmail(any())}
         coVerify(exactly = 1) { repository.findByUUID(test.uuid) }
         coVerify(exactly = 1) { repository.update(test) }
         coVerify(exactly = 1) {bcryptService.encryptPassword(any())}
@@ -142,12 +157,24 @@ class UserServiceTest {
 
     @Test
     fun updateUserNotFound() = runTest {
+        coEvery { repository.findByEmail(any()) } returns null
         coEvery { repository.findByUUID(test.uuid) } returns null
 
         val exception = assertThrows<UserNotFoundException> { service.updateUser(createTest, test.uuid) }
         assertEquals("No se ha encontrado un usuario con el UUID ${test.uuid}", exception.message)
 
+        coVerify(exactly = 1) { repository.findByEmail(any())}
         coVerify(exactly = 1) { repository.findByUUID(test.uuid) }
+    }
+
+    @Test
+    fun updateUserExists() = runTest {
+        coEvery { repository.findByEmail(any()) } returns test
+
+        val exception = assertThrows<UserBadRequestException> { service.updateUser(createTest, test.uuid) }
+        assertEquals("Ya existe un usuario con email ${test.email}", exception.message)
+
+        coVerify(exactly = 1) { repository.findByEmail(any())}
     }
 
     @Test

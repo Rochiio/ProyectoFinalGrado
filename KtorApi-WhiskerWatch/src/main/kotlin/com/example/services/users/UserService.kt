@@ -1,6 +1,7 @@
 package com.example.services.users
 
 import com.example.dto.UserCreateDto
+import com.example.exception.UserBadRequestException
 import com.example.exception.UserNotFoundException
 import com.example.models.users.Rol
 import com.example.models.users.User
@@ -41,12 +42,20 @@ class UserService(
     /**
      * Guardar un usuario.
      * @param user Usuario a añadir.
+     * @throws UserBadRequestException si ya existe un usuario con el email.
      * @return el usuario guardado.
      */
     suspend fun saveUser(user: UserCreateDto): User {
-        val save = User(name = user.name, email = user.email, password = passwordEncoder.encryptPassword(user.password),
-            username = user.username, rol = Rol.valueOf(user.rol))
-        return userRepository.save(save)
+        val find = userRepository.findByEmail(user.email)
+        find?.let {
+            throw UserBadRequestException("Ya existe un usuario con email ${it.email}")
+        }?: run {
+            val save = User(
+                name = user.name, email = user.email, password = passwordEncoder.encryptPassword(user.password),
+                username = user.username, rol = Rol.valueOf(user.rol)
+            )
+            return userRepository.save(save)
+        }
     }
 
     /**
@@ -54,16 +63,29 @@ class UserService(
      * @param user datos del usuario a actualizar.
      * @param uuidUser usuario a actualizar.
      * @throws UserNotFoundException no se encuentra usuario.
+     * @throws UserBadRequestException ya existe un usuario con ese email.
      * @return usuario actualizado.
      */
     suspend fun updateUser(user: UserCreateDto, uuidUser: String): User{
-        val find = userRepository.findByUUID(uuidUser)
-        find?.let {
-            val update = User(id = it.id, uuid = it.uuid, name = user.name, email = user.email,
-                password = passwordEncoder.encryptPassword(user.password), username = user.username, rol = Rol.valueOf(user.rol))
-            return userRepository.update(update)
-        }?: run{
-            throw UserNotFoundException("No se ha encontrado un usuario con el UUID $uuidUser")
+        val findEmail = userRepository.findByEmail(user.email)
+        findEmail?.let{
+            throw UserBadRequestException("Ya existe un usuario con email ${it.email}")
+        }?: run {
+            val find = userRepository.findByUUID(uuidUser)
+            find?.let {
+                val update = User(
+                    id = it.id,
+                    uuid = it.uuid,
+                    name = user.name,
+                    email = user.email,
+                    password = passwordEncoder.encryptPassword(user.password),
+                    username = user.username,
+                    rol = Rol.valueOf(user.rol)
+                )
+                return userRepository.update(update)
+            } ?: run {
+                throw UserNotFoundException("No se ha encontrado un usuario con el UUID $uuidUser")
+            }
         }
     }
 

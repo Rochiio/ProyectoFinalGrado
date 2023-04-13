@@ -1,17 +1,13 @@
 package com.example.services.forum
 
 import com.example.dto.ForumCreateDto
-import com.example.exception.ForumBadRequestException
 import com.example.exception.ForumNotFoundException
 import com.example.exception.MapsNotFoundException
-import com.example.exception.UUIDBadRequestException
 import com.example.mappers.toListMessages
 import com.example.models.forum.Forum
 import com.example.repositories.forum.ForumRepository
-import com.example.utils.toUUID
 import kotlinx.coroutines.flow.toList
 import org.koin.core.annotation.Single
-import java.util.*
 
 @Single
 class ForumService(

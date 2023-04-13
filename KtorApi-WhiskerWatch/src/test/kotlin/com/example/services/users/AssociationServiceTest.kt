@@ -2,6 +2,7 @@ package com.example.services.users
 
 import com.example.dto.AssociationCreateDto
 import com.example.dto.UserCreateDto
+import com.example.exception.AssociationBadRequestException
 import com.example.exception.AssociationNotFoundException
 import com.example.exception.UserNotFoundException
 import com.example.models.users.Association
@@ -110,6 +111,7 @@ class AssociationServiceTest {
 
     @Test
     fun saveAssociation() = runTest {
+        coEvery { repository.findByEmail(any()) } returns null
         coEvery { repository.save(any()) } returns test
         coEvery { bcryptService.encryptPassword(any()) } returns test.password
 
@@ -126,12 +128,23 @@ class AssociationServiceTest {
             { assertEquals(test.rol, created.rol) }
         )
 
+        coVerify(exactly = 1) {repository.findByEmail(any()) }
         coVerify(exactly = 1) { repository.save(any()) }
         coVerify(exactly = 1) { bcryptService.encryptPassword(any()) }
     }
 
     @Test
+    fun saveAssociationExists() = runTest{
+        coEvery { repository.findByEmail(any()) } returns test
+        val exception = assertThrows<AssociationBadRequestException> { service.saveAssociation(createTest) }
+        assertEquals("Ya existe una asociación con email ${test.email}", exception.message)
+
+        coVerify(exactly = 1) {repository.findByEmail(any())}
+    }
+
+    @Test
     fun updateAssociation() = runTest {
+        coEvery { repository.findByEmail(test.email) } returns null
         coEvery { repository.findByUUID(test.uuid) } returns test
         coEvery { bcryptService.encryptPassword(any()) } returns test.password
         coEvery { repository.update(test) } returns test
@@ -149,19 +162,32 @@ class AssociationServiceTest {
             { assertEquals(test.rol, updated.rol) }
         )
 
+        coVerify(exactly = 1) { repository.findByEmail(test.email) }
         coVerify(exactly = 1) { repository.findByUUID(test.uuid) }
         coVerify(exactly = 1) { repository.update(test) }
-        coVerify(exactly = 1) {bcryptService.encryptPassword(any())}
+        coVerify(exactly = 1) { bcryptService.encryptPassword(any()) }
     }
 
     @Test
     fun updateAssociationNotFound() = runTest {
+        coEvery { repository.findByEmail(any()) } returns null
         coEvery { repository.findByUUID(test.uuid) } returns null
 
         val exception = assertThrows<AssociationNotFoundException> { service.updateAssociation(createTest, test.uuid) }
         assertEquals("No se ha encontrado una asociación con uuid ${test.uuid}", exception.message)
 
         coVerify(exactly = 1) { repository.findByUUID(test.uuid) }
+        coVerify(exactly = 1) {repository.findByEmail(any())}
+    }
+
+    @Test
+    fun updateAssociationExists() = runTest {
+        coEvery { repository.findByEmail(any()) } returns test
+
+        val exception = assertThrows<AssociationBadRequestException> { service.updateAssociation(createTest, test.uuid) }
+        assertEquals("Ya existe una asociación con email ${test.email}", exception.message)
+
+        coVerify(exactly = 1) { repository.findByEmail(any()) }
     }
 
     @Test

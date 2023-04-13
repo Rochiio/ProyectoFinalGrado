@@ -1,6 +1,7 @@
 package com.example.services.users
 
 import com.example.dto.AssociationCreateDto
+import com.example.exception.AssociationBadRequestException
 import com.example.exception.AssociationNotFoundException
 import com.example.models.users.Association
 import com.example.models.users.Rol
@@ -27,21 +28,33 @@ class AssociationService(
     }
 
     suspend fun saveAssociation(association: AssociationCreateDto): Association {
-        val created = Association(name = association.name, email = association.email, username = association.username,
-            password = passwordEncoder.encryptPassword(association.password), rol = Rol.valueOf(association.rol),
-            description = association.description, url = association.url)
-        return associationRepository.save(created )
+        val find = associationRepository.findByEmail(association.email)
+        find?.let {
+            throw AssociationBadRequestException("Ya existe una asociación con email ${it.email}")
+        }?: run{
+            val created = Association(name = association.name, email = association.email, username = association.username,
+                password = passwordEncoder.encryptPassword(association.password), rol = Rol.valueOf(association.rol),
+                description = association.description, url = association.url)
+            return associationRepository.save(created )
+        }
     }
 
     suspend fun updateAssociation(association: AssociationCreateDto, uuidAssociation: String): Association{
-        val find = associationRepository.findByUUID(uuidAssociation)
-        find?.let {
-            val updated = Association(id = it.id, uuid = it.uuid, name = association.name, email = association.email,
-                username = association.username, password = passwordEncoder.encryptPassword(association.password),
-                rol = Rol.valueOf(association.rol), description = association.description, url = association.url)
-            return associationRepository.update(updated)
+        val findEmail = associationRepository.findByEmail(association.email)
+        findEmail?.let {
+            throw AssociationBadRequestException("Ya existe una asociación con email ${association.email}")
         }?: run{
-            throw AssociationNotFoundException("No se ha encontrado una asociación con uuid $uuidAssociation")
+            val find = associationRepository.findByUUID(uuidAssociation)
+            find?.let {
+                val updated = Association(
+                    id = it.id, uuid = it.uuid, name = association.name, email = association.email,
+                    username = association.username, password = passwordEncoder.encryptPassword(association.password),
+                    rol = Rol.valueOf(association.rol), description = association.description, url = association.url
+                )
+                return associationRepository.update(updated)
+            } ?: run {
+                throw AssociationNotFoundException("No se ha encontrado una asociación con uuid $uuidAssociation")
+            }
         }
     }
 
