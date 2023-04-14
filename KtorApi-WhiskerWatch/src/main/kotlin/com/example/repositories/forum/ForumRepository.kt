@@ -5,5 +5,5 @@ import com.example.repositories.ICrud
 import java.util.*
 
 interface ForumRepository: ICrud<Forum, String> {
-    suspend fun findByMapsUuid(uuid: String): Forum?
+    suspend fun findByMapsId(id: String): Forum?
 }

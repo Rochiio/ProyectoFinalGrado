@@ -16,43 +16,43 @@ class CalendarService(
     private val calendarRepository: CalendarRepository
 ) {
 
-    suspend fun findCalendarByMapsUuid(uuid: String): Calendario {
-        return calendarRepository.findByMapsUuid(uuid)
-            ?: throw MapsNotFoundException("No se ha encontrado un calendario con uuid de mapa $uuid")
+    suspend fun findCalendarByMapsId(id: String): Calendario {
+        return calendarRepository.findByMapsId(id)
+            ?: throw MapsNotFoundException("No se ha encontrado un calendario con id de mapa $id")
     }
 
-    suspend fun findCalendarByUuid(uuid: String):Calendario{
-        return calendarRepository.findByUUID(uuid)
-            ?: throw CalendarNotFoundException("No se ha encontrado un calendario con uuid $uuid")
+    suspend fun findCalendarById(id: String):Calendario{
+        return calendarRepository.findById(id)
+            ?: throw CalendarNotFoundException("No se ha encontrado un calendario con id $id")
     }
 
     suspend fun saveCalendar(calendar: CalendarCreateDto): Calendario{
         val created = Calendario(
-            mapsUUID = calendar.mapsUUID,
+            mapsId = calendar.mapsId,
             listTasks = calendar.listTasks.toListTasks().toMutableList()
         )
         return calendarRepository.save(created)
     }
 
-    suspend fun updateCalendar(calendar: CalendarCreateDto, uuidCalendar: String): Calendario{
-        val find = calendarRepository.findByUUID(uuidCalendar)
+    suspend fun updateCalendar(calendar: CalendarCreateDto, idCalendar: String): Calendario{
+        val find = calendarRepository.findById(idCalendar)
         find?.let {
             val list = it.listTasks
             val newList = calendar.listTasks.toListTasks()
-            val updated = Calendario(id = it.id, uuid = it.uuid, mapsUUID = calendar.mapsUUID,
+            val updated = Calendario(id = it.id, mapsId = calendar.mapsId,
                 listTasks = (list + newList).toMutableList())
             return calendarRepository.update(updated)
         }?: run{
-            throw CalendarNotFoundException("No se ha encontrado un calendario con uuid $uuidCalendar")
+            throw CalendarNotFoundException("No se ha encontrado un calendario con id $idCalendar")
         }
     }
 
-    suspend fun deleteCalendar(uuid: String): Boolean{
-        val find = calendarRepository.findByUUID(uuid)
+    suspend fun deleteCalendar(id: String): Boolean{
+        val find = calendarRepository.findById(id)
         find?.let {
             return calendarRepository.delete(it)
         }?: run{
-            throw CalendarNotFoundException("No se ha encontrado un calendario con uuid $uuid")
+            throw CalendarNotFoundException("No se ha encontrado un calendario con id $id")
         }
     }
 

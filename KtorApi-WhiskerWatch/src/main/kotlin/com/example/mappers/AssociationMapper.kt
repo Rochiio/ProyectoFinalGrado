@@ -7,7 +7,7 @@ import com.example.models.users.Rol
 
 fun Association.toAssociationDto(): AssociationDto {
     return AssociationDto(
-        uuid = this.uuid,
+        id = this.id,
         name = this.name,
         email = this.email,
         username = this.username,

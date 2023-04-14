@@ -6,8 +6,8 @@ import io.ktor.server.plugins.requestvalidation.*
 
 fun RequestValidationConfig.calendarValidation(){
     validate<CalendarCreateDto> { calendar ->
-        if (calendar.mapsUUID.isBlank()){
-            ValidationResult.Invalid("El uuid del mapa no puede estar vacío")
+        if (calendar.mapsId.isBlank()){
+            ValidationResult.Invalid("El id del mapa no puede estar vacío")
         }else{
             ValidationResult.Valid
         }

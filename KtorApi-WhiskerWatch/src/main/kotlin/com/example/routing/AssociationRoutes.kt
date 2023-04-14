@@ -34,11 +34,11 @@ fun Application.associationRoutes(){
                 call.respond(HttpStatusCode.OK, list)
             }
 
-            get("/{uuid}"){
+            get("/{id}"){
                 logger.info { "Get Association By Uuid"}
                 try{
-                    val uuid = call.parameters["uuid"].toString()
-                    val find = service.findAssociationByUuid(uuid)
+                    val id = call.parameters["id"].toString()
+                    val find = service.findAssociationById(id)
                     call.respond(HttpStatusCode.OK, find.toAssociationDto())
                 }catch (e: AssociationNotFoundException){
                     call.respond(HttpStatusCode.NotFound, e.message.toString())

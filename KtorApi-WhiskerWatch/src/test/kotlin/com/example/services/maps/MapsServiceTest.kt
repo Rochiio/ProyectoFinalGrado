@@ -35,28 +35,27 @@ class MapsServiceTest {
     }
 
     @Test
-    fun findMapByUuid() = runTest {
-        coEvery { repository.findByUUID(test.uuid) } returns test
+    fun findMapById() = runTest {
+        coEvery { repository.findById(test.id) } returns test
 
-        val find = service.findMapByUuid(test.uuid)
+        val find = service.findMapById(test.id)
         assertAll(
             { assertEquals(test.id, find.id) },
-            { assertEquals(test.uuid, find.uuid) },
             { assertEquals(test.latitude, find.latitude) },
             { assertEquals(test.longitude, find.longitude) }
         )
 
-        coVerify(exactly=1) { repository.findByUUID(test.uuid)}
+        coVerify(exactly=1) { repository.findById(test.id)}
     }
 
     @Test
     fun findMayByUuidNotFound() = runTest {
-        coEvery { repository.findByUUID(test.uuid) } returns null
+        coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<MapsNotFoundException> { service.findMapByUuid(test.uuid) }
-        assertEquals("No se ha encontrado un mapa con el uuid ${test.uuid}", exception.message)
+        val exception = assertThrows<MapsNotFoundException> { service.findMapById(test.id) }
+        assertEquals("No se ha encontrado un mapa con el id ${test.id}", exception.message)
 
-        coVerify(exactly=1) { repository.findByUUID(test.uuid) }
+        coVerify(exactly=1) { repository.findById(test.id) }
     }
 
     @Test
@@ -66,7 +65,6 @@ class MapsServiceTest {
         val created = service.saveMap(createTest)
         assertAll(
             { assertEquals(test.id, created.id) },
-            { assertEquals(test.uuid, created.uuid) },
             { assertEquals(test.latitude, created.latitude) },
             { assertEquals(test.longitude, created.longitude) }
         )
@@ -76,50 +74,51 @@ class MapsServiceTest {
 
     @Test
     fun updateMap() = runTest {
-        coEvery { repository.findByUUID(test.uuid) } returns test
+        coEvery { repository.findById(test.id) } returns test
         coEvery { repository.update(test) } returns test
 
-        val updated = service.updateMap(createTest, test.uuid)
+        val updated = service.updateMap(createTest, test.id)
         assertAll(
             { assertEquals(test.id, updated.id) },
-            { assertEquals(test.uuid, updated.uuid) },
+            { assertEquals(test.id, updated.id) },
             { assertEquals(test.latitude, updated.latitude) },
             { assertEquals(test.longitude, updated.longitude) }
         )
 
-        coVerify(exactly=1) { repository.findByUUID(test.uuid) }
+        coVerify(exactly=1) { repository.findById(test.id) }
         coVerify(exactly=1) { repository.update(test) }
     }
 
     @Test
     fun updateMapNotFound() = runTest {
-        coEvery { repository.findByUUID(test.uuid) } returns null
+        coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<MapsNotFoundException> { service.updateMap(createTest, test.uuid) }
-        assertEquals("No se ha encontrado un mapa con el uuid ${test.uuid}", exception.message)
+        val exception = assertThrows<MapsNotFoundException> { service.updateMap(createTest, test.id) }
+        assertEquals("No se ha encontrado un mapa con el id ${test.id}", exception.message)
 
-        coVerify(exactly=1) { repository.findByUUID(test.uuid) }
+        coVerify(exactly=1) { repository.findById(test.id) }
     }
 
     @Test
     fun deleteMap() = runTest {
-        coEvery { repository.findByUUID(test.uuid) } returns test
+        coEvery { repository.findById(test.id) } returns test
         coEvery { repository.delete(test) } returns true
 
-        val deleted = service.deleteMap(test.uuid)
+        val deleted = service.deleteMap(test.id)
         assertTrue(deleted)
 
+        coVerify(exactly = 1){repository.findById(test.id)}
         coVerify(exactly=1) {repository.delete(test)}
     }
 
     @Test
     fun deleteMapNotFound() = runTest {
-        coEvery { repository.findByUUID(test.uuid) } returns null
+        coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<MapsNotFoundException> { service.deleteMap(test.uuid) }
-        assertEquals("No se ha encontrado un mapa con el uuid ${test.uuid}", exception.message)
+        val exception = assertThrows<MapsNotFoundException> { service.deleteMap(test.id) }
+        assertEquals("No se ha encontrado un mapa con el id ${test.id}", exception.message)
 
-        coVerify(exactly=1) { repository.findByUUID(test.uuid)}
+        coVerify(exactly=1) { repository.findById(test.id)}
     }
 
     @Test
@@ -130,7 +129,6 @@ class MapsServiceTest {
         assertAll(
             { assertTrue(find.isNotEmpty()) },
             { assertEquals(test.id, find[0].id) },
-            { assertEquals(test.uuid, find[0].uuid) },
             { assertEquals(test.latitude, find[0].latitude) },
             { assertEquals(test.longitude, find[0].longitude) }
         )

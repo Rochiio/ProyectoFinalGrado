@@ -1,6 +1,7 @@
 package com.example.repositories.maps
 
 import com.example.models.Maps
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestMethodOrder
 
+@ExperimentalCoroutinesApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class MapRepositoryImplTest {
@@ -30,8 +32,8 @@ class MapRepositoryImplTest {
 
     @Test
     @Order(2)
-    fun findByUUID() = runTest {
-        val find = repository.findByUUID(test.uuid)
+    fun findById() = runTest {
+        val find = repository.findById(test.id)
 
         assertAll(
             { assertNotNull(find) },

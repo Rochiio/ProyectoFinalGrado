@@ -14,10 +14,10 @@ class MapRepositoryImpl: MapRepository {
     private val logger = KotlinLogging.logger{}
     private val dbMongo = MongoDbManager.database
 
-    override suspend fun findByUUID(uuid: String): Maps? {
+    override suspend fun findById(id: String): Maps? {
         logger.info { "Buscando mapa por UUID" }
         return dbMongo.getCollection<Maps>()
-            .findOne(Maps::uuid eq uuid)
+            .findOneById(id)
     }
 
     override suspend fun save(item: Maps): Maps {

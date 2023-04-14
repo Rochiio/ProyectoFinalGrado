@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ForumCreateDto(
-    var mapsUuid: String,
+    var mapsId: String,
     var listMessages: List<ForumMessagesCreateDto>
 )
 

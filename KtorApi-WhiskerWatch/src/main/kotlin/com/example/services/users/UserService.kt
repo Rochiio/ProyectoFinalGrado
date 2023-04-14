@@ -9,7 +9,6 @@ import com.example.repositories.users.UserRepositoryImpl
 import com.example.services.password.BcryptService
 import kotlinx.coroutines.flow.toList
 import org.koin.core.annotation.Single
-import java.util.UUID
 
 @Single
 class UserService(
@@ -30,13 +29,13 @@ class UserService(
 
     /**
      * Buscar un usuario por el uuid.
-     * @param uuid uuid por el que buscar.
+     * @param id id por el que buscar.
      * @throws UserNotFoundException siu no se encuentra ningun usuario con ese UUID.
      * @return el usuario encontrado.
      */
-    suspend fun findUserByUuid(uuid: String): User {
-        return userRepository.findByUUID(uuid)
-            ?: throw UserNotFoundException("No se ha encontrado un usuario con uuid $uuid")
+    suspend fun findUserById(id: String): User {
+        return userRepository.findById(id)
+            ?: throw UserNotFoundException("No se ha encontrado un usuario con id $id")
     }
 
     /**
@@ -61,21 +60,20 @@ class UserService(
     /**
      * Actualizar usuario.
      * @param user datos del usuario a actualizar.
-     * @param uuidUser usuario a actualizar.
+     * @param idUser usuario a actualizar.
      * @throws UserNotFoundException no se encuentra usuario.
      * @throws UserBadRequestException ya existe un usuario con ese email.
      * @return usuario actualizado.
      */
-    suspend fun updateUser(user: UserCreateDto, uuidUser: String): User{
+    suspend fun updateUser(user: UserCreateDto, idUser: String): User{
         val findEmail = userRepository.findByEmail(user.email)
         findEmail?.let{
             throw UserBadRequestException("Ya existe un usuario con email ${it.email}")
         }?: run {
-            val find = userRepository.findByUUID(uuidUser)
+            val find = userRepository.findById(idUser)
             find?.let {
                 val update = User(
                     id = it.id,
-                    uuid = it.uuid,
                     name = user.name,
                     email = user.email,
                     password = passwordEncoder.encryptPassword(user.password),
@@ -84,23 +82,23 @@ class UserService(
                 )
                 return userRepository.update(update)
             } ?: run {
-                throw UserNotFoundException("No se ha encontrado un usuario con el UUID $uuidUser")
+                throw UserNotFoundException("No se ha encontrado un usuario con el ID $idUser")
             }
         }
     }
 
     /**
      * Eliminar un usuario.
-     * @param uuid uuid del usuario a eliminar.
+     * @param id id del usuario a eliminar.
      * @throws UserNotFoundException si no se encuentra el usuario.
      * @return si se ha eliminado correctamente el usuario.
      */
-    suspend fun deleteUser(uuid: String): Boolean{
-        val find = userRepository.findByUUID(uuid)
+    suspend fun deleteUser(id: String): Boolean{
+        val find = userRepository.findById(id)
         find?.let {
             return userRepository.delete(it)
         }?: run{
-            throw UserNotFoundException("No se ha encontrado un usario con el UUID $uuid")
+            throw UserNotFoundException("No se ha encontrado un usario con el ID $id")
         }
     }
 

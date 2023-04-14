@@ -10,8 +10,10 @@ import java.time.LocalDate
 fun List<ForumMessagesCreateDto>.toListMessages(): List<ForumMessages>{
     val list: MutableList<ForumMessages> = mutableListOf()
     this.forEach {
-        val forum = ForumMessages(username = it.username, message = it.message,
-            created_At = LocalDate.now())
+        val forum = ForumMessages(
+            username = it.username, message = it.message,
+            created_At = LocalDate.now()
+        )
         list.add(forum)
     }
     return list

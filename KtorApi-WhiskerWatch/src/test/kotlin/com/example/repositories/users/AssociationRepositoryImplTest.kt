@@ -1,18 +1,22 @@
 package com.example.repositories.users
 
 import com.example.models.users.Association
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 
 import org.junit.jupiter.api.Assertions.*
 
+@ExperimentalCoroutinesApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class AssociationRepositoryImplTest {
     private val repository = AssociationRepositoryImpl()
-    private val test = Association(name = "test", email = "test@example.com", username = "test",
-        password = "123456", description = "test description", url = "http://example.com")
+    private val test = Association(
+        name = "test", email = "test@example.com", username = "test",
+        password = "123456", description = "test description", url = "http://example.com"
+    )
 
     @Test
     @Order(1)
@@ -51,8 +55,8 @@ class AssociationRepositoryImplTest {
 
     @Test
     @Order(3)
-    fun findByUUID() = runTest {
-        val find = repository.findByUUID(test.uuid)
+    fun findById() = runTest {
+        val find = repository.findById(test.id)
 
         assertAll(
             { assertNotNull(find) },

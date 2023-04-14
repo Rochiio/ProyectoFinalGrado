@@ -32,10 +32,12 @@ class ForumServiceTest {
     @InjectMockKs
     private lateinit var service: ForumService
 
-    private val test = Forum(mapsUuid = UUID.randomUUID().toString(), listMessages =
-    mutableListOf(ForumMessages(username = "pepe", message = "test")))
+    private val test = Forum(
+        mapsId = UUID.randomUUID().toString(), listMessages =
+        mutableListOf(ForumMessages(username = "pepe", message = "test"))
+    )
 
-    private val createTest = ForumCreateDto(mapsUuid = UUID.randomUUID().toString(), listMessages =
+    private val createTest = ForumCreateDto(mapsId = UUID.randomUUID().toString(), listMessages =
     mutableListOf(ForumMessagesCreateDto(username = "pepe", message = "test")))
 
     init {
@@ -43,54 +45,52 @@ class ForumServiceTest {
     }
 
     @Test
-    fun findByMapsUuid() = runTest {
-        coEvery { repository.findByMapsUuid(test.mapsUuid) } returns test
+    fun findByMapsId() = runTest {
+        coEvery { repository.findByMapsId(test.mapsId) } returns test
 
-        val find = service.findByMapsUuid(test.mapsUuid)
+        val find = service.findByMapsId(test.mapsId)
         assertAll(
             { assertEquals(test.id, find.id) },
-            { assertEquals(test.uuid, find.uuid) },
-            { assertEquals(test.mapsUuid, find.mapsUuid) },
+            { assertEquals(test.mapsId, find.mapsId) },
             { assertEquals(test.listMessages, find.listMessages) },
         )
 
-        coVerify(exactly = 1) { repository.findByMapsUuid(test.mapsUuid)}
+        coVerify(exactly = 1) { repository.findByMapsId(test.mapsId)}
     }
 
 
     @Test
     fun findByMapsUuidNotFound() = runTest {
-        coEvery { repository.findByMapsUuid(test.mapsUuid) } returns null
+        coEvery { repository.findByMapsId(test.mapsId) } returns null
 
-        val exception = assertThrows<MapsNotFoundException> { service.findByMapsUuid(test.mapsUuid) }
-        assertEquals("No se ha encontrado un foro con uuid de mapa ${test.mapsUuid}", exception.message)
+        val exception = assertThrows<MapsNotFoundException> { service.findByMapsId(test.mapsId) }
+        assertEquals("No se ha encontrado un foro con id de mapa ${test.mapsId}", exception.message)
 
-        coVerify(exactly=1)  { repository.findByMapsUuid(test.mapsUuid) }
+        coVerify(exactly=1)  { repository.findByMapsId(test.mapsId) }
     }
 
     @Test
     fun findByUuid() = runTest {
-        coEvery { repository.findByUUID(test.uuid) } returns test
+        coEvery { repository.findById(test.id) } returns test
 
-        val find = service.findByUuid(test.uuid)
+        val find = service.findById(test.id)
         assertAll(
             { assertEquals(test.id, find.id) },
-            { assertEquals(test.uuid, find.uuid) },
-            { assertEquals(test.mapsUuid, find.mapsUuid) },
+            { assertEquals(test.mapsId, find.mapsId) },
             { assertEquals(test.listMessages, find.listMessages) },
         )
 
-        coVerify(exactly = 1) { repository.findByUUID(test.uuid)}
+        coVerify(exactly = 1) { repository.findById(test.id)}
     }
 
     @Test
     fun findByUuidNotFound() = runTest {
-        coEvery { repository.findByUUID(test.uuid) } returns null
+        coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<ForumNotFoundException> { service.findByUuid(test.uuid) }
-        assertEquals("No se ha encontrado un foro con uuid ${test.uuid}", exception.message)
+        val exception = assertThrows<ForumNotFoundException> { service.findById(test.id) }
+        assertEquals("No se ha encontrado un foro con id ${test.id}", exception.message)
 
-        coVerify(exactly=1)  { repository.findByUUID(test.uuid) }
+        coVerify(exactly=1)  { repository.findById(test.id) }
     }
 
     @Test
@@ -100,8 +100,7 @@ class ForumServiceTest {
         val created = service.saveForum(createTest)
         assertAll(
             { assertEquals(test.id, created.id) },
-            { assertEquals(test.uuid, created.uuid) },
-            { assertEquals(test.mapsUuid, created.mapsUuid) },
+            { assertEquals(test.mapsId, created.mapsId) },
             { assertEquals(test.listMessages, created.listMessages) },
         )
 
@@ -110,51 +109,50 @@ class ForumServiceTest {
 
     @Test
     fun updateForum() = runTest{
-        coEvery { repository.findByUUID(test.uuid) } returns test
+        coEvery { repository.findById(test.id) } returns test
         coEvery { repository.update(any()) } returns test
 
-        val updated = service.updateForum(createTest, test.uuid)
+        val updated = service.updateForum(createTest, test.id)
         assertAll(
             { assertEquals(test.id, updated.id) },
-            { assertEquals(test.uuid, updated.uuid) },
-            { assertEquals(test.mapsUuid, updated.mapsUuid) },
+            { assertEquals(test.mapsId, updated.mapsId) },
             { assertEquals(test.listMessages, updated.listMessages) },
         )
 
-        coVerify(exactly=1) {repository.findByUUID(test.uuid)}
+        coVerify(exactly=1) {repository.findById(test.id)}
         coVerify(exactly=1) {repository.update(any())}
     }
 
     @Test
     fun updateForumNotFound() = runTest{
-        coEvery { repository.findByUUID(test.uuid) } returns null
+        coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<ForumNotFoundException> { service.updateForum(createTest, test.uuid) }
-        assertEquals("No se ha encontrado un foro con uuid ${test.uuid}", exception.message)
+        val exception = assertThrows<ForumNotFoundException> { service.updateForum(createTest, test.id) }
+        assertEquals("No se ha encontrado un foro con id ${test.id}", exception.message)
 
-        coVerify(exactly=1) { repository.findByUUID(test.uuid)}
+        coVerify(exactly=1) { repository.findById(test.id)}
     }
 
     @Test
     fun deleteForum() = runTest{
-        coEvery { repository.findByUUID(test.uuid)} returns test
+        coEvery { repository.findById(test.id)} returns test
         coEvery { repository.delete(test) } returns true
 
-        val deleted = service.deleteForum(test.uuid)
+        val deleted = service.deleteForum(test.id)
         assertTrue(deleted)
 
-        coVerify(exactly=1) {repository.findByUUID(test.uuid)}
+        coVerify(exactly=1) {repository.findById(test.id)}
         coVerify(exactly = 1) {repository.delete(test)}
     }
 
     @Test
     fun deleteForumNotFound() = runTest{
-        coEvery { repository.findByUUID(test.uuid) } returns null
+        coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<ForumNotFoundException> { service.deleteForum(test.uuid) }
-        assertEquals("No se ha encontrado un foro con uuid ${test.uuid}", exception.message)
+        val exception = assertThrows<ForumNotFoundException> { service.deleteForum(test.id) }
+        assertEquals("No se ha encontrado un foro con id ${test.id}", exception.message)
 
-        coVerify(exactly = 1) {repository.findByUUID(test.uuid)}
+        coVerify(exactly = 1) {repository.findById(test.id)}
     }
 
     @Test
@@ -165,8 +163,7 @@ class ForumServiceTest {
         assertAll(
             { assertTrue(find.isNotEmpty()) },
             { assertEquals(test.id, find[0].id) },
-            { assertEquals(test.uuid, find[0].uuid) },
-            { assertEquals(test.mapsUuid, find[0].mapsUuid) },
+            { assertEquals(test.mapsId, find[0].mapsId) },
             { assertEquals(test.listMessages, find[0].listMessages) },
         )
 

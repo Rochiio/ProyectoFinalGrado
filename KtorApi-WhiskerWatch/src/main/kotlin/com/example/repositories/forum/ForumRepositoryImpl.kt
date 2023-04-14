@@ -14,16 +14,16 @@ class ForumRepositoryImpl: ForumRepository {
     private val logger = KotlinLogging.logger{}
     private val dbMongo = MongoDbManager.database
 
-    override suspend fun findByMapsUuid(uuid: String): Forum? {
-        logger.info { "Buscando foro por el uuid del mapa" }
+    override suspend fun findByMapsId(id: String): Forum? {
+        logger.info { "Buscando foro por el id del mapa" }
         return dbMongo.getCollection<Forum>()
-            .findOne(Forum::mapsUuid eq uuid)
+            .findOne(Forum::mapsId eq id)
     }
 
-    override suspend fun findByUUID(uuid: String): Forum? {
-        logger.info { "Buscando foro por UUID" }
+    override suspend fun findById(id: String): Forum? {
+        logger.info { "Buscando foro por ID" }
         return dbMongo.getCollection<Forum>()
-            .findOne(Forum::uuid eq uuid)
+            .findOneById(id)
     }
 
     override suspend fun save(item: Forum): Forum {

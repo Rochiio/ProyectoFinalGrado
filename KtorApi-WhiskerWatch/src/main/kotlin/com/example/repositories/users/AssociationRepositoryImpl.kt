@@ -21,10 +21,10 @@ class AssociationRepositoryImpl: AssociationRepository {
             .findOne(Association::email eq email)
     }
 
-    override suspend fun findByUUID(uuid: String): Association? {
-        logger.info { "Buscando asociación por UUID" }
+    override suspend fun findById(id: String): Association? {
+        logger.info { "Buscando asociación por ID" }
         return dbMongo.getCollection<Association>()
-            .findOne(Association::uuid eq uuid)
+            .findOneById(id)
     }
 
     override suspend fun save(item: Association): Association {

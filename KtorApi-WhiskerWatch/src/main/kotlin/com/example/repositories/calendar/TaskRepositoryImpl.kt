@@ -14,10 +14,10 @@ class TaskRepositoryImpl: TaskRepository {
     private val logger = KotlinLogging.logger{}
     private val dbMongo = MongoDbManager.database
 
-    override suspend fun findByUUID(uuid: String): Task? {
-        logger.info { "Buscando tarea por UUID" }
+    override suspend fun findById(id: String): Task? {
+        logger.info { "Buscando tarea por ID" }
         return dbMongo.getCollection<Task>()
-            .findOne(Task::uuid eq uuid)
+            .findOneById(id)
     }
 
     override suspend fun save(item: Task): Task {

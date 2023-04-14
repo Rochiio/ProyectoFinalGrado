@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CalendarCreateDto(
-    var mapsUUID: String,
+    var mapsId: String,
     var listTasks: MutableList<TaskCreateDto>
 )
 

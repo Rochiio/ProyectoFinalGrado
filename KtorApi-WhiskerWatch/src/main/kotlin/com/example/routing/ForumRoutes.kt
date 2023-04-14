@@ -18,7 +18,13 @@ fun Application.forumRoutes(){
         route(API){
 
             get(){
-                val creado = Forum(mapsUuid = UUID.randomUUID().toString(), listMessages = mutableListOf(ForumMessages(username = "paco", message = "Este es un mensaje de prueba")))
+                val creado = Forum(
+                    mapsId = UUID.randomUUID().toString(),
+                    listMessages = mutableListOf(ForumMessages(
+                        username = "paco",
+                        message = "Este es un mensaje de prueba"
+                    ))
+                )
                 val devolver = repository.save(creado)
                 call.respond(HttpStatusCode.OK, devolver)
             }

@@ -1,12 +1,14 @@
 package com.example.repositories.users
 
 import com.example.models.users.User
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 
 import org.junit.jupiter.api.Assertions.*
 
+@ExperimentalCoroutinesApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class UserRepositoryImplTest {
@@ -45,8 +47,8 @@ class UserRepositoryImplTest {
 
     @Test
     @Order(3)
-    fun findByUUID() = runTest {
-        val find = userRepository.findByUUID(userTest.uuid)
+    fun findById() = runTest {
+        val find = userRepository.findById(userTest.id)
 
         assertAll(
             { assertNotNull(find) },

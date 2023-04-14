@@ -6,8 +6,8 @@ import io.ktor.server.plugins.requestvalidation.*
 
 fun RequestValidationConfig.forumValidation(){
     validate<ForumCreateDto> { forum ->
-        if (forum.mapsUuid.isBlank()){
-            ValidationResult.Invalid("El uuid del mapa no puede estar vacío")
+        if (forum.mapsId.isBlank()){
+            ValidationResult.Invalid("El id del mapa no puede estar vacío")
         }else {
             ValidationResult.Valid
         }

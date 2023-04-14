@@ -2,7 +2,7 @@ package com.example.repositories.calendar
 
 import com.example.models.calendar.Calendar
 import com.example.models.calendar.Task
-import com.example.models.forum.ForumMessages
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -15,12 +15,15 @@ import org.junit.jupiter.api.TestMethodOrder
 import java.time.LocalDate
 import java.util.*
 
+@ExperimentalCoroutinesApi
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class CalendarRepositoryImplTest {
     private val repository = CalendarRepositoryImpl()
-    private val test = Calendar(mapsUUID = UUID.randomUUID().toString(),
-        listTasks = mutableListOf(Task(date = LocalDate.now(), task = "tarea test")))
+    private val test = Calendar(
+        mapsId = UUID.randomUUID().toString(),
+        listTasks = mutableListOf(Task(date = LocalDate.now(), task = "tarea test"))
+    )
 
     @Test
     @Order(1)
@@ -28,31 +31,31 @@ class CalendarRepositoryImplTest {
         val created = repository.save(test)
 
         assertAll(
-            { assertEquals(test.mapsUUID, created.mapsUUID) },
+            { assertEquals(test.mapsId, created.mapsId) },
             { assertEquals(test.listTasks, created.listTasks)}
         )
     }
 
     @Test
     @Order(2)
-    fun findByMapsUuid() = runTest {
-        val find = repository.findByMapsUuid(test.mapsUUID)
+    fun findByMapsId() = runTest {
+        val find = repository.findByMapsId(test.mapsId)
 
         assertAll(
             { assertNotNull(find) },
-            { assertEquals(test.mapsUUID, find?.mapsUUID) },
+            { assertEquals(test.mapsId, find?.mapsId) },
             { assertEquals(test.listTasks, find?.listTasks)}
         )
     }
 
     @Test
     @Order(3)
-    fun findByUUID() = runTest {
-        val find = repository.findByUUID(test.uuid)
+    fun findById() = runTest {
+        val find = repository.findById(test.id)
 
         assertAll(
             { assertNotNull(find) },
-            { assertEquals(test.mapsUUID, find?.mapsUUID) },
+            { assertEquals(test.mapsId, find?.mapsId) },
             { assertEquals(test.listTasks, find?.listTasks)}
         )
     }
@@ -64,7 +67,7 @@ class CalendarRepositoryImplTest {
 
         assertAll(
             { assertTrue(find.isNotEmpty()) },
-            { assertEquals(test.mapsUUID, find[0].mapsUUID) },
+            { assertEquals(test.mapsId, find[0].mapsId) },
             { assertEquals(test.listTasks, find[0].listTasks)}
         )
     }
@@ -79,7 +82,7 @@ class CalendarRepositoryImplTest {
         val updated = repository.update(update)
 
         assertAll(
-            { assertEquals(update.mapsUUID, updated.mapsUUID) },
+            { assertEquals(update.mapsId, updated.mapsId) },
             { assertEquals(update.listTasks, updated.listTasks) }
         )
     }

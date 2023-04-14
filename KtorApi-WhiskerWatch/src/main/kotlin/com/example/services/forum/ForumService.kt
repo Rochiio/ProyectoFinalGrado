@@ -14,46 +14,45 @@ class ForumService(
     private val forumRepository: ForumRepository
 ) {
 
-    suspend fun findByMapsUuid(uuid: String): Forum {
-        return forumRepository.findByMapsUuid(uuid)
-            ?: throw MapsNotFoundException("No se ha encontrado un foro con uuid de mapa $uuid")
+    suspend fun findByMapsId(id: String): Forum {
+        return forumRepository.findByMapsId(id)
+            ?: throw MapsNotFoundException("No se ha encontrado un foro con id de mapa $id")
     }
 
-    suspend fun findByUuid(uuid: String): Forum {
-        return forumRepository.findByUUID(uuid)
-            ?: throw ForumNotFoundException("No se ha encontrado un foro con uuid $uuid")
+    suspend fun findById(id: String): Forum {
+        return forumRepository.findById(id)
+            ?: throw ForumNotFoundException("No se ha encontrado un foro con id $id")
     }
 
     suspend fun saveForum(forum: ForumCreateDto): Forum {
         val created = Forum(
-            mapsUuid = forum.mapsUuid,
+            mapsId = forum.mapsId,
             listMessages = forum.listMessages.toListMessages().toMutableList()
         )
         return forumRepository.save(created)
     }
 
-    suspend fun updateForum(forum: ForumCreateDto, uuidForum: String): Forum {
-        val find = forumRepository.findByUUID(uuidForum)
+    suspend fun updateForum(forum: ForumCreateDto, idForum: String): Forum {
+        val find = forumRepository.findById(idForum)
         find?.let {
             val list = it.listMessages
             val newList = forum.listMessages.toListMessages()
             val updated = Forum(
-                id = it.id, uuid = it.uuid,
-                mapsUuid = forum.mapsUuid,
+                id = it.id, mapsId = forum.mapsId,
                 listMessages = (list + newList).toMutableList()
             )
             return forumRepository.update(updated)
         } ?: run {
-            throw ForumNotFoundException("No se ha encontrado un foro con uuid $uuidForum")
+            throw ForumNotFoundException("No se ha encontrado un foro con id $idForum")
         }
     }
 
-    suspend fun deleteForum(uuid: String): Boolean {
-        val find = forumRepository.findByUUID(uuid)
+    suspend fun deleteForum(id: String): Boolean {
+        val find = forumRepository.findById(id)
         find?.let {
             return forumRepository.delete(it)
         }?: run{
-            throw ForumNotFoundException("No se ha encontrado un foro con uuid $uuid")
+            throw ForumNotFoundException("No se ha encontrado un foro con id $id")
         }
     }
 

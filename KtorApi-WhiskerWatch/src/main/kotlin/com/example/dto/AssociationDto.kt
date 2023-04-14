@@ -21,7 +21,7 @@ data class AssociationCreateDto(
  */
 @Serializable
 data class AssociationDto(
-    val uuid: String,
+    val id: String,
     var name: String,
     var email: String,
     var username: String,
