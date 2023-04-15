@@ -90,7 +90,7 @@ dependencies {
     implementation("io.github.smiley4:ktor-swagger-ui:$ktor_swagger_ui_version")
 
     // Cache 4K
-    //implementation("io.github.reactivecircus.cache4k:cache4k:$cache_version")
+    implementation("io.github.reactivecircus.cache4k:cache4k:$cache_version")
 
     // Para testear
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
@@ -115,6 +115,9 @@ dependencies {
     // Corrutinas Mongo
     implementation("org.litote.kmongo:kmongo-coroutine:4.7.2")
 
+    // Result Kotlin
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.17")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.17")
 }
 
 tasks.test {

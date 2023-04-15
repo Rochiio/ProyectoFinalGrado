@@ -1,7 +1,7 @@
 package com.example.services.maps
 
 import com.example.dto.MapsCreateDto
-import com.example.exception.MapsNotFoundException
+import com.example.error.MapsNotFoundException
 import com.example.models.Maps
 import com.example.repositories.maps.MapRepositoryImpl
 import io.mockk.MockKAnnotations

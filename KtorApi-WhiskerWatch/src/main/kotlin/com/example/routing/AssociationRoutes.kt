@@ -1,9 +1,8 @@
 package com.example.routing
 
 import com.example.dto.AssociationCreateDto
-import com.example.exception.AssociationBadRequestException
-import com.example.exception.AssociationNotFoundException
-import com.example.mappers.toAssociation
+import com.example.error.AssociationBadRequestException
+import com.example.error.AssociationNotFoundException
 import com.example.mappers.toAssociationDto
 import com.example.services.users.AssociationService
 import io.ktor.http.*
@@ -12,7 +11,6 @@ import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.flow.toList
 import mu.KotlinLogging
 import org.koin.ktor.ext.inject
 

@@ -1,11 +1,13 @@
 package com.example.services.forum
 
 import com.example.dto.ForumCreateDto
-import com.example.exception.ForumNotFoundException
-import com.example.exception.MapsNotFoundException
+import com.example.error.ForumError
 import com.example.mappers.toListMessages
 import com.example.models.forum.Forum
 import com.example.repositories.forum.ForumRepository
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import kotlinx.coroutines.flow.toList
 import org.koin.core.annotation.Single
 
@@ -14,45 +16,49 @@ class ForumService(
     private val forumRepository: ForumRepository
 ) {
 
-    suspend fun findByMapsId(id: String): Forum {
-        return forumRepository.findByMapsId(id)
-            ?: throw MapsNotFoundException("No se ha encontrado un foro con id de mapa $id")
+    suspend fun findByMapsId(id: String): Result<Forum, ForumError> {
+        return forumRepository.findByMapsId(id)?.let {
+            Ok(it)
+        }?: run{
+            Err(ForumError.ForumNotFoundError("No se ha encontrado un foro con id de mapa $id"))
+        }
     }
 
-    suspend fun findById(id: String): Forum {
-        return forumRepository.findById(id)
-            ?: throw ForumNotFoundException("No se ha encontrado un foro con id $id")
+    suspend fun findById(id: String): Result<Forum, ForumError> {
+        return forumRepository.findById(id)?.let {
+            Ok(it)
+        }?: run{
+            Err(ForumError.ForumNotFoundError("No se ha encontrado un foro con id $id"))
+        }
     }
 
-    suspend fun saveForum(forum: ForumCreateDto): Forum {
+    suspend fun saveForum(forum: ForumCreateDto): Result<Forum, ForumError> {
         val created = Forum(
             mapsId = forum.mapsId,
             listMessages = forum.listMessages.toListMessages().toMutableList()
         )
-        return forumRepository.save(created)
+        return Ok(forumRepository.save(created))
     }
 
-    suspend fun updateForum(forum: ForumCreateDto, idForum: String): Forum {
-        val find = forumRepository.findById(idForum)
-        find?.let {
+    suspend fun updateForum(forum: ForumCreateDto, idForum: String): Result<Forum, ForumError> {
+        return forumRepository.findById(idForum)?.let {
             val list = it.listMessages
             val newList = forum.listMessages.toListMessages()
             val updated = Forum(
                 id = it.id, mapsId = forum.mapsId,
                 listMessages = (list + newList).toMutableList()
             )
-            return forumRepository.update(updated)
+            Ok(forumRepository.update(updated))
         } ?: run {
-            throw ForumNotFoundException("No se ha encontrado un foro con id $idForum")
+            Err(ForumError.ForumNotFoundError("No se ha encontrado un foro con id $idForum"))
         }
     }
 
-    suspend fun deleteForum(id: String): Boolean {
-        val find = forumRepository.findById(id)
-        find?.let {
-            return forumRepository.delete(it)
+    suspend fun deleteForum(id: String): Result<Boolean, ForumError> {
+        return forumRepository.findById(id)?.let {
+            Ok(forumRepository.delete(it))
         }?: run{
-            throw ForumNotFoundException("No se ha encontrado un foro con id $id")
+            Err(ForumError.ForumNotFoundError("No se ha encontrado un foro con id $id"))
         }
     }
 

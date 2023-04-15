@@ -1,8 +1,8 @@
 package com.example.services.users
 
 import com.example.dto.UserCreateDto
-import com.example.exception.UserBadRequestException
-import com.example.exception.UserNotFoundException
+import com.example.error.UserBadRequestError
+import com.example.error.UserNotFoundError
 import com.example.models.users.Rol
 import com.example.models.users.User
 import com.example.repositories.users.UserRepositoryImpl
@@ -64,7 +64,7 @@ class UserServiceTest {
     fun findUserByEmailNotFound() = runTest {
         coEvery { repository.findByEmail(test.email) } returns null
 
-        val exception = assertThrows<UserNotFoundException> { service.findUserByEmail(test.email) }
+        val exception = assertThrows<UserNotFoundError> { service.findUserByEmail(test.email) }
         assertEquals("No se ha encontrado un usuario con email ${test.email}", exception.message)
 
         coVerify(exactly = 1) { repository.findByEmail(test.email) }
@@ -91,7 +91,7 @@ class UserServiceTest {
     fun findUserByIdNotFound() = runTest {
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<UserNotFoundException> { service.findUserById(test.id) }
+        val exception = assertThrows<UserNotFoundError> { service.findUserById(test.id) }
         assertEquals("No se ha encontrado un usuario con id ${test.id}", exception.message)
 
         coVerify(exactly = 1) { repository.findById(test.id) }
@@ -122,7 +122,7 @@ class UserServiceTest {
     fun saveUserExists() = runTest {
         coEvery { repository.findByEmail(any()) } returns test
 
-        val exception = assertThrows<UserBadRequestException> { service.saveUser(createTest) }
+        val exception = assertThrows<UserBadRequestError> { service.saveUser(createTest) }
         assertEquals("Ya existe un usuario con email ${test.email}", exception.message)
 
         coVerify(exactly = 1) {repository.findByEmail(any())}
@@ -156,7 +156,7 @@ class UserServiceTest {
         coEvery { repository.findByEmail(any()) } returns null
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<UserNotFoundException> { service.updateUser(createTest, test.id) }
+        val exception = assertThrows<UserNotFoundError> { service.updateUser(createTest, test.id) }
         assertEquals("No se ha encontrado un usuario con el ID ${test.id}", exception.message)
 
         coVerify(exactly = 1) { repository.findByEmail(any())}
@@ -167,7 +167,7 @@ class UserServiceTest {
     fun updateUserExists() = runTest {
         coEvery { repository.findByEmail(any()) } returns test
 
-        val exception = assertThrows<UserBadRequestException> { service.updateUser(createTest, test.id) }
+        val exception = assertThrows<UserBadRequestError> { service.updateUser(createTest, test.id) }
         assertEquals("Ya existe un usuario con email ${test.email}", exception.message)
 
         coVerify(exactly = 1) { repository.findByEmail(any())}
@@ -189,7 +189,7 @@ class UserServiceTest {
     fun deleteUserNotFound() = runTest {
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<UserNotFoundException> { service.deleteUser(test.id) }
+        val exception = assertThrows<UserNotFoundError> { service.deleteUser(test.id) }
         assertEquals("No se ha encontrado un usario con el ID ${test.id}", exception.message)
 
         coVerify(exactly = 1) { repository.findById(test.id) }

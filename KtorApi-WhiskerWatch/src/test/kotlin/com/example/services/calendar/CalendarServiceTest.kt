@@ -2,8 +2,8 @@ package com.example.services.calendar
 
 import com.example.dto.CalendarCreateDto
 import com.example.dto.TaskCreateDto
-import com.example.exception.CalendarNotFoundException
-import com.example.exception.MapsNotFoundException
+import com.example.error.CalendarNotFoundException
+import com.example.error.MapsNotFoundException
 import com.example.models.calendar.Calendar
 import com.example.models.calendar.Task
 import com.example.repositories.calendar.CalendarRepositoryImpl

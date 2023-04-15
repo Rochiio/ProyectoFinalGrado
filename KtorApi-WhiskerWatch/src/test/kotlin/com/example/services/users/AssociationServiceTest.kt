@@ -1,8 +1,8 @@
 package com.example.services.users
 
 import com.example.dto.AssociationCreateDto
-import com.example.exception.AssociationBadRequestException
-import com.example.exception.AssociationNotFoundException
+import com.example.error.AssociationBadRequestException
+import com.example.error.AssociationNotFoundException
 import com.example.models.users.Association
 import com.example.models.users.Rol
 import com.example.repositories.users.AssociationRepositoryImpl

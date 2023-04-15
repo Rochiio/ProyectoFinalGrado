@@ -29,7 +29,7 @@ Y registro, modificación y eliminación de cuenta para usuarios y asociaciones.
 [![Mongo][Mongo]][Mongo-url]
 ### Framework.
 [![Ktor][Ktor]][Ktor-url]
-[![Flutter][Flutter]][Flutter-url]
+
 
 
 
@@ -42,5 +42,3 @@ Y registro, modificación y eliminación de cuenta para usuarios y asociaciones.
 [Mongo-url]: https://www.mongodb.com/
 [Ktor]: https://img.shields.io/badge/ktor-orange?style=for-the-badge&logo=kotlin&logoColor=white
 [Ktor-url]:https://ktor.io/
-[Flutter]: https://img.shields.io/badge/flutter-lightblue?style=for-the-badge&logo=flutter&logoColor=white
-[Flutter-url]: https://flutter.dev/

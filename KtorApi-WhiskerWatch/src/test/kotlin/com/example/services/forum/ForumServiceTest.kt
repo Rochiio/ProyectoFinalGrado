@@ -2,8 +2,8 @@ package com.example.services.forum
 
 import com.example.dto.ForumCreateDto
 import com.example.dto.ForumMessagesCreateDto
-import com.example.exception.ForumNotFoundException
-import com.example.exception.MapsNotFoundException
+import com.example.error.ForumNotFoundException
+import com.example.error.MapsNotFoundException
 import com.example.models.forum.Forum
 import com.example.models.forum.ForumMessages
 import com.example.repositories.forum.ForumRepositoryImpl
