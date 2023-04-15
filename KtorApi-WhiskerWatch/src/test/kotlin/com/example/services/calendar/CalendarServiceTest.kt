@@ -2,11 +2,12 @@ package com.example.services.calendar
 
 import com.example.dto.CalendarCreateDto
 import com.example.dto.TaskCreateDto
-import com.example.error.CalendarNotFoundException
-import com.example.error.MapsNotFoundException
+import com.example.error.CalendarError
 import com.example.models.calendar.Calendar
 import com.example.models.calendar.Task
 import com.example.repositories.calendar.CalendarRepositoryImpl
+import com.github.michaelbull.result.get
+import com.github.michaelbull.result.getError
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -16,10 +17,8 @@ import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.LocalDate
 import java.util.*
@@ -50,9 +49,10 @@ class CalendarServiceTest {
 
         val find = service.findCalendarByMapsId(test.mapsId)
         assertAll(
-            { assertEquals(test.id, find.id) },
-            { assertEquals(test.mapsId, find.mapsId) },
-            { assertEquals(test.listTasks, find.listTasks) },
+            { assertNotNull(find) },
+            { assertEquals(test.id, find.get()?.id) },
+            { assertEquals(test.mapsId, find.get()?.mapsId) },
+            { assertEquals(test.listTasks, find.get()?.listTasks) },
         )
 
         coVerify(exactly = 1) {repository.findByMapsId(test.mapsId)}
@@ -62,8 +62,14 @@ class CalendarServiceTest {
     fun findCalendarByMapsUuidNotFound() = runTest {
         coEvery { repository.findByMapsId(test.mapsId) } returns null
 
-        val exception = assertThrows<MapsNotFoundException> { service.findCalendarByMapsId(test.mapsId) }
-        assertEquals("No se ha encontrado un calendario con id de mapa ${test.mapsId}", exception.message)
+        val res = service.findCalendarByMapsId(test.mapsId)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is CalendarError.CalendarNotFoundError)},
+            { assertEquals("No se ha encontrado un calendario con id de mapa ${test.mapsId}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1){repository.findByMapsId(test.mapsId)}
     }
@@ -74,9 +80,10 @@ class CalendarServiceTest {
 
         val find = service.findCalendarById(test.id)
         assertAll(
-            { assertEquals(test.id, find.id) },
-            { assertEquals(test.mapsId, find.mapsId) },
-            { assertEquals(test.listTasks, find.listTasks) },
+            { assertNotNull(find) },
+            { assertEquals(test.id, find.get()?.id) },
+            { assertEquals(test.mapsId, find.get()?.mapsId) },
+            { assertEquals(test.listTasks, find.get()?.listTasks) },
         )
 
         coVerify(exactly = 1) {repository.findById(test.id)}
@@ -86,8 +93,14 @@ class CalendarServiceTest {
     fun findCalendarByUuidNotFound() = runTest {
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<CalendarNotFoundException> { service.findCalendarById(test.id) }
-        assertEquals("No se ha encontrado un calendario con id ${test.id}", exception.message)
+        val res = service.findCalendarById(test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is CalendarError.CalendarNotFoundError)},
+            { assertEquals("No se ha encontrado un calendario con id ${test.id}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1){repository.findById(test.id)}
     }
@@ -98,9 +111,10 @@ class CalendarServiceTest {
 
         val created = service.saveCalendar(createTest)
         assertAll(
-            { assertEquals(test.id, created.id) },
-            { assertEquals(test.mapsId, created.mapsId) },
-            { assertEquals(test.listTasks, created.listTasks) },
+            { assertNotNull(created) },
+            { assertEquals(test.id, created.get()?.id) },
+            { assertEquals(test.mapsId, created.get()?.mapsId) },
+            { assertEquals(test.listTasks, created.get()?.listTasks) },
         )
 
         coVerify(exactly = 1) {repository.save(any())}
@@ -113,9 +127,10 @@ class CalendarServiceTest {
 
         val updated = service.updateCalendar(createTest, test.id)
         assertAll(
-            { assertEquals(test.id, updated.id) },
-            { assertEquals(test.mapsId, updated.mapsId) },
-            { assertEquals(test.listTasks, updated.listTasks) },
+            { assertNotNull(updated) },
+            { assertEquals(test.id, updated.get()?.id) },
+            { assertEquals(test.mapsId, updated.get()?.mapsId) },
+            { assertEquals(test.listTasks, updated.get()?.listTasks) },
         )
 
         coVerify(exactly = 1) {repository.update(any())}
@@ -126,8 +141,14 @@ class CalendarServiceTest {
     fun updateCalendarNotFound() = runTest {
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<CalendarNotFoundException> { service.updateCalendar(createTest, test.id) }
-        assertEquals("No se ha encontrado un calendario con id ${test.id}", exception.message)
+        val res = service.updateCalendar(createTest, test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is CalendarError.CalendarNotFoundError)},
+            { assertEquals("No se ha encontrado un calendario con id ${test.id}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) {repository.findById(test.id)}
     }
@@ -138,7 +159,10 @@ class CalendarServiceTest {
         coEvery { repository.delete(test) } returns true
 
         val deleted = service.deleteCalendar(test.id)
-        assertTrue(deleted)
+        assertAll(
+            { assertNotNull(deleted) },
+            { assertTrue(deleted.get()!!) }
+        )
 
         coVerify(exactly = 1){repository.findById(test.id)}
         coVerify(exactly = 1){repository.delete(test)}
@@ -148,8 +172,14 @@ class CalendarServiceTest {
     fun deleteCalendarNotFound() = runTest {
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<CalendarNotFoundException> { service.deleteCalendar(test.id) }
-        assertEquals("No se ha encontrado un calendario con id ${test.id}", exception.message)
+        val res = service.deleteCalendar(test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is CalendarError.CalendarNotFoundError)},
+            { assertEquals("No se ha encontrado un calendario con id ${test.id}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1){repository.findById(test.id)}
     }

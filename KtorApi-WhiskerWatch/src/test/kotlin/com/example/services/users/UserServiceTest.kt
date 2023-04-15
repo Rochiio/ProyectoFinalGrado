@@ -1,12 +1,13 @@
 package com.example.services.users
 
 import com.example.dto.UserCreateDto
-import com.example.error.UserBadRequestError
-import com.example.error.UserNotFoundError
+import com.example.error.UserError
 import com.example.models.users.Rol
 import com.example.models.users.User
 import com.example.repositories.users.UserRepositoryImpl
 import com.example.services.password.BcryptService
+import com.github.michaelbull.result.get
+import com.github.michaelbull.result.getError
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExperimentalCoroutinesApi
@@ -49,12 +49,13 @@ class UserServiceTest {
 
         val find = service.findUserByEmail(test.email)
         assertAll(
-            { assertEquals(test.id, find.id) },
-            { assertEquals(test.name, find.name) },
-            { assertEquals(test.email, find.email) },
-            { assertEquals(test.password, find.password) },
-            { assertEquals(test.username, find.username) },
-            { assertEquals(test.rol, find.rol) }
+            { assertNotNull(find) },
+            { assertEquals(test.id, find.get()?.id) },
+            { assertEquals(test.name, find.get()?.name) },
+            { assertEquals(test.email, find.get()?.email) },
+            { assertEquals(test.password, find.get()?.password) },
+            { assertEquals(test.username, find.get()?.username) },
+            { assertEquals(test.rol, find.get()?.rol) }
         )
 
         coVerify(exactly = 1) { repository.findByEmail(test.email) }
@@ -64,8 +65,14 @@ class UserServiceTest {
     fun findUserByEmailNotFound() = runTest {
         coEvery { repository.findByEmail(test.email) } returns null
 
-        val exception = assertThrows<UserNotFoundError> { service.findUserByEmail(test.email) }
-        assertEquals("No se ha encontrado un usuario con email ${test.email}", exception.message)
+        val res = service.findUserByEmail(test.email)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is UserError.UserNotFoundError)},
+            { assertEquals("No se ha encontrado un usuario con email ${test.email}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) { repository.findByEmail(test.email) }
     }
@@ -76,12 +83,13 @@ class UserServiceTest {
 
         val find = service.findUserById(test.id)
         assertAll(
-            { assertEquals(test.id, find.id) },
-            { assertEquals(test.name, find.name) },
-            { assertEquals(test.email, find.email) },
-            { assertEquals(test.password, find.password) },
-            { assertEquals(test.username, find.username) },
-            { assertEquals(test.rol, find.rol) }
+            { assertNotNull(find) },
+            { assertEquals(test.id, find.get()?.id) },
+            { assertEquals(test.name, find.get()?.name) },
+            { assertEquals(test.email, find.get()?.email) },
+            { assertEquals(test.password, find.get()?.password) },
+            { assertEquals(test.username, find.get()?.username) },
+            { assertEquals(test.rol, find.get()?.rol) }
         )
 
         coVerify(exactly = 1) { repository.findById(test.id) }
@@ -91,8 +99,14 @@ class UserServiceTest {
     fun findUserByIdNotFound() = runTest {
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<UserNotFoundError> { service.findUserById(test.id) }
-        assertEquals("No se ha encontrado un usuario con id ${test.id}", exception.message)
+        val res = service.findUserById(test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is UserError.UserNotFoundError)},
+            { assertEquals("No se ha encontrado un usuario con id ${test.id}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) { repository.findById(test.id) }
     }
@@ -105,12 +119,13 @@ class UserServiceTest {
 
         val created = service.saveUser(createTest)
         assertAll(
-            { assertEquals(test.id, created.id) },
-            { assertEquals(test.name, created.name) },
-            { assertEquals(test.email, created.email) },
-            { assertEquals(test.password, created.password) },
-            { assertEquals(test.username, created.username) },
-            { assertEquals(test.rol, created.rol) }
+            { assertNotNull(created) },
+            { assertEquals(test.id, created.get()?.id) },
+            { assertEquals(test.name, created.get()?.name) },
+            { assertEquals(test.email, created.get()?.email) },
+            { assertEquals(test.password, created.get()?.password) },
+            { assertEquals(test.username, created.get()?.username) },
+            { assertEquals(test.rol, created.get()?.rol) }
         )
 
         coVerify(exactly = 1) { repository.save(any()) }
@@ -122,8 +137,14 @@ class UserServiceTest {
     fun saveUserExists() = runTest {
         coEvery { repository.findByEmail(any()) } returns test
 
-        val exception = assertThrows<UserBadRequestError> { service.saveUser(createTest) }
-        assertEquals("Ya existe un usuario con email ${test.email}", exception.message)
+        val res = service.saveUser(createTest)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is UserError.UserBadRequestError)},
+            { assertEquals("Ya existe un usuario con email ${test.email}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) {repository.findByEmail(any())}
     }
@@ -137,12 +158,13 @@ class UserServiceTest {
 
         val updated = service.updateUser(createTest, test.id)
         assertAll(
-            { assertEquals(test.id, updated.id) },
-            { assertEquals(test.name, updated.name) },
-            { assertEquals(test.email, updated.email) },
-            { assertEquals(test.password, updated.password) },
-            { assertEquals(test.username, updated.username) },
-            { assertEquals(test.rol, updated.rol) }
+            { assertNotNull(updated) },
+            { assertEquals(test.id, updated.get()?.id) },
+            { assertEquals(test.name, updated.get()?.name) },
+            { assertEquals(test.email, updated.get()?.email) },
+            { assertEquals(test.password, updated.get()?.password) },
+            { assertEquals(test.username, updated.get()?.username) },
+            { assertEquals(test.rol, updated.get()?.rol) }
         )
 
         coVerify(exactly = 1) { repository.findByEmail(any())}
@@ -156,8 +178,14 @@ class UserServiceTest {
         coEvery { repository.findByEmail(any()) } returns null
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<UserNotFoundError> { service.updateUser(createTest, test.id) }
-        assertEquals("No se ha encontrado un usuario con el ID ${test.id}", exception.message)
+        val res = service.updateUser(createTest, test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is UserError.UserNotFoundError)},
+            { assertEquals("No se ha encontrado un usuario con el ID ${test.id}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) { repository.findByEmail(any())}
         coVerify(exactly = 1) { repository.findById(test.id) }
@@ -167,8 +195,14 @@ class UserServiceTest {
     fun updateUserExists() = runTest {
         coEvery { repository.findByEmail(any()) } returns test
 
-        val exception = assertThrows<UserBadRequestError> { service.updateUser(createTest, test.id) }
-        assertEquals("Ya existe un usuario con email ${test.email}", exception.message)
+        val res = service.updateUser(createTest, test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is UserError.UserBadRequestError)},
+            { assertEquals("Ya existe un usuario con email ${test.email}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) { repository.findByEmail(any())}
     }
@@ -179,7 +213,10 @@ class UserServiceTest {
         coEvery { repository.delete(any()) } returns true
 
         val deleted = service.deleteUser(test.id)
-        assertTrue(deleted)
+        assertAll(
+            { assertNotNull(deleted) },
+            { assertTrue(deleted.get()!!) }
+        )
 
         coVerify(exactly = 1) { repository.findById(test.id) }
         coVerify(exactly = 1) { repository.delete(any()) }
@@ -189,8 +226,14 @@ class UserServiceTest {
     fun deleteUserNotFound() = runTest {
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<UserNotFoundError> { service.deleteUser(test.id) }
-        assertEquals("No se ha encontrado un usario con el ID ${test.id}", exception.message)
+        val res = service.deleteUser(test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is UserError.UserNotFoundError)},
+            { assertEquals("No se ha encontrado un usario con el ID ${test.id}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) { repository.findById(test.id) }
     }

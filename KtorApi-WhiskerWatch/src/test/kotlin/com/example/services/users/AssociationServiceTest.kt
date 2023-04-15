@@ -1,12 +1,13 @@
 package com.example.services.users
 
 import com.example.dto.AssociationCreateDto
-import com.example.error.AssociationBadRequestException
-import com.example.error.AssociationNotFoundException
+import com.example.error.AssociationError
 import com.example.models.users.Association
 import com.example.models.users.Rol
 import com.example.repositories.users.AssociationRepositoryImpl
 import com.example.services.password.BcryptService
+import com.github.michaelbull.result.get
+import com.github.michaelbull.result.getError
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -16,10 +17,8 @@ import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExperimentalCoroutinesApi
@@ -53,14 +52,15 @@ class AssociationServiceTest {
 
         val find = service.findAssociationByEmail(test.email)
         assertAll(
-            { assertEquals(test.id, find.id) },
-            { assertEquals(test.name, find.name) },
-            { assertEquals(test.email, find.email) },
-            { assertEquals(test.password, find.password) },
-            { assertEquals(test.username, find.username) },
-            { assertEquals(test.description, find.description) },
-            { assertEquals(test.url, find.url) },
-            { assertEquals(test.rol, find.rol) }
+            { assertNotNull(find)},
+            { assertEquals(test.id, find.get()?.id) },
+            { assertEquals(test.name, find.get()?.name) },
+            { assertEquals(test.email, find.get()?.email) },
+            { assertEquals(test.password, find.get()?.password) },
+            { assertEquals(test.username, find.get()?.username) },
+            { assertEquals(test.description, find.get()?.description) },
+            { assertEquals(test.url, find.get()?.url) },
+            { assertEquals(test.rol, find.get()?.rol) }
         )
 
         coVerify(exactly = 1) { repository.findByEmail(test.email) }
@@ -70,8 +70,14 @@ class AssociationServiceTest {
     fun findAssociationByEmailNotFound() = runTest {
         coEvery { repository.findByEmail(test.email) } returns null
 
-        val exception =assertThrows<AssociationNotFoundException> { service.findAssociationByEmail(test.email) }
-        assertEquals("No se ha encontrado una asociación con email ${test.email}", exception.message)
+        val res = service.findAssociationByEmail(test.email)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is AssociationError.AssociationNotFoundError)},
+            { assertEquals("No se ha encontrado una asociación con email ${test.email}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) { repository.findByEmail(test.email) }
     }
@@ -82,14 +88,15 @@ class AssociationServiceTest {
 
         val find = service.findAssociationById(test.id)
         assertAll(
-            { assertEquals(test.id, find.id) },
-            { assertEquals(test.name, find.name) },
-            { assertEquals(test.email, find.email) },
-            { assertEquals(test.password, find.password) },
-            { assertEquals(test.username, find.username) },
-            { assertEquals(test.description, find.description) },
-            { assertEquals(test.url, find.url) },
-            { assertEquals(test.rol, find.rol) }
+            { assertNotNull(find) },
+            { assertEquals(test.id, find.get()?.id) },
+            { assertEquals(test.name, find.get()?.name) },
+            { assertEquals(test.email, find.get()?.email) },
+            { assertEquals(test.password, find.get()?.password) },
+            { assertEquals(test.username, find.get()?.username) },
+            { assertEquals(test.description, find.get()?.description) },
+            { assertEquals(test.url, find.get()?.url) },
+            { assertEquals(test.rol, find.get()?.rol) }
         )
 
         coVerify(exactly = 1) { repository.findById(test.id) }
@@ -99,8 +106,14 @@ class AssociationServiceTest {
     fun findAssociationByUuidNotFound() = runTest {
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<AssociationNotFoundException> { service.findAssociationById(test.id) }
-        assertEquals("No se ha encontrado una asociación con id ${test.id}", exception.message)
+        val res = service.findAssociationById(test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is AssociationError.AssociationNotFoundError)},
+            { assertEquals("No se ha encontrado una asociación con id ${test.id}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) { repository.findById(test.id) }
     }
@@ -113,14 +126,15 @@ class AssociationServiceTest {
 
         val created = service.saveAssociation(createTest)
         assertAll(
-            { assertEquals(test.id, created.id) },
-            { assertEquals(test.name, created.name) },
-            { assertEquals(test.email, created.email) },
-            { assertEquals(test.password, created.password) },
-            { assertEquals(test.username, created.username) },
-            { assertEquals(test.description, created.description) },
-            { assertEquals(test.url, created.url) },
-            { assertEquals(test.rol, created.rol) }
+            { assertNotNull(created) },
+            { assertEquals(test.id, created.get()?.id) },
+            { assertEquals(test.name, created.get()?.name) },
+            { assertEquals(test.email, created.get()?.email) },
+            { assertEquals(test.password, created.get()?.password) },
+            { assertEquals(test.username, created.get()?.username) },
+            { assertEquals(test.description, created.get()?.description) },
+            { assertEquals(test.url, created.get()?.url) },
+            { assertEquals(test.rol, created.get()?.rol) }
         )
 
         coVerify(exactly = 1) {repository.findByEmail(any()) }
@@ -131,8 +145,15 @@ class AssociationServiceTest {
     @Test
     fun saveAssociationExists() = runTest{
         coEvery { repository.findByEmail(any()) } returns test
-        val exception = assertThrows<AssociationBadRequestException> { service.saveAssociation(createTest) }
-        assertEquals("Ya existe una asociación con email ${test.email}", exception.message)
+
+        val res = service.saveAssociation(createTest)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is AssociationError.AssociationBadRequestError)},
+            { assertEquals("Ya existe una asociación con email ${test.email}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) {repository.findByEmail(any())}
     }
@@ -146,14 +167,15 @@ class AssociationServiceTest {
 
         val updated = service.updateAssociation(createTest, test.id)
         assertAll(
-            { assertEquals(test.id, updated.id) },
-            { assertEquals(test.name, updated.name) },
-            { assertEquals(test.email, updated.email) },
-            { assertEquals(test.password, updated.password) },
-            { assertEquals(test.username, updated.username) },
-            { assertEquals(test.description, updated.description) },
-            { assertEquals(test.url, updated.url) },
-            { assertEquals(test.rol, updated.rol) }
+            { assertNotNull(updated) },
+            { assertEquals(test.id, updated.get()?.id) },
+            { assertEquals(test.name, updated.get()?.name) },
+            { assertEquals(test.email, updated.get()?.email) },
+            { assertEquals(test.password, updated.get()?.password) },
+            { assertEquals(test.username, updated.get()?.username) },
+            { assertEquals(test.description, updated.get()?.description) },
+            { assertEquals(test.url, updated.get()?.url) },
+            { assertEquals(test.rol, updated.get()?.rol) }
         )
 
         coVerify(exactly = 1) { repository.findByEmail(test.email) }
@@ -167,8 +189,14 @@ class AssociationServiceTest {
         coEvery { repository.findByEmail(any()) } returns null
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<AssociationNotFoundException> { service.updateAssociation(createTest, test.id) }
-        assertEquals("No se ha encontrado una asociación con id ${test.id}", exception.message)
+        val res = service.updateAssociation(createTest, test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is AssociationError.AssociationNotFoundError)},
+            { assertEquals("No se ha encontrado una asociación con id ${test.id}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) { repository.findById(test.id) }
         coVerify(exactly = 1) {repository.findByEmail(any())}
@@ -178,8 +206,14 @@ class AssociationServiceTest {
     fun updateAssociationExists() = runTest {
         coEvery { repository.findByEmail(any()) } returns test
 
-        val exception = assertThrows<AssociationBadRequestException> { service.updateAssociation(createTest, test.id) }
-        assertEquals("Ya existe una asociación con email ${test.email}", exception.message)
+        val res = service.updateAssociation(createTest, test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is AssociationError.AssociationBadRequestError)},
+            { assertEquals("Ya existe una asociación con email ${test.email}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) { repository.findByEmail(any()) }
     }
@@ -190,7 +224,10 @@ class AssociationServiceTest {
         coEvery { repository.delete(any()) } returns true
 
         val deleted = service.deleteAssociation(test.id)
-        assertTrue(deleted)
+        assertAll(
+            { assertNotNull(deleted) },
+            { assertTrue(deleted.get()!!) }
+        )
 
         coVerify(exactly = 1) { repository.findById(test.id) }
         coVerify(exactly = 1) { repository.delete(any()) }
@@ -200,8 +237,14 @@ class AssociationServiceTest {
     fun deleteAssociationNotFound() = runTest {
         coEvery { repository.findById(test.id) } returns null
 
-        val exception = assertThrows<AssociationNotFoundException> { service.deleteAssociation(test.id) }
-        assertEquals("No se ha encontrado una asociación con id ${test.id}", exception.message)
+        val res = service.deleteAssociation(test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is AssociationError.AssociationNotFoundError)},
+            { assertEquals("No se ha encontrado una asociación con id ${test.id}", res.getError()?.message) }
+        )
 
         coVerify(exactly = 1) { repository.findById(test.id) }
     }
