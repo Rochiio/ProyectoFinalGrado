@@ -13,3 +13,4 @@ data class ForumMessagesCreateDto(
     var username: String,
     var message: String,
 )
+
