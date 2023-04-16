@@ -1,6 +1,7 @@
 package com.example.validators
 
 import com.example.dto.UserCreateDto
+import com.example.dto.UserLogin
 import com.example.models.users.Rol
 import io.ktor.server.plugins.requestvalidation.*
 
@@ -15,6 +16,16 @@ fun RequestValidationConfig.userValidation(){
         } else if (user.password.isBlank() || user.password.length < 6){
             ValidationResult.Invalid("La contraseña no puede estar vacía o tener menos de 6 caracteres")
         }else {
+            ValidationResult.Valid
+        }
+    }
+
+    validate<UserLogin> { user ->
+        if(user.email.isBlank() || !user.email.matches(Regex("^[a-z0-9!#\$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\$"))){
+            ValidationResult.Invalid("El correo no puede estar vacío o es incorrecto")
+        }else if (user.password.isBlank()){
+            ValidationResult.Invalid("La contraseña no puede estar vacía")
+        }else{
             ValidationResult.Valid
         }
     }

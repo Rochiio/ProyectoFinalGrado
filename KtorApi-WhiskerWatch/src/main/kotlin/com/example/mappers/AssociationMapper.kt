@@ -2,6 +2,7 @@ package com.example.mappers
 
 import com.example.dto.AssociationCreateDto
 import com.example.dto.AssociationDto
+import com.example.dto.AssociationTokenDto
 import com.example.models.users.Association
 import com.example.models.users.Rol
 
@@ -19,6 +20,12 @@ fun Association.toAssociationDto(): AssociationDto {
 
 }
 
+fun Association.toAssociationTokenDto(token: String): AssociationTokenDto {
+    return AssociationTokenDto(
+        association = this.toAssociationDto(),
+        token = token
+    )
+}
 
 fun AssociationCreateDto.toAssociation(): Association{
     return Association(

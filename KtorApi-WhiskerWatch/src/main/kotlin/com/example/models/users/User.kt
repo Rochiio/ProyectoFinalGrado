@@ -15,3 +15,4 @@ data class User(
     var username: String,
     var rol: Rol = Rol.USER
 )
+

@@ -30,3 +30,18 @@ data class AssociationDto(
     var url: String,
     var image: String?,
 )
+
+/**
+ * Clase DTO Serializable para devolver al con token
+ */
+@Serializable
+data class  AssociationTokenDto(
+    var association: AssociationDto,
+    var token: String
+)
+
+@Serializable
+data class AssociationLogin(
+    var email: String,
+    var password: String
+)

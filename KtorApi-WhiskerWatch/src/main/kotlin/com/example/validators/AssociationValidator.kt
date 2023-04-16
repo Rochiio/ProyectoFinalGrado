@@ -1,6 +1,7 @@
 package com.example.validators
 
 import com.example.dto.AssociationCreateDto
+import com.example.dto.AssociationLogin
 import com.example.models.users.Rol
 import io.ktor.server.plugins.requestvalidation.*
 
@@ -21,6 +22,16 @@ fun RequestValidationConfig.associationValidation(){
         }else if (association.password.isBlank() || association.password.length < 6){
             ValidationResult.Invalid("La contraseña no puede ser vacía o tener una longitud menor de 6")
         }else {
+            ValidationResult.Valid
+        }
+    }
+
+    validate<AssociationLogin> { association ->
+        if(association.email.isBlank() || !association.email.matches(Regex("^[a-z0-9!#\$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\$"))){
+            ValidationResult.Invalid("El correo no puede estar vacío o es incorrecto")
+        }else if (association.password.isBlank()){
+            ValidationResult.Invalid("La contraseña no puede estar vacía")
+        }else{
             ValidationResult.Valid
         }
     }
