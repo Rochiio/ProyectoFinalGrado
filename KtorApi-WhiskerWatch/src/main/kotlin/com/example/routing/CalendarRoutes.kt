@@ -1,7 +1,7 @@
 package com.example.routing
 
-import com.example.dto.MapsCreateDto
-import com.example.services.maps.MapsService
+import com.example.dto.CalendarCreateDto
+import com.example.services.calendar.CalendarService
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import io.ktor.http.*
@@ -14,36 +14,44 @@ import io.ktor.server.routing.*
 import mu.KotlinLogging
 import org.koin.ktor.ext.inject
 
-private const val MAP = "/map"
-fun Application.mapRoutes(){
+private const val CAL = "/calendar"
+fun Application.calendarRoutes(){
     val logger = KotlinLogging.logger{}
-    val service: MapsService by inject()
+    val service: CalendarService by inject()
 
 
     routing {
-        route(MAP){
+        route(CAL){
 
             authenticate {
 
                 get(){
-                    logger.info { "Get All Map Route" }
-                    val list = service.findAllMaps()
+                    logger.info { "Get All Calendar Route" }
+                    val list = service.findAllCalendars()
                     call.respond(HttpStatusCode.OK, list)
                 }
 
                 get("/{id}"){
-                    logger.info { "Get Map By Id"}
+                    logger.info { "Get Calendar By Id"}
                     val id = call.parameters["id"].toString()
-                    service.findMapById(id)
+                    service.findCalendarById(id)
+                        .onSuccess { call.respond(HttpStatusCode.OK, it) }
+                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                }
+
+                get("/mapsId/{id}"){
+                    logger.info { "Get Calendar By Maps Id"}
+                    val id = call.parameters["id"].toString()
+                    service.findCalendarByMapsId(id)
                         .onSuccess { call.respond(HttpStatusCode.OK, it) }
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
                 post(){
-                    logger.info { "Save Map" }
+                    logger.info { "Save Calendar" }
                     try{
-                        val post = call.receive<MapsCreateDto>()
-                        service.saveMap(post)
+                        val post = call.receive<CalendarCreateDto>()
+                        service.saveCalendar(post)
                             .onSuccess { call.respond(HttpStatusCode.Created, it) }
                     }catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.message.toString())
@@ -51,11 +59,11 @@ fun Application.mapRoutes(){
                 }
 
                 put("/{id}"){
-                    logger.info { "Update Map" }
+                    logger.info { "Update Calendar" }
                     try {
                         val id = call.parameters["id"].toString()
-                        val put = call.receive<MapsCreateDto>()
-                        service.updateMap(put, id)
+                        val put = call.receive<CalendarCreateDto>()
+                        service.updateCalendar(put, id)
                             .onSuccess { call.respond(HttpStatusCode.Created, it) }
                             .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                     }catch (e: RequestValidationException){
@@ -64,9 +72,9 @@ fun Application.mapRoutes(){
                 }
 
                 delete("/{id}"){
-                    logger.info { "Delete Map" }
+                    logger.info { "Delete Calendar" }
                     val id = call.parameters["id"].toString()
-                    service.deleteMap(id)
+                    service.deleteCalendar(id)
                         .onSuccess { call.respond(HttpStatusCode.NoContent) }
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }

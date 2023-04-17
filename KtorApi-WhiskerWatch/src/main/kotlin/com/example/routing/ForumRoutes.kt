@@ -1,7 +1,7 @@
 package com.example.routing
 
-import com.example.dto.MapsCreateDto
-import com.example.services.maps.MapsService
+import com.example.dto.ForumCreateDto
+import com.example.services.forum.ForumService
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import io.ktor.http.*
@@ -14,36 +14,45 @@ import io.ktor.server.routing.*
 import mu.KotlinLogging
 import org.koin.ktor.ext.inject
 
-private const val MAP = "/map"
-fun Application.mapRoutes(){
+
+private const val FOR = "/forum"
+fun Application.forumRoutes(){
     val logger = KotlinLogging.logger{}
-    val service: MapsService by inject()
+    val service: ForumService by inject()
 
 
     routing {
-        route(MAP){
+        route(FOR){
 
             authenticate {
 
                 get(){
-                    logger.info { "Get All Map Route" }
-                    val list = service.findAllMaps()
+                    logger.info { "Get All Forum Route" }
+                    val list = service.findAllForums()
                     call.respond(HttpStatusCode.OK, list)
                 }
 
                 get("/{id}"){
-                    logger.info { "Get Map By Id"}
+                    logger.info { "Get Forum By Id"}
                     val id = call.parameters["id"].toString()
-                    service.findMapById(id)
+                    service.findById(id)
+                        .onSuccess { call.respond(HttpStatusCode.OK, it) }
+                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                }
+
+                get("/mapsId/{id}"){
+                    logger.info { "Get Forum By Map Id"}
+                    val id = call.parameters["id"].toString()
+                    service.findByMapsId(id)
                         .onSuccess { call.respond(HttpStatusCode.OK, it) }
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
                 post(){
-                    logger.info { "Save Map" }
+                    logger.info { "Save Forum" }
                     try{
-                        val post = call.receive<MapsCreateDto>()
-                        service.saveMap(post)
+                        val post = call.receive<ForumCreateDto>()
+                        service.saveForum(post)
                             .onSuccess { call.respond(HttpStatusCode.Created, it) }
                     }catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.message.toString())
@@ -51,11 +60,11 @@ fun Application.mapRoutes(){
                 }
 
                 put("/{id}"){
-                    logger.info { "Update Map" }
+                    logger.info { "Update Forum" }
                     try {
                         val id = call.parameters["id"].toString()
-                        val put = call.receive<MapsCreateDto>()
-                        service.updateMap(put, id)
+                        val put = call.receive<ForumCreateDto>()
+                        service.updateForum(put, id)
                             .onSuccess { call.respond(HttpStatusCode.Created, it) }
                             .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                     }catch (e: RequestValidationException){
@@ -64,9 +73,9 @@ fun Application.mapRoutes(){
                 }
 
                 delete("/{id}"){
-                    logger.info { "Delete Map" }
+                    logger.info { "Delete Forum" }
                     val id = call.parameters["id"].toString()
-                    service.deleteMap(id)
+                    service.deleteForum(id)
                         .onSuccess { call.respond(HttpStatusCode.NoContent) }
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
@@ -75,4 +84,5 @@ fun Application.mapRoutes(){
 
         }
     }
+
 }

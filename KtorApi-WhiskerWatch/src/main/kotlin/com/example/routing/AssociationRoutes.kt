@@ -69,9 +69,6 @@ fun Application.associationRoutes(){
 
                 get(){
                     logger.info { "Get All Association Route" }
-                    //val aso = Association(name = "Pruba", email = "pruba@gmail.com", username = "pruba", password = "123456"
-                    //    , description = "xxxxx", url = "http://google.com")
-                    //var salvado = repo.save(aso)
                     val list = service.findAllAssociations().map { it.toAssociationDto() }
                     call.respond(HttpStatusCode.OK, list)
                 }
