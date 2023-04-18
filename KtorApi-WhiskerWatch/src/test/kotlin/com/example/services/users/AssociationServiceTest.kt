@@ -38,6 +38,10 @@ class AssociationServiceTest {
         name = "test", email = "test@example.com", username = "test",
         password = "123456", description = "test description", url = "http://example.com"
     )
+    private var updateTest = Association(
+        name = "update", email = "test@example.com", username = "up",
+        password = "123456", description = "test description", url = "http://example.com"
+    )
     private var createTest = AssociationCreateDto(name = "test", email = "test@example.com", username = "test",
         password = "123456", description = "test description", url = "http://example.com", rol = Rol.ASSOCIATION.name)
 
@@ -186,7 +190,6 @@ class AssociationServiceTest {
 
     @Test
     fun updateAssociationNotFound() = runTest {
-        coEvery { repository.findByEmail(any()) } returns null
         coEvery { repository.findById(test.id) } returns null
 
         val res = service.updateAssociation(createTest, test.id)
@@ -199,12 +202,12 @@ class AssociationServiceTest {
         )
 
         coVerify(exactly = 1) { repository.findById(test.id) }
-        coVerify(exactly = 1) {repository.findByEmail(any())}
     }
 
     @Test
     fun updateAssociationExists() = runTest {
-        coEvery { repository.findByEmail(any()) } returns test
+        coEvery { repository.findById(test.id) } returns test
+        coEvery { repository.findByEmail(any()) } returns updateTest
 
         val res = service.updateAssociation(createTest, test.id)
         assertAll(
@@ -216,6 +219,7 @@ class AssociationServiceTest {
         )
 
         coVerify(exactly = 1) { repository.findByEmail(any()) }
+        coVerify(exactly = 1) { repository.findById(test.id) }
     }
 
     @Test

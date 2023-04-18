@@ -6,7 +6,9 @@ import com.example.models.users.Association
 import com.example.models.users.Rol
 import com.example.repositories.users.AssociationRepository
 import com.example.services.password.BcryptService
-import com.github.michaelbull.result.*
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import kotlinx.coroutines.flow.toList
 import org.koin.core.annotation.Single
 
@@ -46,12 +48,10 @@ class AssociationService(
     }
 
     suspend fun updateAssociation(association: AssociationCreateDto, idAssociation: String): Result<Association, AssociationError>{
-        return associationRepository.findByEmail(association.email)?.let {
-            Err(AssociationError.AssociationBadRequestError("Ya existe una asociación con email ${association.email}"))
-        }?: run{
-            val find = associationRepository.findById(idAssociation)
-            find?.let {
-                val updated = Association(
+        associationRepository.findById(idAssociation)?.let {
+            val find = associationRepository.findByEmail(association.email)
+            if ((find != null && find.id == idAssociation) || (find == null)){
+                val update = Association(
                     id = it.id,
                     name = association.name,
                     email = association.email,
@@ -61,10 +61,12 @@ class AssociationService(
                     description = association.description,
                     url = association.url
                 )
-                Ok(associationRepository.update(updated))
-            } ?: run {
-                Err(AssociationError.AssociationNotFoundError("No se ha encontrado una asociación con id $idAssociation"))
+                return Ok(associationRepository.update(update))
+            }else{
+                return Err(AssociationError.AssociationBadRequestError("Ya existe una asociación con email ${association.email}"))
             }
+        } ?: run {
+            return Err(AssociationError.AssociationNotFoundError("No se ha encontrado una asociación con id $idAssociation"))
         }
     }
 

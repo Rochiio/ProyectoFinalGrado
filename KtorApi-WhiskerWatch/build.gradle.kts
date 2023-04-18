@@ -108,6 +108,8 @@ dependencies {
 
     // Para testear con content negotiation
     testImplementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    // Auth para tokens usando el metodo de clienteAuth
+    implementation("io.ktor:ktor-client-auth:$ktor_version")
 
     // Mongo Kotlin Asincrono
     implementation("org.litote.kmongo:kmongo-async:4.7.2")

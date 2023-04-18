@@ -35,6 +35,7 @@ class UserServiceTest {
 
 
     private var test = User(name = "test", email = "test", password = "test", username = "test")
+    private var updateTest = User(name = "updateTest", email = "test", password = "test", username = "update")
     private var createTest = UserCreateDto(name = "test", email = "test", password = "test", username = "test", rol = Rol.USER.name)
 
 
@@ -175,7 +176,6 @@ class UserServiceTest {
 
     @Test
     fun updateUserNotFound() = runTest {
-        coEvery { repository.findByEmail(any()) } returns null
         coEvery { repository.findById(test.id) } returns null
 
         val res = service.updateUser(createTest, test.id)
@@ -187,13 +187,13 @@ class UserServiceTest {
             { assertEquals("No se ha encontrado un usuario con el ID ${test.id}", res.getError()?.message) }
         )
 
-        coVerify(exactly = 1) { repository.findByEmail(any())}
         coVerify(exactly = 1) { repository.findById(test.id) }
     }
 
     @Test
     fun updateUserExists() = runTest {
-        coEvery { repository.findByEmail(any()) } returns test
+        coEvery { repository.findByEmail(any()) } returns updateTest
+        coEvery { repository.findById(test.id) } returns test
 
         val res = service.updateUser(createTest, test.id)
         assertAll(
@@ -205,6 +205,7 @@ class UserServiceTest {
         )
 
         coVerify(exactly = 1) { repository.findByEmail(any())}
+        coVerify(exactly = 1) { repository.findById(test.id)}
     }
 
     @Test

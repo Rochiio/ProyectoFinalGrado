@@ -73,10 +73,9 @@ class UserService(
      * @return usuario actualizado.
      */
     suspend fun updateUser(user: UserCreateDto, idUser: String): Result<User, UserError>{
-        return userRepository.findByEmail(user.email)?.let{
-            Err(UserError.UserBadRequestError("Ya existe un usuario con email ${it.email}"))
-        }?: run {
-            userRepository.findById(idUser)?.let {
+        userRepository.findById(idUser)?.let {
+            val find = userRepository.findByEmail(user.email)
+            if ((find != null && find.id == idUser) || (find == null)){
                 val update = User(
                     id = it.id,
                     name = user.name,
@@ -85,10 +84,12 @@ class UserService(
                     username = user.username,
                     rol = Rol.valueOf(user.rol)
                 )
-                Ok(userRepository.update(update))
-            } ?: run {
-                Err(UserError.UserNotFoundError("No se ha encontrado un usuario con el ID $idUser"))
+                return Ok(userRepository.update(update))
+            }else{
+                return Err(UserError.UserBadRequestError("Ya existe un usuario con email ${user.email}"))
             }
+        } ?: run {
+            return Err(UserError.UserNotFoundError("No se ha encontrado un usuario con el ID $idUser"))
         }
     }
 
