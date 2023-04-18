@@ -1,9 +1,6 @@
 package com.example.routing
 
-import com.example.dto.UserCreateDto
-import com.example.dto.UserDto
-import com.example.dto.UserLogin
-import com.example.dto.UserWithTokenDto
+import com.example.dto.*
 import com.example.models.users.Rol
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
@@ -12,7 +9,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.auth.*
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.decodeFromString
@@ -25,11 +21,12 @@ private val json = Json { ignoreUnknownKeys = true }
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class UserRoutesTest {
+class AssociationRoutesTest {
     private val config = ApplicationConfig("application.conf")
 
-    private var createTest = UserCreateDto(name = "test", email = "test@gmail.com", password = "123456789", username = "test", rol = Rol.USER.name)
-    private var loginTest = UserLogin(email="test@gmail.com", password="123456789")
+    private var createTest = AssociationCreateDto(name = "test", email = "test@example.com", username = "test",
+        password = "123456", description = "test description", url = "http://example.com", rol = Rol.ASSOCIATION.name)
+    private var loginTest = AssociationLogin(email="test@example.com", password="123456")
 
     @Test
     @Order(1)
@@ -40,18 +37,18 @@ class UserRoutesTest {
                 json()
             }
         }
-        val response = client.post("/user/register"){
+        val response = client.post("/association/register"){
             contentType(ContentType.Application.Json)
             setBody(createTest)
         }
         val result = response.bodyAsText()
-        val user = json.decodeFromString<UserWithTokenDto>(result)
+        val user = json.decodeFromString<AssociationTokenDto>(result)
         assertAll(
             { assertEquals(HttpStatusCode.Created, response.status) },
-            { assertEquals(createTest.name, user.user.name) },
-            { assertEquals(createTest.email, user.user.email) },
-            { assertEquals(createTest.username, user.user.username) },
-            { assertEquals(createTest.rol, user.user.rol) }
+            { assertEquals(createTest.name, user.association.name) },
+            { assertEquals(createTest.email, user.association.email) },
+            { assertEquals(createTest.username, user.association.username) },
+            { assertEquals(createTest.rol, user.association.rol) }
         )
     }
 
@@ -65,23 +62,23 @@ class UserRoutesTest {
             }
         }
 
-        client.post("/user/register") {
+        client.post("/association/register") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
         }
 
-        val responseLogin = client.post("/user/login") {
+        val responseLogin = client.post("/association/login") {
             contentType(ContentType.Application.Json)
             setBody(loginTest)
         }
 
-        val res = json.decodeFromString<UserWithTokenDto>(responseLogin.bodyAsText())
+        val res = json.decodeFromString<AssociationTokenDto>(responseLogin.bodyAsText())
         assertAll(
             { assertEquals(responseLogin.status, HttpStatusCode.OK) },
-            { assertEquals(createTest.name, res.user.name) },
-            { assertEquals(createTest.email, res.user.email) },
-            { assertEquals( createTest.username, res.user.username) },
-            { assertEquals(createTest.rol, res.user.rol) },
+            { assertEquals(createTest.name, res.association.name) },
+            { assertEquals(createTest.email, res.association.email) },
+            { assertEquals( createTest.username, res.association.username) },
+            { assertEquals(createTest.rol, res.association.rol) },
         )
     }
 
@@ -96,16 +93,16 @@ class UserRoutesTest {
             }
         }
 
-        client.post("/user/register") {
+        client.post("/association/register") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
         }
-        var response = client.post("/user/login") {
+        var response = client.post("/association/login") {
             contentType(ContentType.Application.Json)
             setBody(loginTest)
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        val res = json.decodeFromString<UserWithTokenDto>(response.bodyAsText())
+        val res = json.decodeFromString<AssociationTokenDto>(response.bodyAsText())
 
         client = createClient {
             install(ContentNegotiation) {
@@ -119,9 +116,9 @@ class UserRoutesTest {
                 }
             }
         }
-        response = client.get("/user")
+        response = client.get("/association")
         assertEquals(HttpStatusCode.OK, response.status)
-        val list = json.decodeFromString<List<UserDto>>(response.bodyAsText())
+        val list = json.decodeFromString<List<AssociationDto>>(response.bodyAsText())
         assertAll(
             { assertTrue(list.size == 1) },
             { assertEquals(createTest.name,  list[0].name) },
@@ -142,16 +139,16 @@ class UserRoutesTest {
             }
         }
 
-        client.post("/user/register") {
+        client.post("/association/register") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
         }
-        var response = client.post("/user/login") {
+        var response = client.post("/association/login") {
             contentType(ContentType.Application.Json)
             setBody(loginTest)
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        val res = json.decodeFromString<UserWithTokenDto>(response.bodyAsText())
+        val res = json.decodeFromString<AssociationTokenDto>(response.bodyAsText())
 
         client = createClient {
             install(ContentNegotiation) {
@@ -165,9 +162,9 @@ class UserRoutesTest {
                 }
             }
         }
-        response = client.get("/user/${res.user.id}")
+        response = client.get("/association/${res.association.id}")
         assertEquals(HttpStatusCode.OK, response.status)
-        val find = json.decodeFromString<UserDto>(response.bodyAsText())
+        val find = json.decodeFromString<AssociationDto>(response.bodyAsText())
         assertAll(
             { assertEquals(createTest.name,  find.name) },
             { assertEquals(createTest.username,  find.username) },
@@ -187,16 +184,16 @@ class UserRoutesTest {
             }
         }
 
-        client.post("/user/register") {
+        client.post("/association/register") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
         }
-        var response = client.post("/user/login") {
+        var response = client.post("/association/login") {
             contentType(ContentType.Application.Json)
             setBody(loginTest)
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        val res = json.decodeFromString<UserWithTokenDto>(response.bodyAsText())
+        val res = json.decodeFromString<AssociationTokenDto>(response.bodyAsText())
 
         client = createClient {
             install(ContentNegotiation) {
@@ -211,12 +208,12 @@ class UserRoutesTest {
             }
         }
         val updated = createTest.copy(name = "updated")
-        response = client.put("/user/${res.user.id}"){
+        response = client.put("/association/${res.association.id}"){
             contentType(ContentType.Application.Json)
             setBody(updated)
         }
         assertEquals(HttpStatusCode.Created, response.status)
-        val update = json.decodeFromString<UserDto>(response.bodyAsText())
+        val update = json.decodeFromString<AssociationDto>(response.bodyAsText())
         assertAll(
             { assertEquals(updated.name,  update.name) },
             { assertEquals(updated.username,  update.username) },
@@ -236,16 +233,16 @@ class UserRoutesTest {
             }
         }
 
-        client.post("/user/register") {
+        client.post("/association/register") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
         }
-        var response = client.post("/user/login") {
+        var response = client.post("/association/login") {
             contentType(ContentType.Application.Json)
             setBody(loginTest)
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        val res = json.decodeFromString<UserWithTokenDto>(response.bodyAsText())
+        val res = json.decodeFromString<AssociationTokenDto>(response.bodyAsText())
 
         client = createClient {
             install(ContentNegotiation) {
@@ -259,7 +256,7 @@ class UserRoutesTest {
                 }
             }
         }
-        response = client.delete("/user/${res.user.id}")
+        response = client.delete("/association/${res.association.id}")
         assertEquals(HttpStatusCode.NoContent, response.status)
     }
 }
