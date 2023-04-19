@@ -3,9 +3,14 @@ package com.example.services.calendar
 import com.example.dto.CalendarCreateDto
 import com.example.dto.TaskCreateDto
 import com.example.error.CalendarError
+import com.example.error.MapsError
+import com.example.models.Maps
 import com.example.models.calendar.Calendar
 import com.example.models.calendar.Task
 import com.example.repositories.calendar.CalendarRepositoryImpl
+import com.example.services.maps.MapsService
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.get
 import com.github.michaelbull.result.getError
 import io.mockk.MockKAnnotations
@@ -29,6 +34,9 @@ class CalendarServiceTest {
     @MockK
     private lateinit var repository: CalendarRepositoryImpl
 
+    @MockK
+    private lateinit var mapsService: MapsService
+
     @InjectMockKs
     private lateinit var service: CalendarService
 
@@ -38,6 +46,8 @@ class CalendarServiceTest {
     )
     private val createTest = CalendarCreateDto(mapsId = UUID.randomUUID().toString(),
         listTasks = mutableListOf(TaskCreateDto(date = LocalDate.now().toString(), task = "tarea test")))
+
+    private val map = Maps(latitude = "12.3", longitude = "1.23")
 
     init {
         MockKAnnotations.init(this)
@@ -107,6 +117,7 @@ class CalendarServiceTest {
 
     @Test
     fun saveCalendar() = runTest{
+        coEvery { mapsService.findMapById(any()) } returns Ok(map)
         coEvery { repository.save(any()) } returns test
 
         val created = service.saveCalendar(createTest)
@@ -118,10 +129,27 @@ class CalendarServiceTest {
         )
 
         coVerify(exactly = 1) {repository.save(any())}
+        coVerify(exactly=1) { mapsService.findMapById(any()) }
+    }
+
+    @Test
+    fun saveCalendarMapsNotFound() = runTest {
+        coEvery { mapsService.findMapById(any()) } returns Err(MapsError.MapsNotFoundError(""))
+
+        val res = service.saveCalendar(createTest)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is CalendarError.CalendarNotFoundError)}
+        )
+
+        coVerify(exactly = 1){ mapsService.findMapById(any())}
     }
 
     @Test
     fun updateCalendar() = runTest{
+        coEvery { mapsService.findMapById(any()) } returns Ok(map)
         coEvery { repository.findById(test.id) } returns test
         coEvery { repository.update(any()) } returns test
 
@@ -135,10 +163,12 @@ class CalendarServiceTest {
 
         coVerify(exactly = 1) {repository.update(any())}
         coVerify(exactly = 1) {repository.findById(test.id)}
+        coVerify(exactly=1) {mapsService.findMapById(any())}
     }
 
     @Test
     fun updateCalendarNotFound() = runTest {
+        coEvery { mapsService.findMapById(any()) } returns Ok(map)
         coEvery { repository.findById(test.id) } returns null
 
         val res = service.updateCalendar(createTest, test.id)
@@ -151,6 +181,22 @@ class CalendarServiceTest {
         )
 
         coVerify(exactly = 1) {repository.findById(test.id)}
+        coVerify(exactly=1) {mapsService.findMapById(any())}
+    }
+
+    @Test
+    fun updateCalendarMapsNotFound() = runTest {
+        coEvery { mapsService.findMapById(any()) } returns Err(MapsError.MapsNotFoundError(""))
+
+        val res = service.updateCalendar(createTest, test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is CalendarError.CalendarNotFoundError)}
+        )
+
+        coVerify(exactly = 1){ mapsService.findMapById(any())}
     }
 
     @Test

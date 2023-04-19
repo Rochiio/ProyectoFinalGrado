@@ -3,9 +3,14 @@ package com.example.services.forum
 import com.example.dto.ForumCreateDto
 import com.example.dto.ForumMessagesCreateDto
 import com.example.error.ForumError
+import com.example.error.MapsError
+import com.example.models.Maps
 import com.example.models.forum.Forum
 import com.example.models.forum.ForumMessages
 import com.example.repositories.forum.ForumRepositoryImpl
+import com.example.services.maps.MapsService
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.get
 import com.github.michaelbull.result.getError
 import io.mockk.MockKAnnotations
@@ -28,6 +33,9 @@ class ForumServiceTest {
     @MockK
     private lateinit var repository: ForumRepositoryImpl
 
+    @MockK
+    private lateinit var mapsService: MapsService
+
     @InjectMockKs
     private lateinit var service: ForumService
 
@@ -38,6 +46,8 @@ class ForumServiceTest {
 
     private val createTest = ForumCreateDto(mapsId = UUID.randomUUID().toString(), listMessages =
     mutableListOf(ForumMessagesCreateDto(username = "pepe", message = "test")))
+
+    private val map = Maps(latitude = "12.3", longitude = "1.23")
 
     init {
         MockKAnnotations.init(this)
@@ -108,6 +118,7 @@ class ForumServiceTest {
 
     @Test
     fun saveForum() = runTest{
+        coEvery { mapsService.findMapById(any()) } returns Ok(map)
         coEvery { repository.save(any()) } returns test
 
         val created = service.saveForum(createTest)
@@ -119,10 +130,27 @@ class ForumServiceTest {
         )
 
         coVerify(exactly=1) { repository.save(any())}
+        coVerify(exactly=1) { mapsService.findMapById(any()) }
+    }
+
+    @Test
+    fun saveForumMapsNotFound() = runTest {
+        coEvery { mapsService.findMapById(any()) } returns Err(MapsError.MapsNotFoundError(""))
+
+        val res = service.saveForum(createTest)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is ForumError.ForumNotFoundError)}
+        )
+
+        coVerify(exactly = 1){ mapsService.findMapById(any())}
     }
 
     @Test
     fun updateForum() = runTest{
+        coEvery { mapsService.findMapById(any()) } returns Ok(map)
         coEvery { repository.findById(test.id) } returns test
         coEvery { repository.update(any()) } returns test
 
@@ -136,10 +164,12 @@ class ForumServiceTest {
 
         coVerify(exactly=1) {repository.findById(test.id)}
         coVerify(exactly=1) {repository.update(any())}
+        coVerify(exactly=1) {mapsService.findMapById(any())}
     }
 
     @Test
     fun updateForumNotFound() = runTest{
+        coEvery { mapsService.findMapById(any()) } returns Ok(map)
         coEvery { repository.findById(test.id) } returns null
 
         val res = service.updateForum(createTest, test.id)
@@ -152,6 +182,22 @@ class ForumServiceTest {
         )
 
         coVerify(exactly=1) { repository.findById(test.id)}
+        coVerify(exactly=1) { mapsService.findMapById(any())}
+    }
+
+    @Test
+    fun updateForumMapsNotFound() = runTest {
+        coEvery { mapsService.findMapById(any()) } returns Err(MapsError.MapsNotFoundError(""))
+
+        val res = service.updateForum(createTest, test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is ForumError.ForumNotFoundError)}
+        )
+
+        coVerify(exactly = 1){ mapsService.findMapById(any())}
     }
 
     @Test
