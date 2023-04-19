@@ -9,6 +9,7 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 fun Application.module() {
     configureKoin()
     configureSecurity()
+    configureWebSockets()
     configureSerialization()
     configureRouting()
     configureValidation()

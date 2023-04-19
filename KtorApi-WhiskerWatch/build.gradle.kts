@@ -120,6 +120,9 @@ dependencies {
     // Result Kotlin
     implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.17")
     implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.17")
+
+    // WebSockets
+    implementation("io.ktor:ktor-server-websockets:$ktor_version")
 }
 
 tasks.test {

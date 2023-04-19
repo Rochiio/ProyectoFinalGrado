@@ -7,30 +7,42 @@ import com.example.repositories.maps.MapRepository
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.flow.toList
 import org.koin.core.annotation.Single
+import kotlin.time.Duration.Companion.minutes
 
 @Single
 class MapsService(
     private val mapRepository: MapRepository
 ) {
+    private val cache = Cache.Builder()
+        .maximumCacheSize(100)
+        .expireAfterAccess(15.minutes)
+        .build<String, Maps>()
 
     suspend fun findMapById(id: String): Result<Maps, MapsError>{
-        return mapRepository.findById(id)?.let {
+        return cache.get(id)?.let {
             Ok(it)
-        }?: run{
-            Err(MapsError.MapsNotFoundError("No se ha encontrado un mapa con el id $id"))
+        }?: run {
+            mapRepository.findById(id)?.let {
+                Ok(it)
+            }?: run{
+                Err(MapsError.MapsNotFoundError("No se ha encontrado un mapa con el id $id"))
+            }
         }
     }
 
     suspend fun saveMap(map: MapsCreateDto): Result<Maps, MapsError>{
         val created = Maps(latitude = map.latitude, longitude = map.longitude)
+        cache.put(created.id, created)
         return Ok(mapRepository.save(created))
     }
 
     suspend fun updateMap(map: MapsCreateDto, idMap: String): Result<Maps, MapsError>{
         return mapRepository.findById(idMap)?.let {
             val updated = Maps(id = it.id, latitude = map.latitude, longitude = map.longitude)
+            cache.put(idMap, updated)
             Ok(mapRepository.update(updated))
         }?: run{
             Err(MapsError.MapsNotFoundError("No se ha encontrado un mapa con el id $idMap"))
@@ -39,6 +51,7 @@ class MapsService(
 
     suspend fun deleteMap(id: String): Result<Boolean, MapsError>{
         return mapRepository.findById(id)?.let{
+            cache.invalidate(id)
             Ok(mapRepository.delete(it))
         }?: run{
             Err(MapsError.MapsNotFoundError("No se ha encontrado un mapa con el id $id"))
