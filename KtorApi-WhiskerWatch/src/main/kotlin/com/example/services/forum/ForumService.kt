@@ -78,6 +78,14 @@ class ForumService(
         }
     }
 
+    suspend fun deleteForumByMapsId(id: String): Result<Boolean, ForumError>{
+        return forumRepository.findByMapsId(id)?.let {
+            Ok(forumRepository.delete(it))
+        }?: run{
+            Err(ForumError.ForumNotFoundError("No se ha encontrado un foro con id $id"))
+        }
+    }
+
     suspend fun findAllForums(): List<Forum>{
         return forumRepository.findAll().toList()
     }

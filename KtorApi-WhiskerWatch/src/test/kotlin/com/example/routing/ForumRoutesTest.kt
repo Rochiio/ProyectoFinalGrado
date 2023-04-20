@@ -29,7 +29,7 @@ private val json = Json { ignoreUnknownKeys = true }
 class ForumRoutesTest {
     private val config = ApplicationConfig("application.conf")
 
-    private var createUser = UserCreateDto(name = "test", email = "test@gmail.com", password = "123456789", username = "test", rol = Rol.USER.name)
+    private var createUser = UserCreateDto(name = "test", email = "test@gmail.com", password = "123456789", username = "test", rol = Rol.USER.name, isAdmin = false)
     private var loginUser = UserLogin(email="test@gmail.com", password="123456789")
 
     private val test = Forum(

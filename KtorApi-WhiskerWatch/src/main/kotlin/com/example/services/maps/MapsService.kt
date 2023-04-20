@@ -2,6 +2,7 @@ package com.example.services.maps
 
 import com.example.dto.MapsCreateDto
 import com.example.error.MapsError
+import com.example.models.AdoptedNotification
 import com.example.models.Maps
 import com.example.repositories.maps.MapRepository
 import com.github.michaelbull.result.Err
@@ -14,12 +15,13 @@ import kotlin.time.Duration.Companion.minutes
 
 @Single
 class MapsService(
-    private val mapRepository: MapRepository
-) {
+    private val mapRepository: MapRepository,
+): NotificationService {
     private val cache = Cache.Builder()
         .maximumCacheSize(100)
         .expireAfterAccess(15.minutes)
         .build<String, Maps>()
+    private val suscribers = mutableMapOf<Int, suspend (AdoptedNotification) -> Unit>()
 
     suspend fun findMapById(id: String): Result<Maps, MapsError>{
         return cache.get(id)?.let {
@@ -64,5 +66,34 @@ class MapsService(
 
     suspend fun deleteAllMaps(): Boolean{
         return mapRepository.deleteAll()
+    }
+
+    suspend fun deleteMapsAdoption(id: String): Result<Boolean, MapsError>{
+        return mapRepository.findById(id)?.let{
+            cache.invalidate(id)
+            onChange(it)
+            Ok(mapRepository.delete(it))
+        }?: run{
+            Err(MapsError.MapsNotFoundError("No se ha encontrado un mapa con el id $id"))
+        }
+    }
+
+    //WebSocket
+    override fun addSuscriber(id: Int, suscriber: suspend (AdoptedNotification) -> Unit) {
+        suscribers[id] = suscriber
+    }
+
+    override fun removeSuscriber(id: Int) {
+        suscribers.remove(id)
+    }
+
+    private suspend fun onChange(data: Maps) {
+        suscribers.values.forEach {
+            it.invoke(
+                AdoptedNotification(
+                    map = data,
+                )
+            )
+        }
     }
 }

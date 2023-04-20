@@ -78,6 +78,14 @@ class CalendarService(
         }
     }
 
+    suspend fun deleteCalendarByMapsId(id: String): Result<Boolean, CalendarError>{
+        return calendarRepository.findByMapsId(id)?.let{
+            Ok(calendarRepository.delete(it))
+        }?: run{
+            Err(CalendarError.CalendarNotFoundError("No se ha encontrado un calendario con id de mapa $id"))
+        }
+    }
+
     suspend fun findAllCalendars(): List<Calendar>{
         return calendarRepository.findAll().toList()
     }

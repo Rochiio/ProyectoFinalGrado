@@ -58,7 +58,7 @@ class UserService(
         }?: run {
             val save = User(
                 name = user.name, email = user.email, password = passwordEncoder.encryptPassword(user.password),
-                username = user.username, rol = Rol.valueOf(user.rol)
+                username = user.username, rol = Rol.valueOf(user.rol), isAdmin = user.isAdmin
             )
             Ok(userRepository.save(save))
         }
@@ -82,7 +82,8 @@ class UserService(
                     email = user.email,
                     password = passwordEncoder.encryptPassword(user.password),
                     username = user.username,
-                    rol = Rol.valueOf(user.rol)
+                    rol = Rol.valueOf(user.rol),
+                    isAdmin = user.isAdmin
                 )
                 return Ok(userRepository.update(update))
             }else{

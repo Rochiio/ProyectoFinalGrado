@@ -155,7 +155,7 @@ class AssociationServiceTest {
             { assertNotNull(res) },
             { assertTrue(res.get()==null) },
             { assertTrue(res.getError() != null) },
-            { assertTrue(res.getError() is AssociationError.AssociationBadRequestError)},
+            { assertTrue(res.getError() is AssociationError.AssociationFoundError)},
             { assertEquals("Ya existe una asociación con email ${test.email}", res.getError()?.message) }
         )
 
@@ -214,7 +214,7 @@ class AssociationServiceTest {
             { assertNotNull(res) },
             { assertTrue(res.get()==null) },
             { assertTrue(res.getError() != null) },
-            { assertTrue(res.getError() is AssociationError.AssociationBadRequestError)},
+            { assertTrue(res.getError() is AssociationError.AssociationFoundError)},
             { assertEquals("Ya existe una asociación con email ${test.email}", res.getError()?.message) }
         )
 

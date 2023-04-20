@@ -36,7 +36,7 @@ class UserServiceTest {
 
     private var test = User(name = "test", email = "test", password = "test", username = "test")
     private var updateTest = User(name = "updateTest", email = "test", password = "test", username = "update")
-    private var createTest = UserCreateDto(name = "test", email = "test", password = "test", username = "test", rol = Rol.USER.name)
+    private var createTest = UserCreateDto(name = "test", email = "test", password = "test", username = "test", rol = Rol.USER.name, isAdmin = false)
 
 
     init {

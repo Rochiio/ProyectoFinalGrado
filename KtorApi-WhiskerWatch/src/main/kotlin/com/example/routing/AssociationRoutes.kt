@@ -11,6 +11,7 @@ import com.example.services.users.AssociationService
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.requestvalidation.*
@@ -59,7 +60,7 @@ fun Application.associationRoutes(){
                                 call.respond(HttpStatusCode.NotFound, "Correo o contraseña incorrectos")
                             }
                         }
-                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                        .onFailure { call.respond(HttpStatusCode.Found, it.message) }
                 }catch (e: RequestValidationException){
                     call.respond(HttpStatusCode.BadRequest, e.reasons.toString())
                 }
@@ -81,21 +82,6 @@ fun Application.associationRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
-//                post(){
-//                    logger.info { "Save Association" }
-//                    try{
-//                        val post = call.receive<AssociationCreateDto>()
-//                        service.saveAssociation(post)
-//                            .onSuccess { call.respond(HttpStatusCode.Created, it.toAssociationDto()) }
-//                            .onFailure { when(it){
-//                                is AssociationError.AssociationBadRequestError -> call.respond(HttpStatusCode.BadRequest, it.message)
-//                                is AssociationError.AssociationNotFoundError -> call.respond(HttpStatusCode.NotFound, it.message)
-//                            } }
-//                    }catch (e: RequestValidationException){
-//                        call.respond(HttpStatusCode.BadRequest, e.message.toString())
-//                    }
-//                }
-
                 put("/{id}"){
                     logger.info { "Update Association" }
                     try {
@@ -104,9 +90,10 @@ fun Application.associationRoutes(){
                         service.updateAssociation(put, id)
                             .onSuccess { call.respond(HttpStatusCode.Created, it.toAssociationDto()) }
                             .onFailure { when(it){
-                                    is AssociationError.AssociationBadRequestError -> call.respond(HttpStatusCode.BadRequest, it.message)
+                                    is AssociationError.AssociationFoundError -> call.respond(HttpStatusCode.Found, it.message)
                                     is AssociationError.AssociationNotFoundError -> call.respond(HttpStatusCode.NotFound, it.message)
-                                } }
+                                    is AssociationError.AssociationBadRequestError -> call.respond(HttpStatusCode.BadRequest, it.message)
+                            } }
                     }catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.reasons.toString())
                     }
@@ -120,7 +107,56 @@ fun Application.associationRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
+                post("/image/{id}"){
+                    logger.info{"Save image to Association"}
+                    val id = call.parameters["id"].toString()
+                    val multipart = call.receiveMultipart()
+                    try {
+                        multipart.forEachPart { partData ->
+                            if (partData is PartData.FileItem) {
+                                service.changeImageAssociation(partData, id)
+                                    .onSuccess { call.respond(HttpStatusCode.Created, it.toString()) }
+                                    .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                            }
+                        }
+                    }catch (_: Exception) {
+                        call.respond(HttpStatusCode.BadRequest, "Problemas para guardar la imagen")
+                    }
+                }
+
+                get("/image/{id}"){
+                    logger.info { "Get Image by Association Id" }
+                    val id = call.parameters["id"].toString()
+                    service.getImageAssociation(id)
+                        .onSuccess {
+                            call.respondFile(it)
+                        }
+                        .onFailure { when(it){
+                            is AssociationError.AssociationBadRequestError -> call.respond(HttpStatusCode.BadRequest, it.message)
+                            is AssociationError.AssociationFoundError -> call.respond(HttpStatusCode.Found, it.message)
+                            is AssociationError.AssociationNotFoundError -> call.respond(HttpStatusCode.NotFound, it.message)
+                        }
+                    }
+                }
+
+                delete("/image/{id}"){
+                    logger.info { "Delete Image by Association Id" }
+                    val id = call.parameters["id"].toString()
+                    service.deleteImageAssociation(id)
+                        .onSuccess {
+                            call.respond(HttpStatusCode.NoContent)
+                        }
+                        .onFailure { when(it){
+                            is AssociationError.AssociationBadRequestError -> call.respond(HttpStatusCode.BadRequest, it.message)
+                            is AssociationError.AssociationFoundError -> call.respond(HttpStatusCode.Found, it.message)
+                            is AssociationError.AssociationNotFoundError -> call.respond(HttpStatusCode.NotFound, it.message)
+                        }
+                    }
+                }
+
+
             }
+
 
         }
     }

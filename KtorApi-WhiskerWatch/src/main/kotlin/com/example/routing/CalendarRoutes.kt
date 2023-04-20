@@ -79,6 +79,13 @@ fun Application.calendarRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
+                delete("/mapsId/{id}"){
+                    logger.info { "Delete Calendar By Maps Id" }
+                    val id = call.parameters["id"].toString()
+                    service.deleteCalendarByMapsId(id)
+                        .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                }
             }
 
         }

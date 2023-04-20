@@ -11,6 +11,8 @@ import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
+import io.ktor.websocket.*
 import mu.KotlinLogging
 import org.koin.ktor.ext.inject
 
@@ -71,6 +73,32 @@ fun Application.mapRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
+                delete("/adoption/{id}"){
+                    logger.info { "Delete Map Association Adoption" }
+                    val id = call.parameters["id"].toString()
+                    service.deleteMapsAdoption(id)
+                        .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                }
+
+            }
+
+            webSocket("/notifications/adoption"){
+                try{
+                    service.addSuscriber(this.hashCode()) {
+                        sendSerialized(it)
+                    }
+
+                    for (frame in incoming){
+                        if(frame.frameType == FrameType.CLOSE){
+                            break
+                        }else if (frame is Frame.Text){
+                            sendSerialized(frame.readText())
+                        }
+                    }
+                }finally {
+                    service.removeSuscriber(this.hashCode())
+                }
             }
 
         }

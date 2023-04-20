@@ -80,6 +80,13 @@ fun Application.forumRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
+                delete("/mapsId/{id}"){
+                    logger.info { "Delete Forum By Maps Id" }
+                    val id = call.parameters["id"].toString()
+                    service.deleteForumByMapsId(id)
+                        .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                }
             }
 
         }
