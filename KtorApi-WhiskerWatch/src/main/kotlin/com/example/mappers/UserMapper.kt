@@ -10,8 +10,7 @@ fun User.toUserDto():UserDto{
         username = this.username,
         name = this.name,
         email = this.email,
-        rol = this.rol.name,
-        isAdmin = this.isAdmin
+        rol = this.rol.name
     )
 }
 

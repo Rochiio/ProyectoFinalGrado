@@ -1,12 +1,14 @@
 package com.example.routing
 
 import com.example.dto.ForumCreateDto
+import com.example.models.users.Rol
 import com.example.services.forum.ForumService
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -75,17 +77,29 @@ fun Application.forumRoutes(){
                 delete("/{id}"){
                     logger.info { "Delete Forum" }
                     val id = call.parameters["id"].toString()
-                    service.deleteForum(id)
-                        .onSuccess { call.respond(HttpStatusCode.NoContent) }
-                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    val auth = call.principal<JWTPrincipal>()
+                    val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
+                    if(rol != Rol.ADMIN){
+                        call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
+                    }else {
+                        service.deleteForum(id)
+                            .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                            .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    }
                 }
 
                 delete("/mapsId/{id}"){
                     logger.info { "Delete Forum By Maps Id" }
                     val id = call.parameters["id"].toString()
-                    service.deleteForumByMapsId(id)
-                        .onSuccess { call.respond(HttpStatusCode.NoContent) }
-                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    val auth = call.principal<JWTPrincipal>()
+                    val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
+                    if(rol != Rol.ADMIN){
+                        call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
+                    }else {
+                        service.deleteForumByMapsId(id)
+                            .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                            .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    }
                 }
             }
 

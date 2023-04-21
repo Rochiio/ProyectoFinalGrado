@@ -5,6 +5,7 @@ import com.example.dto.AssociationLogin
 import com.example.error.AssociationError
 import com.example.mappers.toAssociationDto
 import com.example.mappers.toAssociationTokenDto
+import com.example.models.users.Rol
 import com.example.services.password.BcryptService
 import com.example.services.token.TokenService
 import com.example.services.users.AssociationService
@@ -14,6 +15,7 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -86,15 +88,34 @@ fun Application.associationRoutes(){
                     logger.info { "Update Association" }
                     try {
                         val id = call.parameters["id"].toString()
+                        val auth = call.principal<JWTPrincipal>()
+                        val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
                         val put = call.receive<AssociationCreateDto>()
-                        service.updateAssociation(put, id)
-                            .onSuccess { call.respond(HttpStatusCode.Created, it.toAssociationDto()) }
-                            .onFailure { when(it){
-                                    is AssociationError.AssociationFoundError -> call.respond(HttpStatusCode.Found, it.message)
-                                    is AssociationError.AssociationNotFoundError -> call.respond(HttpStatusCode.NotFound, it.message)
-                                    is AssociationError.AssociationBadRequestError -> call.respond(HttpStatusCode.BadRequest, it.message)
-                            } }
-                    }catch (e: RequestValidationException){
+                        if (rol == Rol.USER) {
+                            call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
+                        } else {
+                            service.updateAssociation(put, id)
+                                .onSuccess { call.respond(HttpStatusCode.Created, it.toAssociationDto()) }
+                                .onFailure {
+                                    when (it) {
+                                        is AssociationError.AssociationFoundError -> call.respond(
+                                            HttpStatusCode.Found,
+                                            it.message
+                                        )
+
+                                        is AssociationError.AssociationNotFoundError -> call.respond(
+                                            HttpStatusCode.NotFound,
+                                            it.message
+                                        )
+
+                                        is AssociationError.AssociationBadRequestError -> call.respond(
+                                            HttpStatusCode.BadRequest,
+                                            it.message
+                                        )
+                                    }
+                                }
+                        }
+                    } catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.reasons.toString())
                     }
                 }
@@ -102,25 +123,37 @@ fun Application.associationRoutes(){
                 delete("/{id}"){
                     logger.info { "Delete Association" }
                     val id = call.parameters["id"].toString()
-                    service.deleteAssociation(id)
-                        .onSuccess { call.respond(HttpStatusCode.NoContent) }
-                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    val auth = call.principal<JWTPrincipal>()
+                    val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
+                    if(rol == Rol.USER){
+                        call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
+                    }else {
+                        service.deleteAssociation(id)
+                            .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                            .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    }
                 }
 
                 post("/image/{id}"){
                     logger.info{"Save image to Association"}
                     val id = call.parameters["id"].toString()
+                    val auth = call.principal<JWTPrincipal>()
+                    val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
                     val multipart = call.receiveMultipart()
-                    try {
-                        multipart.forEachPart { partData ->
-                            if (partData is PartData.FileItem) {
-                                service.changeImageAssociation(partData, id)
-                                    .onSuccess { call.respond(HttpStatusCode.Created, it.toString()) }
-                                    .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    if(rol == Rol.USER){
+                        call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
+                    }else {
+                        try {
+                            multipart.forEachPart { partData ->
+                                if (partData is PartData.FileItem) {
+                                    service.changeImageAssociation(partData, id)
+                                        .onSuccess { call.respond(HttpStatusCode.Created, it.toString()) }
+                                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                                }
                             }
+                        } catch (_: Exception) {
+                            call.respond(HttpStatusCode.BadRequest, "Problemas para guardar la imagen")
                         }
-                    }catch (_: Exception) {
-                        call.respond(HttpStatusCode.BadRequest, "Problemas para guardar la imagen")
                     }
                 }
 
@@ -142,15 +175,33 @@ fun Application.associationRoutes(){
                 delete("/image/{id}"){
                     logger.info { "Delete Image by Association Id" }
                     val id = call.parameters["id"].toString()
-                    service.deleteImageAssociation(id)
-                        .onSuccess {
-                            call.respond(HttpStatusCode.NoContent)
-                        }
-                        .onFailure { when(it){
-                            is AssociationError.AssociationBadRequestError -> call.respond(HttpStatusCode.BadRequest, it.message)
-                            is AssociationError.AssociationFoundError -> call.respond(HttpStatusCode.Found, it.message)
-                            is AssociationError.AssociationNotFoundError -> call.respond(HttpStatusCode.NotFound, it.message)
-                        }
+                    val auth = call.principal<JWTPrincipal>()
+                    val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
+                    if(rol == Rol.USER){
+                        call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
+                    }else {
+                        service.deleteImageAssociation(id)
+                            .onSuccess {
+                                call.respond(HttpStatusCode.NoContent)
+                            }
+                            .onFailure {
+                                when (it) {
+                                    is AssociationError.AssociationBadRequestError -> call.respond(
+                                        HttpStatusCode.BadRequest,
+                                        it.message
+                                    )
+
+                                    is AssociationError.AssociationFoundError -> call.respond(
+                                        HttpStatusCode.Found,
+                                        it.message
+                                    )
+
+                                    is AssociationError.AssociationNotFoundError -> call.respond(
+                                        HttpStatusCode.NotFound,
+                                        it.message
+                                    )
+                                }
+                            }
                     }
                 }
 

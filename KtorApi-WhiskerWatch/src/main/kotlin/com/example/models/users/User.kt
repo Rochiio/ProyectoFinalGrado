@@ -14,6 +14,5 @@ data class User(
     var password: String,
     var username: String,
     var rol: Rol = Rol.USER,
-    var isAdmin: Boolean = false
 )
 

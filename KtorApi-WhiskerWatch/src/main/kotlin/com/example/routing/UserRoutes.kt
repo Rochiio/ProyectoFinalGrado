@@ -5,6 +5,7 @@ import com.example.dto.UserLogin
 import com.example.error.UserError
 import com.example.mappers.toUserDto
 import com.example.mappers.toUserWithToken
+import com.example.models.users.Rol
 import com.example.services.password.BcryptService
 import com.example.services.token.TokenService
 import com.example.services.users.UserService
@@ -13,6 +14,7 @@ import com.github.michaelbull.result.onSuccess
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -89,12 +91,27 @@ fun Application.userRoutes(){
                     try {
                         val id = call.parameters["id"].toString()
                         val put = call.receive<UserCreateDto>()
-                        service.updateUser(put, id)
-                            .onSuccess { call.respond(HttpStatusCode.Created, it.toUserDto()) }
-                            .onFailure { when(it){
-                                is UserError.UserBadRequestError -> call.respond(HttpStatusCode.BadRequest, it.message)
-                                is UserError.UserNotFoundError -> call.respond(HttpStatusCode.NotFound, it.message)
-                            } }
+                        val auth = call.principal<JWTPrincipal>()
+                        val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
+                        if (rol == Rol.ASSOCIATION){
+                            call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
+                        }else {
+                            service.updateUser(put, id)
+                                .onSuccess { call.respond(HttpStatusCode.Created, it.toUserDto()) }
+                                .onFailure {
+                                    when (it) {
+                                        is UserError.UserBadRequestError -> call.respond(
+                                            HttpStatusCode.BadRequest,
+                                            it.message
+                                        )
+
+                                        is UserError.UserNotFoundError -> call.respond(
+                                            HttpStatusCode.NotFound,
+                                            it.message
+                                        )
+                                    }
+                                }
+                        }
                     }catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.reasons.toString())
                     }
@@ -103,9 +120,15 @@ fun Application.userRoutes(){
                 delete("/{id}"){
                     logger.info { "Delete User" }
                     val id = call.parameters["id"].toString()
-                    service.deleteUser(id)
-                        .onSuccess { call.respond(HttpStatusCode.NoContent) }
-                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    val auth = call.principal<JWTPrincipal>()
+                    val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
+                    if(rol == Rol.ASSOCIATION){
+                        call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
+                    }else {
+                        service.deleteUser(id)
+                            .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                            .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    }
                 }
 
             }

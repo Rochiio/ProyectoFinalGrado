@@ -1,12 +1,14 @@
 package com.example.routing
 
 import com.example.dto.CalendarCreateDto
+import com.example.models.users.Rol
 import com.example.services.calendar.CalendarService
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -74,17 +76,29 @@ fun Application.calendarRoutes(){
                 delete("/{id}"){
                     logger.info { "Delete Calendar" }
                     val id = call.parameters["id"].toString()
-                    service.deleteCalendar(id)
-                        .onSuccess { call.respond(HttpStatusCode.NoContent) }
-                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    val auth = call.principal<JWTPrincipal>()
+                    val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
+                    if(rol != Rol.ADMIN){
+                        call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
+                    }else {
+                        service.deleteCalendar(id)
+                            .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                            .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    }
                 }
 
                 delete("/mapsId/{id}"){
                     logger.info { "Delete Calendar By Maps Id" }
                     val id = call.parameters["id"].toString()
-                    service.deleteCalendarByMapsId(id)
-                        .onSuccess { call.respond(HttpStatusCode.NoContent) }
-                        .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    val auth = call.principal<JWTPrincipal>()
+                    val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
+                    if(rol != Rol.ADMIN){
+                        call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
+                    }else {
+                        service.deleteCalendarByMapsId(id)
+                            .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                            .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                    }
                 }
             }
 

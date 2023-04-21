@@ -8,8 +8,7 @@ data class UserCreateDto(
     var email: String,
     var password: String,
     var username: String,
-    var rol: String,
-    var isAdmin: Boolean = false
+    var rol: String
 )
 
 
@@ -19,8 +18,7 @@ data class UserDto(
     var name: String,
     var email: String,
     var username: String,
-    var rol: String,
-    var isAdmin: Boolean
+    var rol: String
 )
 
 

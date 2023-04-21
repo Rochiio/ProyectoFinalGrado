@@ -28,7 +28,7 @@ private val json = Json { ignoreUnknownKeys = true }
 class UserRoutesTest {
     private val config = ApplicationConfig("application.conf")
 
-    private var createTest = UserCreateDto(name = "test", email = "test@gmail.com", password = "123456789", username = "test", rol = Rol.USER.name, isAdmin = false)
+    private var createTest = UserCreateDto(name = "test", email = "test@gmail.com", password = "123456789", username = "test", rol = Rol.USER.name)
     private var loginTest = UserLogin(email="test@gmail.com", password="123456789")
 
     @Test
