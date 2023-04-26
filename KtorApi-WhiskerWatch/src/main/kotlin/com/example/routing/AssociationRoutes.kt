@@ -140,6 +140,7 @@ fun Application.associationRoutes(){
                     val auth = call.principal<JWTPrincipal>()
                     val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
                     val multipart = call.receiveMultipart()
+                    logger.info { rol.toString() }
                     if(rol == Rol.USER){
                         call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
                     }else {

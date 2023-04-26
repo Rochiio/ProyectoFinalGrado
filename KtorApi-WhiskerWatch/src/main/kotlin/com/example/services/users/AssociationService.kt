@@ -44,7 +44,7 @@ class AssociationService(
         }?: run{
             val created = Association(
                 name = association.name, email = association.email, username = association.username,
-                password = passwordEncoder.encryptPassword(association.password), rol = Rol.valueOf(association.rol),
+                password = passwordEncoder.encryptPassword(association.password), rol = Rol.ASSOCIATION,
                 description = association.description, url = association.url
             )
             Ok(associationRepository.save(created))

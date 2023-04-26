@@ -71,9 +71,6 @@ fun Application.userRoutes(){
 
                 get(){
                     logger.info { "Get All User Route" }
-                    //val aso = Association(name = "Pruba", email = "pruba@gmail.com", username = "pruba", password = "123456"
-                    //    , description = "xxxxx", url = "http://google.com")
-                    //var salvado = repo.save(aso)
                     val list = service.findAllUsers().map { it.toUserDto() }
                     call.respond(HttpStatusCode.OK, list)
                 }
