@@ -3,6 +3,7 @@ package com.example.routing
 import com.example.dto.ForumCreateDto
 import com.example.models.users.Rol
 import com.example.services.forum.ForumService
+import com.example.validators.forumListValidation
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import io.ktor.http.*
@@ -54,8 +55,14 @@ fun Application.forumRoutes(){
                     logger.info { "Save Forum" }
                     try{
                         val post = call.receive<ForumCreateDto>()
-                        service.saveForum(post)
-                            .onSuccess { call.respond(HttpStatusCode.Created, it) }
+                        val correct = if (post.listMessages.isNotEmpty()) post.forumListValidation() else true
+
+                        if (correct){
+                            service.saveForum(post)
+                                .onSuccess { call.respond(HttpStatusCode.Created, it) }
+                        }else{
+                            call.respond(HttpStatusCode.BadRequest, "Mensajes incorrectos")
+                        }
                     }catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.message.toString())
                     }
@@ -66,9 +73,15 @@ fun Application.forumRoutes(){
                     try {
                         val id = call.parameters["id"].toString()
                         val put = call.receive<ForumCreateDto>()
-                        service.updateForum(put, id)
-                            .onSuccess { call.respond(HttpStatusCode.Created, it) }
-                            .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                        val correct = if (put.listMessages.isNotEmpty()) put.forumListValidation() else true
+
+                        if(correct) {
+                            service.updateForum(put, id)
+                                .onSuccess { call.respond(HttpStatusCode.Created, it) }
+                                .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                        }else{
+                            call.respond(HttpStatusCode.BadRequest, "Mensajes incorrectos")
+                        }
                     }catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.reasons.toString())
                     }

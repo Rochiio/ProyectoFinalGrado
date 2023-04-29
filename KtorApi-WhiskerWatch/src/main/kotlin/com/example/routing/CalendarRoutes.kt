@@ -3,6 +3,7 @@ package com.example.routing
 import com.example.dto.CalendarCreateDto
 import com.example.models.users.Rol
 import com.example.services.calendar.CalendarService
+import com.example.validators.taskListValidation
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import io.ktor.http.*
@@ -53,8 +54,14 @@ fun Application.calendarRoutes(){
                     logger.info { "Save Calendar" }
                     try{
                         val post = call.receive<CalendarCreateDto>()
-                        service.saveCalendar(post)
-                            .onSuccess { call.respond(HttpStatusCode.Created, it) }
+                        val correct = if (post.listTasks.isNotEmpty()) post.taskListValidation() else true
+
+                        if(correct) {
+                            service.saveCalendar(post)
+                                .onSuccess { call.respond(HttpStatusCode.Created, it) }
+                        }else{
+                            call.respond(HttpStatusCode.BadRequest, "Tareas incorrectos")
+                        }
                     }catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.message.toString())
                     }
@@ -65,9 +72,15 @@ fun Application.calendarRoutes(){
                     try {
                         val id = call.parameters["id"].toString()
                         val put = call.receive<CalendarCreateDto>()
-                        service.updateCalendar(put, id)
-                            .onSuccess { call.respond(HttpStatusCode.Created, it) }
-                            .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                        val correct = if (put.listTasks.isNotEmpty()) put.taskListValidation() else true
+
+                        if(correct) {
+                            service.updateCalendar(put, id)
+                                .onSuccess { call.respond(HttpStatusCode.Created, it) }
+                                .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
+                        }else{
+                            call.respond(HttpStatusCode.BadRequest, "Tareas incorrectos")
+                        }
                     }catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.reasons.toString())
                     }

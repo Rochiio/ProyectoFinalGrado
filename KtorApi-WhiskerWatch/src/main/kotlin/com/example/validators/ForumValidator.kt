@@ -23,3 +23,13 @@ fun RequestValidationConfig.forumValidation(){
         }
     }
 }
+
+fun ForumCreateDto.forumListValidation(): Boolean{
+    var result = true
+    this.listMessages.forEach {
+        if(it.message.isEmpty() || it.username.isEmpty()){
+            result  = false
+        }
+    }
+    return result
+}
