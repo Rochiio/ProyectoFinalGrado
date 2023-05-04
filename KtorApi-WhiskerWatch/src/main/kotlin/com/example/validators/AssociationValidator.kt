@@ -18,7 +18,7 @@ fun RequestValidationConfig.associationValidation(){
         }else if (association.url.isBlank()){
             ValidationResult.Invalid("La url no puede estar vacía")
         }else if (association.username.isBlank()){
-            ValidationResult.Invalid("El nombre de usario no puede estar vacía")
+            ValidationResult.Invalid("El nombre de asociación no puede estar vacía")
         }else if (association.password.isBlank() || association.password.length < 6){
             ValidationResult.Invalid("La contraseña no puede ser vacía o tener una longitud menor de 6")
         }else {

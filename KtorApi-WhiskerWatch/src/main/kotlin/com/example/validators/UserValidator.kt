@@ -15,6 +15,8 @@ fun RequestValidationConfig.userValidation(){
             ValidationResult.Invalid("El nombre no puede estar vacío")
         } else if (user.password.isBlank() || user.password.length < 6){
             ValidationResult.Invalid("La contraseña no puede estar vacía o tener menos de 6 caracteres")
+        } else if (user.username.isBlank()) {
+            ValidationResult.Invalid("El nombre de usuario no puede estar vacío")
         }else {
             ValidationResult.Valid
         }

@@ -55,6 +55,9 @@ dependencies {
 
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
 
+    //CORS
+    implementation("io.ktor:ktor-server-cors-jvm:2.2.2")
+
     //Content Negotiation
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")

@@ -13,6 +13,7 @@ fun Application.module() {
     configureWebSockets()
     configureSerialization()
     configureRouting()
+    configureCors()
     configureValidation()
     //configureSwagger()
 }
