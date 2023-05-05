@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UserCreate } from 'src/app/models/user/user-create/user-create';
 import { UserToken } from 'src/app/models/user/user-token/user-token';
 import { UserRestClientService } from 'src/app/services/api/user/user-rest-client.service';
+import { NotificationsService } from 'src/app/services/notifications/notifications.service';
 
 @Component({
   selector: 'app-user-register',
@@ -9,11 +10,12 @@ import { UserRestClientService } from 'src/app/services/api/user/user-rest-clien
   styleUrls: ['./user-register.component.css']
 })
 export class UserRegisterComponent {
-  public iconRoute = 'assets/icons/'
+  public repeatPass: string= '' ;
   public userCreate: UserCreate
 
   constructor(
-    private userRest: UserRestClientService
+    private userRest: UserRestClientService,
+    private notificationService: NotificationsService
   ){
     this.userCreate = new UserCreate();
   }
@@ -26,9 +28,13 @@ export class UserRegisterComponent {
         alert('Usuario correcto' + JSON.stringify(data));
       },
       (err: Error) => {
-        console.error(err.message);
+        this.notificationService.showError(err.message);
       }
     )
+  }
+
+  public checkCorrectPassword(): boolean{
+    return this.userCreate.password == this.repeatPass
   }
 
 }

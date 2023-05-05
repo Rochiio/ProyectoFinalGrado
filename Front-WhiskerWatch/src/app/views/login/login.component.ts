@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Login } from 'src/app/models/login/login';
 import { UserToken } from 'src/app/models/user/user-token/user-token';
 import { UserRestClientService } from 'src/app/services/api/user/user-rest-client.service';
+import { NotificationsService } from 'src/app/services/notifications/notifications.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private userRest: UserRestClientService
+    private userRest: UserRestClientService,
+    private notificationService: NotificationsService
     ){
     this.login = new Login();
     this.association = false;
@@ -39,7 +41,7 @@ export class LoginComponent implements OnInit {
           alert('Usuario correcto' + JSON.stringify(data));
         },
         (err: Error) => {
-          console.error(err.message);
+          this.notificationService.showError(err.message);
         }
       )
     }
