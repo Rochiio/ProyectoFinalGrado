@@ -4,10 +4,12 @@ import { RouterModule, Routes} from '@angular/router';
 import { PaginaNoEncontradaComponent } from '../views/pagina-no-encontrada/pagina-no-encontrada.component';
 import { LoginComponent } from '../views/login/login.component';
 import { UserRegisterComponent } from '../views/register/user-register/user-register.component';
+import { AssociationRegisterComponent } from '../views/register/association-register/association-register.component';
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'user-register', component: UserRegisterComponent},
+  {path: 'association-register', component: AssociationRegisterComponent},
 
   {path:'', redirectTo: '/login', pathMatch:'full'},
   {path: '**', component: PaginaNoEncontradaComponent}

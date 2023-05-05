@@ -10,8 +10,11 @@ export class NotificationsService {
   private horizontalPosition: MatSnackBarHorizontalPosition = 'center';
   private verticalPosition: MatSnackBarVerticalPosition = 'top';
 
-  showSuccess(message: string): void {
-    this.snackBar.open(message);
+  showAdoption(message: string): void {
+    this.snackBar.open('🐱🐱 ' + message, '', {
+      verticalPosition: this.verticalPosition,
+      horizontalPosition: this.horizontalPosition
+    });
   }
 
   showError(message: string): void {

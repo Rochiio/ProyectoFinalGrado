@@ -20,7 +20,7 @@ export class AssociationRegisterComponent {
     this.associationCreate = new AssociationCreate();
   }
 
-  public registerUser(): void {
+  public registerAssociation(): void {
     this.associationRest.associationRegister(this.associationCreate).subscribe(
       (data: AssociationToken) => {
         localStorage.setItem('isAssociation', 'true');
