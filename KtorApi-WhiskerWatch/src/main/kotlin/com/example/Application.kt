@@ -1,12 +1,16 @@
 package com.example
 
 import com.example.plugins.*
+import com.example.utils.Data
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
+import kotlinx.coroutines.runBlocking
+import org.koin.ktor.ext.inject
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
+fun Application.module() = runBlocking{
+    val dataUtil: Data by inject()
 
-fun Application.module() {
     configureKoin()
     configureSecurity()
     configureStorage()
@@ -16,4 +20,7 @@ fun Application.module() {
     configureCors()
     configureValidation()
     //configureSwagger()
+
+
+    dataUtil.cleanData()
 }
