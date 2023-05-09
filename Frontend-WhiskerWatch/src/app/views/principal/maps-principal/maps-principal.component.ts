@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-maps-principal',
@@ -7,5 +7,6 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MapsPrincipalComponent {
 
-
 }
+
+

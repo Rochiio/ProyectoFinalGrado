@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
+
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/material/snack-bar';
-import { GoogleMapsModule } from '@angular/google-maps';
 
 import { AppComponent } from './app.component';
 import { PaginaNoEncontradaComponent } from './views/pagina-no-encontrada/pagina-no-encontrada.component';
@@ -14,6 +14,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AssociationRegisterComponent } from './views/register/association-register/association-register.component';
 import { MenuPrincipalComponent } from './views/principal/menu-principal/menu-principal.component';
 import { MapsPrincipalComponent } from './views/principal/maps-principal/maps-principal.component';
+import { OlMapComponent } from './views/principal/maps-principal/ol-map/ol-map.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { MapsPrincipalComponent } from './views/principal/maps-principal/maps-pr
     AssociationRegisterComponent,
     MenuPrincipalComponent,
     MapsPrincipalComponent,
+    OlMapComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,7 +34,6 @@ import { MapsPrincipalComponent } from './views/principal/maps-principal/maps-pr
     FormsModule,
     NoopAnimationsModule,
     MatSnackBarModule,
-    GoogleMapsModule
   ],
   providers: [
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 5000}}

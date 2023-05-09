@@ -1,34 +1,21 @@
 <nav class="bg-sky-100">
-  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-    <div class="flex items-center p-4">
-        <img src="{{imgUrl}}/kitty.png" class="h-8 mr-3" alt="Kitty" />
-        <span class="self-center text-2xl font-semibold whitespace-nowrap">Whisker Watch</span>
-    </div>
-
-    <div class="w-full md:block md:w-auto" id="navbar-default">
-      <ul class="font-medium flex flex-wrap rounded-lg md:flex-wrap md:space-x-4 md:mt-0 md:border-0 sm:flex-auto">
-
-        <li class="flex justify-center items-center">
-          <a routerLink="/principal" class="block" aria-current="page">
-            <img src="{{imgUrl}}/maps.png" class="h-8 mr-3 mx-auto hover:h-10" alt="Maps"/></a>
-        </li>
-
-        <li class="flex justify-center items-center">
-          <a href="#" class="block" aria-current="page">
-            <img src="{{imgUrl}}/cat.png" class="h-8 mr-3 mx-auto hover:h-10" alt="Maps"/></a>
-        </li>
-
-        <li class="flex justify-center items-center">
-          <a href="#" class="block" aria-current="page">
-            <img src="{{imgUrl}}/person.png" class="h-8 mr-3 mx-auto hover:h-10" alt="Maps"/></a>
-        </li>
-
-        <li class="flex justify-center items-center hover:cursor-pointer">
-          <a (click)="closeSession()" class="block" aria-current="page">
-            <img src="{{imgUrl}}/logout.png" class="h-8 mr-3 mx-auto hover:h-10" alt="Maps"/></a>
-        </li>
-
-      </ul>
+  <div class="">
+    <div class="flex h-16 items-center justify-between">
+      <div class="flex items-center">
+        <div class="flex items-center p-4">
+          <img src="{{imgUrl}}/kitty.png" class="h-8 mr-3" alt="Kitty" />
+          <span class="self-center text-2xl font-semibold whitespace-nowrap">Whisker Watch</span>
+        </div>
+        <div class="">
+          <div class="ml-10 flex items-baseline space-x-4">
+            <a routerLink="/principal" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">Maps</a>
+            <a routerLink="" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">Associations</a>
+            <a routerLink="" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">Profile</a>
+            <a (click)="closeSession()" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">Log Out</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
+

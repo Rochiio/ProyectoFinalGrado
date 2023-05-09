@@ -16,11 +16,12 @@
     "@angular/compiler": "^16.0.0",
     "@angular/core": "^16.0.0",
     "@angular/forms": "^16.0.0",
-    "@angular/google-maps": "^16.0.0",
     "@angular/material": "^16.0.0",
     "@angular/platform-browser": "^16.0.0",
     "@angular/platform-browser-dynamic": "^16.0.0",
     "@angular/router": "^16.0.0",
+    "@types/ol": "^7.0.0",
+    "ol": "^7.3.0",
     "rxjs": "~7.8.1",
     "tslib": "^2.5.0",
     "zone.js": "~0.13.0"
