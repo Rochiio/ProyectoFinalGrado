@@ -12,6 +12,9 @@ import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
+import { MapRestClientService } from 'src/app/services/api/maps/map-rest-client.service';
+import { MapDto } from 'src/app/models/maps/map-dto/map-dto';
+import { NotificationsService } from 'src/app/services/notifications/notifications.service';
 
 export const DEFAULT_HEIGHT = '500px';
 export const DEFAULT_WIDTH = '100%';
@@ -26,10 +29,13 @@ export class OlMapComponent implements OnInit, AfterViewInit{
   private zoom: number = 16;
 
   map!:Map;
-
   private mapEl!: HTMLElement;
 
-  constructor(private element: ElementRef) {}
+  constructor(
+    private element: ElementRef,
+    private mapRest: MapRestClientService,
+    private notificationService: NotificationsService) {
+    }
 
   ngOnInit(): void {
     this.mapEl = this.element.nativeElement.querySelector('#map');
@@ -54,11 +60,10 @@ export class OlMapComponent implements OnInit, AfterViewInit{
     });
 
 
-    var capa = addMarkers();
+    var capa = this.addMarkers();
     this.map.addLayer(capa);
-    addMapEvents(this.map);
+    this.addMapEvents(this.map);
   }
-
 
   private setSize(): void {
     if(this.mapEl){
@@ -67,49 +72,62 @@ export class OlMapComponent implements OnInit, AfterViewInit{
       styles.width = DEFAULT_WIDTH;
     }
   }
-}
 
+    /**
+   *Añadir los marcadores al mapa.
+  * @returns vector con todos los marcadores añadidos.
+  */
+  private addMarkers(): VectorLayer<VectorSource<Point>> {
+    const markers_list: Feature<Point>[] = [];
 
+    this.mapRest.getAllMaps(localStorage.getItem('access_token')!).subscribe(
+      (data: Array<MapDto>) => {
+        for (let i = 0; i < data.length; i++) {
+          var map = data[i];
+          let marker = new Feature({geometry: new Point(Proj.fromLonLat([Number.parseInt(map.longitude), Number.parseInt(map.latitude)])),});
+          marker.setStyle(new Style({
+            image: new Icon({
+              src: 'assets/icons/marker.png',
+              scale: 0.1
+            })
+          }));
 
-/**
- *Añadir los marcadores al mapa.
- * @returns vector con todos los marcadores añadidos.
- */
-function addMarkers(): VectorLayer<VectorSource<Point>> {
-  const marcadores = [];
-  let marcador = new Feature({
-    geometry: new Point(Proj.fromLonLat([-3.746024, 40.363673])),
-  });
+          markers_list.push(marker);
+        }
+      },
+      (err: Error) => {
+        this.notificationService.showError(err.message);
+      }
+    );
 
-  marcador.setStyle(new Style({
-    image: new Icon({
-      src: 'assets/icons/marker.png',
-      scale: 0.1
-    })
-  }));
-
-  marcadores.push(marcador);
-
-  return new VectorLayer({
-    source: new VectorSource({
-      features: marcadores
-    }),
-  });
-}
-
-/**
- * Añadir los eventos del mapa.
- * @param map mapa añadir el evento.
- */
-function addMapEvents(map: Map) {
-  map.on('singleclick', (evt) => {
-    var feature = map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
-      var lonLat = Proj.toLonLat(evt.coordinate);
-      return lonLat;
+    return new VectorLayer({
+      source: new VectorSource({
+        features: markers_list
+      }),
     });
-    if(feature){
-      console.log(feature);
-    }
-  })
+  }
+
+    /**
+   * Añadir los eventos del mapa.
+   * @param map mapa añadir el evento.
+   */
+  private addMapEvents(map: Map) {
+    map.on('singleclick', (evt) => {
+      var feature = map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
+        var lonLat = Proj.toLonLat(evt.coordinate);
+        return lonLat;
+      });
+      if(feature){
+        console.log(feature);
+      }
+    })
+  }
+
+
 }
+
+
+
+
+
 

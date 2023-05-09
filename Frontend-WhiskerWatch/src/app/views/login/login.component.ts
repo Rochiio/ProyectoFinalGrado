@@ -39,6 +39,7 @@ export class LoginComponent implements OnInit {
           (data: AssociationToken) => {
             localStorage.setItem('isAssociation', 'true');
             localStorage.setItem('currentAssociation', JSON.stringify(data));
+            localStorage.setItem('access_token', data.token);
             this.router.navigate(['/principal'])
           },
           (err: Error) => {
@@ -50,6 +51,7 @@ export class LoginComponent implements OnInit {
         (data: UserToken) => {
           localStorage.setItem('isAssociation', 'false');
           localStorage.setItem('currentUser', JSON.stringify(data));
+          localStorage.setItem('access_token', data.token);
           this.router.navigate(['/principal'])
         },
         (err: Error) => {
