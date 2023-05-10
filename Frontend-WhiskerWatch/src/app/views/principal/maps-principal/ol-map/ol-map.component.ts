@@ -27,6 +27,9 @@ export class OlMapComponent implements OnInit, AfterViewInit{
   private lat: number = 40.364002116999536;
   private lon: number = -3.7455721740194017;
   private zoom: number = 16;
+  private icon = 'assets/icons/marker.png'
+  marcadores: Feature<Point>[] = [];
+
 
   map!:Map;
   private mapEl!: HTMLElement;
@@ -60,8 +63,8 @@ export class OlMapComponent implements OnInit, AfterViewInit{
     });
 
 
-    var capa = this.addMarkers();
-    this.map.addLayer(capa);
+    this.addMarkers();
+    //this.map.addLayer(capa);
     this.addMapEvents(this.map);
   }
 
@@ -77,34 +80,37 @@ export class OlMapComponent implements OnInit, AfterViewInit{
    *Añadir los marcadores al mapa.
   * @returns vector con todos los marcadores añadidos.
   */
-  private addMarkers(): VectorLayer<VectorSource<Point>> {
-    const markers_list: Feature<Point>[] = [];
+  private addMarkers() {
+    let ultimaCapa;
 
     this.mapRest.getAllMaps(localStorage.getItem('access_token')!).subscribe(
       (data: Array<MapDto>) => {
-        for (let i = 0; i < data.length; i++) {
-          var map = data[i];
-          let marker = new Feature({geometry: new Point(Proj.fromLonLat([Number.parseInt(map.longitude), Number.parseInt(map.latitude)])),});
-          marker.setStyle(new Style({
-            image: new Icon({
-              src: 'assets/icons/marker.png',
-              scale: 0.1
-            })
+        data.forEach(coordenada => {
+          let marcador = new Feature({
+              geometry: new Point(
+                  Proj.fromLonLat([Number.parseFloat(coordenada.longitude), Number.parseFloat(coordenada.latitude)])
+              ),
+          });
+          marcador.setStyle(new Style({
+              image: new Icon(({
+                  src: this.icon,
+                  scale: 0.1
+              }))
           }));
-
-          markers_list.push(marker);
-        }
+          this.marcadores.push(marcador);
+      });
+      ultimaCapa = new VectorLayer({
+          source: new VectorSource({
+              features: this.marcadores,
+          }),
+      });
+      this.map.addLayer(ultimaCapa);
       },
+
       (err: Error) => {
         this.notificationService.showError(err.message);
       }
     );
-
-    return new VectorLayer({
-      source: new VectorSource({
-        features: markers_list
-      }),
-    });
   }
 
     /**

@@ -19,13 +19,15 @@ export class CanActivateAuthGuard implements CanActivate {
 
   checkRoles(route: ActivatedRouteSnapshot): boolean {
     let isAssociation = localStorage.getItem('isAssociation');
-    const {scopes = []} = route.data["role"];
+    let roles: string[] = route.data['role'];
+
     if(isAssociation == 'true'){
       let association: AssociationToken = JSON.parse(localStorage.getItem('currentAssociation')!);
-      return scopes.includes(association.association.rol);
+      return roles.includes(association.association.rol);
     }else{
       let user: UserToken = JSON.parse(localStorage.getItem('currentUser')!);
-      return scopes.includes(user.user.rol);
+      console.log(user.user.rol);
+      return roles.includes(user.user.rol);
     }
   }
 
