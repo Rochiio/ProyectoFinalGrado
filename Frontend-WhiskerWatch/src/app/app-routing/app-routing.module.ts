@@ -12,8 +12,8 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'user-register', component: UserRegisterComponent},
   {path: 'association-register', component: AssociationRegisterComponent},
-  //{path: 'principal', component: MapsPrincipalComponent},
-  {path: 'principal', data: {role:['ADMIN','USER','ASSOCIATION']}, canActivate: [CanActivateAuthGuard], component: MapsPrincipalComponent },
+  {path: 'principal', component: MapsPrincipalComponent},
+  //{path: 'principal', data: {role:['ADMIN','USER','ASSOCIATION']}, canActivate: [CanActivateAuthGuard], component: MapsPrincipalComponent },
 
   {path:'', redirectTo: '/login', pathMatch:'full'},
   {path: '**', component: PaginaNoEncontradaComponent}

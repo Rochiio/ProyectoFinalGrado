@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ElementRef, Output, EventEmitter } from '@angular/core';
 import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -24,10 +24,16 @@ export const DEFAULT_WIDTH = '100%';
   styleUrls: ['./ol-map.component.css']
 })
 export class OlMapComponent implements OnInit, AfterViewInit{
+  @Output() acutalLat = new EventEmitter<number>();
+  @Output() acutalLng = new EventEmitter<number>();
+  @Output() disabledButton = new EventEmitter<boolean>();
+
   private lat: number = 40.364002116999536;
   private lon: number = -3.7455721740194017;
   private zoom: number = 16;
   private icon = 'assets/icons/marker.png'
+  private listaMapas:MapDto[] = [];
+  
   marcadores: Feature<Point>[] = [];
 
 
@@ -46,6 +52,14 @@ export class OlMapComponent implements OnInit, AfterViewInit{
   }
 
   ngAfterViewInit(): void {
+     let center = Proj.fromLonLat([this.lon, this.lat]);
+     if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition((pos) => {
+        center = Proj.fromLonLat([pos.coords.longitude, pos.coords.latitude]);
+      })
+    }
+
+
     this.map = new Map({
       target: 'map',
       layers: [
@@ -55,8 +69,9 @@ export class OlMapComponent implements OnInit, AfterViewInit{
           })
         })
       ],
+
       view: new View({
-        center: Proj.fromLonLat([this.lon, this.lat]),
+        center: center,
         zoom: this.zoom
       }),
       controls: defaultControls().extend([])
@@ -64,8 +79,11 @@ export class OlMapComponent implements OnInit, AfterViewInit{
 
 
     this.addMarkers();
-    //this.map.addLayer(capa);
     this.addMapEvents(this.map);
+
+    this.acutalLat.emit(this.lat);
+    this.acutalLng.emit(this.lon);
+    this.disabledButton.emit(true);
   }
 
   private setSize(): void {
@@ -76,8 +94,8 @@ export class OlMapComponent implements OnInit, AfterViewInit{
     }
   }
 
-    /**
-   *Añadir los marcadores al mapa.
+  /**
+  *Añadir los marcadores al mapa.
   * @returns vector con todos los marcadores añadidos.
   */
   private addMarkers() {
@@ -85,6 +103,7 @@ export class OlMapComponent implements OnInit, AfterViewInit{
 
     this.mapRest.getAllMaps(localStorage.getItem('access_token')!).subscribe(
       (data: Array<MapDto>) => {
+        this.listaMapas = data;
         data.forEach(coordenada => {
           let marcador = new Feature({
               geometry: new Point(
@@ -113,7 +132,7 @@ export class OlMapComponent implements OnInit, AfterViewInit{
     );
   }
 
-    /**
+  /**
    * Añadir los eventos del mapa.
    * @param map mapa añadir el evento.
    */
@@ -124,6 +143,9 @@ export class OlMapComponent implements OnInit, AfterViewInit{
         return lonLat;
       });
       if(feature){
+        this.acutalLat.emit(feature[1]);
+        this.acutalLng.emit(feature[0]);
+        this.disabledButton.emit(false);
         console.log(feature);
       }
     })
