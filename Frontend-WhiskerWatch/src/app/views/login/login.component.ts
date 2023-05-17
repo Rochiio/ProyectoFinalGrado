@@ -40,7 +40,8 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('isAssociation', 'true');
             localStorage.setItem('currentAssociation', JSON.stringify(data));
             localStorage.setItem('access_token', data.token);
-            this.router.navigate(['/principal'])
+            localStorage.setItem('actual_username', data.association.username);
+            this.router.navigate(['/principal']);
           },
           (err: Error) => {
             this.notificationService.showError(err.message);
@@ -52,7 +53,8 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('isAssociation', 'false');
           localStorage.setItem('currentUser', JSON.stringify(data));
           localStorage.setItem('access_token', data.token);
-          this.router.navigate(['/principal'])
+          localStorage.setItem('actual_username', data.user.username);
+          this.router.navigate(['/principal']);
         },
         (err: Error) => {
           this.notificationService.showError(err.message);

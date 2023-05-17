@@ -1,0 +1,16 @@
+<div>
+  <div class="mx-auto max-w-screen-sm text-center lg:mb-16 mb-8">
+    <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900">Foro</h2>
+    <p class="font-light text-gray-500 sm:text-xl ">Cuéntanos lo que ocurre en la localización aquí!</p>
+  </div>
+
+  <div>
+    <!--Poner aqui lo de enviar nuevas cosis-->
+  </div>
+
+  <div class="mt-10">
+    <app-entries-forum *ngFor="let message of forum.listMessages"
+    [entry]="message"
+    ></app-entries-forum>
+  </div>
+</div>

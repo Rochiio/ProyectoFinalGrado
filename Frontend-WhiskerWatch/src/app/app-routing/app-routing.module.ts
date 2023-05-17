@@ -7,13 +7,15 @@ import { UserRegisterComponent } from '../views/register/user-register/user-regi
 import { AssociationRegisterComponent } from '../views/register/association-register/association-register.component';
 import { CanActivateAuthGuard } from '../guard/can-active-auto-guard.service';
 import { MapsPrincipalComponent } from '../views/principal/maps-principal/maps-principal.component';
+import { ForumPrincipalComponent } from '../views/principal/forum-principal/forum-principal.component';
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'user-register', component: UserRegisterComponent},
   {path: 'association-register', component: AssociationRegisterComponent},
-  {path: 'principal', component: MapsPrincipalComponent},
-  //{path: 'principal', data: {role:['ADMIN','USER','ASSOCIATION']}, canActivate: [CanActivateAuthGuard], component: MapsPrincipalComponent },
+  //{path: 'principal', component: MapsPrincipalComponent},
+  {path: 'principal', data: {role:['ADMIN','USER','ASSOCIATION']}, canActivate: [CanActivateAuthGuard], component: MapsPrincipalComponent },
+  {path: 'forum', component: ForumPrincipalComponent},
 
   {path:'', redirectTo: '/login', pathMatch:'full'},
   {path: '**', component: PaginaNoEncontradaComponent}

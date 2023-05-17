@@ -15,6 +15,8 @@ import { AssociationRegisterComponent } from './views/register/association-regis
 import { MenuPrincipalComponent } from './views/principal/menu-principal/menu-principal.component';
 import { MapsPrincipalComponent } from './views/principal/maps-principal/maps-principal.component';
 import { OlMapComponent } from './views/principal/maps-principal/ol-map/ol-map.component';
+import { ForumPrincipalComponent } from './views/principal/forum-principal/forum-principal.component';
+import { EntriesForumComponent } from './views/principal/forum-principal/entries-forum/entries-forum.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +28,8 @@ import { OlMapComponent } from './views/principal/maps-principal/ol-map/ol-map.c
     MenuPrincipalComponent,
     MapsPrincipalComponent,
     OlMapComponent,
+    ForumPrincipalComponent,
+    EntriesForumComponent,
   ],
   imports: [
     BrowserModule,

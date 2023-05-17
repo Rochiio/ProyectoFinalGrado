@@ -33,7 +33,7 @@ export class OlMapComponent implements OnInit, AfterViewInit{
   private zoom: number = 16;
   private icon = 'assets/icons/marker.png'
   private listaMapas:MapDto[] = [];
-  
+
   marcadores: Feature<Point>[] = [];
 
 
@@ -110,6 +110,7 @@ export class OlMapComponent implements OnInit, AfterViewInit{
                   Proj.fromLonLat([Number.parseFloat(coordenada.longitude), Number.parseFloat(coordenada.latitude)])
               ),
           });
+          marcador.setId(coordenada.id);
           marcador.setStyle(new Style({
               image: new Icon(({
                   src: this.icon,
@@ -138,16 +139,14 @@ export class OlMapComponent implements OnInit, AfterViewInit{
    */
   private addMapEvents(map: Map) {
     map.on('singleclick', (evt) => {
-      var feature = map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
+      map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
         var lonLat = Proj.toLonLat(evt.coordinate);
-        return lonLat;
-      });
-      if(feature){
-        this.acutalLat.emit(feature[1]);
-        this.acutalLng.emit(feature[0]);
+        this.acutalLat.emit(lonLat[1]);
+        this.acutalLng.emit(lonLat[0]);
         this.disabledButton.emit(false);
-        console.log(feature);
-      }
+        localStorage.setItem('actual_maps_id', feature.getId.toString());
+        console.log(feature.getId.toString());
+      });
     })
   }
 
