@@ -14,12 +14,12 @@ export class ForumMessagesDto {
   public id: string;
   public username: string;
   public message: string;
-  public created_At: Date;
+  public created_At: string;
 
   constructor() {
     this.id = '';
     this.username = '';
     this.message = '';
-    this.created_At = new Date();
+    this.created_At = '';
   }
 }

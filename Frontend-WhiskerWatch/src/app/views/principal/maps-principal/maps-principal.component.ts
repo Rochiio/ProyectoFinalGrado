@@ -18,8 +18,14 @@ export class MapsPrincipalComponent {
     }
   }
 
-  changeDisabled(item: boolean){
-    this.disabled = item;
+  changeDisabled() :boolean{
+    let actual = localStorage.getItem('actual_maps_id');
+    if(actual == null || actual.length == 0){
+      return true;
+    }else{
+      return false;
+    }
+
   }
 
 

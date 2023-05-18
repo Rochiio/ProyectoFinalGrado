@@ -13,6 +13,5 @@ data class ForumMessages(
     val id: String = newId<ForumMessages>().toString(),
     var username: String,
     var message: String,
-    @Serializable(with = LocalDateSerializer::class)
-    var created_At: LocalDate = LocalDate.now()
+    var created_At: String = LocalDate.now().toString()
 )

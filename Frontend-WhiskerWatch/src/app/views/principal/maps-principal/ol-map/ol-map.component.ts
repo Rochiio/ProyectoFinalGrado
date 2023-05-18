@@ -144,8 +144,8 @@ export class OlMapComponent implements OnInit, AfterViewInit{
         this.acutalLat.emit(lonLat[1]);
         this.acutalLng.emit(lonLat[0]);
         this.disabledButton.emit(false);
-        localStorage.setItem('actual_maps_id', feature.getId.toString());
-        console.log(feature.getId.toString());
+        localStorage.setItem('actual_maps_id', feature.getId()!.toString());
+        console.log(feature.getId()!.toString());
       });
     })
   }

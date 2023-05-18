@@ -11,8 +11,7 @@ fun List<ForumMessagesCreateDto>.toListMessages(): List<ForumMessages>{
     val list: MutableList<ForumMessages> = mutableListOf()
     this.forEach {
         val forum = ForumMessages(
-            username = it.username, message = it.message,
-            created_At = LocalDate.now()
+            username = it.username, message = it.message
         )
         list.add(forum)
     }

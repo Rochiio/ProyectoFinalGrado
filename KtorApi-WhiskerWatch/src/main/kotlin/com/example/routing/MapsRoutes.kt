@@ -1,7 +1,11 @@
 package com.example.routing
 
+import com.example.dto.CalendarCreateDto
+import com.example.dto.ForumCreateDto
 import com.example.dto.MapsCreateDto
 import com.example.models.users.Rol
+import com.example.services.calendar.CalendarService
+import com.example.services.forum.ForumService
 import com.example.services.maps.MapsService
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
@@ -15,6 +19,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import org.koin.ktor.ext.inject
 
@@ -22,6 +27,8 @@ private const val MAP = "/map"
 fun Application.mapRoutes(){
     val logger = KotlinLogging.logger{}
     val service: MapsService by inject()
+    val forumService: ForumService by inject()
+    val calendarService: CalendarService by inject()
 
 
     routing {
@@ -48,7 +55,10 @@ fun Application.mapRoutes(){
                     try{
                         val post = call.receive<MapsCreateDto>()
                         service.saveMap(post)
-                            .onSuccess { call.respond(HttpStatusCode.Created, it) }
+                            .onSuccess {
+                                launch { forumService.saveForum(ForumCreateDto(it.id, listOf())) }
+                                launch { calendarService.saveCalendar(CalendarCreateDto(it.id, mutableListOf())) }
+                                call.respond(HttpStatusCode.Created, it) }
                     }catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.message.toString())
                     }
@@ -82,7 +92,10 @@ fun Application.mapRoutes(){
                         call.respond(HttpStatusCode.Unauthorized, "No tiene permisos para realizar esta acción")
                     }else {
                         service.deleteMap(id)
-                            .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                            .onSuccess {
+                                launch { forumService.deleteForumByMapsId(id) }
+                                launch { calendarService.deleteCalendarByMapsId(id) }
+                                call.respond(HttpStatusCode.NoContent) }
                             .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                     }
                 }
@@ -96,7 +109,10 @@ fun Application.mapRoutes(){
                         call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
                     }else {
                         service.deleteMapsAdoption(id)
-                            .onSuccess { call.respond(HttpStatusCode.NoContent) }
+                            .onSuccess {
+                                launch { forumService.deleteForumByMapsId(id) }
+                                launch { calendarService.deleteCalendarByMapsId(id) }
+                                call.respond(HttpStatusCode.NoContent) }
                             .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                     }
                 }
