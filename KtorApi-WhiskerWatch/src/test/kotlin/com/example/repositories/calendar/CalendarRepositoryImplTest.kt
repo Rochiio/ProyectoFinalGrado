@@ -22,7 +22,7 @@ class CalendarRepositoryImplTest {
     private val repository = CalendarRepositoryImpl()
     private val test = Calendar(
         mapsId = UUID.randomUUID().toString(),
-        listTasks = mutableListOf(Task(date = LocalDate.now(), task = "tarea test"))
+        listTasks = mutableListOf(Task(date = LocalDate.now().toString(), task = "tarea test"))
     )
 
     @Test
@@ -76,7 +76,7 @@ class CalendarRepositoryImplTest {
     @Order(5)
     fun update() = runTest {
         val lista = test.listTasks
-        lista.add(Task(date = LocalDate.now(), task = "other task"))
+        lista.add(Task(date = LocalDate.now().toString(), task = "other task"))
 
         val update = test.copy(listTasks = lista)
         val updated = repository.update(update)

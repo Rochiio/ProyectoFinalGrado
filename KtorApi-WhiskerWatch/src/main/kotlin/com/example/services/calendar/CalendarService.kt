@@ -5,6 +5,7 @@ import com.example.dto.CalendarCreateDto
 import com.example.error.CalendarError
 import com.example.mappers.toListTasks
 import com.example.models.calendar.Calendar
+import com.example.models.calendar.Task
 import com.example.repositories.calendar.CalendarRepository
 import com.example.services.maps.MapsService
 import com.github.michaelbull.result.*
@@ -55,10 +56,11 @@ class CalendarService(
         mapService.findMapById(calendar.mapsId)
             .onSuccess {
                 calendarRepository.findById(idCalendar)?.let {
-                    val list = it.listTasks
-                    val newList = calendar.listTasks.toListTasks()
+                    val newListAdd = mutableSetOf<Task>()
+                    it.listTasks.forEach { task -> newListAdd.add(task) }
+                    calendar.listTasks.toListTasks().forEach { task -> newListAdd.add(task) }
                     val updated = Calendario(id = it.id, mapsId = calendar.mapsId,
-                        listTasks = (list + newList).toMutableList())
+                        listTasks = newListAdd.toMutableList())
                     result = Ok(calendarRepository.update(updated))
                 }?: run{
                     result = Err(CalendarError.CalendarNotFoundError("No se ha encontrado un calendario con id $idCalendar"))

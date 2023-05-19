@@ -30,12 +30,12 @@ private val json = Json { ignoreUnknownKeys = true }
 class CalendarRoutesTest {
     private val config = ApplicationConfig("application.conf")
 
-    private var createUser = UserCreateDto(name = "test", email = "test@gmail.com", password = "123456789", username = "test", rol = Rol.USER.name, isAdmin = false)
+    private var createUser = UserCreateDto(name = "test", email = "test@gmail.com", password = "123456789", username = "test", rol = Rol.USER.name)
     private var loginUser = UserLogin(email="test@gmail.com", password="123456789")
 
     private val test = Calendar(
         mapsId = "5dc236c1-ef36-439e-b9c6-04b7dd145d36",
-        listTasks = mutableListOf(Task(date = LocalDate.now(), task = "tarea test"))
+        listTasks = mutableListOf(Task(date = LocalDate.now().toString(), task = "tarea test"))
     )
     private val createTest = CalendarCreateDto(mapsId = "5dc236c1-ef36-439e-b9c6-04b7dd145d36",
         listTasks = mutableListOf(TaskCreateDto(date = LocalDate.now().toString(), task = "tarea test")))

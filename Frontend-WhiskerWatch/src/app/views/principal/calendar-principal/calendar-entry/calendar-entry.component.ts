@@ -23,19 +23,20 @@ export class CalendarEntryComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    let events: { id: string; title: string; start: string; }[] = [{id:'1234', title:'pruebabababa', start:'2023-05-17'}];
+    let events: { id: string; title: string; start: string; }[] = [] //= [{id:'1234', title:'pruebabababa', start:'2023-05-17'}];
 
-    /**this.calendarService.getCalendarByMapsId(localStorage.getItem('access_token')! ,localStorage.getItem('actual_maps_id')!).subscribe(
+    this.calendarService.getCalendarByMapsId(localStorage.getItem('access_token')! ,localStorage.getItem('actual_maps_id')!).subscribe(
       (data: CalendarDto) => {
+        console.log(data);
         this.actualCalendar = data;
         for (let event of data.listTasks) {
-          events.push({title:event.task, start:event.date});
+          events.push({id:event.id, title:event.task, start:event.date.toDateString()});
         }
       },
       (err: Error) => {
         this.notificationService.showError(err.message);
       }
-    );**/
+    );
 
     this.calendarOptions = {
       initialView: 'dayGridMonth',

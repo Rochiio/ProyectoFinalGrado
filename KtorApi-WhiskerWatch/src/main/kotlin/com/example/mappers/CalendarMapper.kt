@@ -7,7 +7,7 @@ import java.time.LocalDate
 fun List<TaskCreateDto>.toListTasks(): List<Task>{
     val list: MutableList<Task> = mutableListOf()
     this.forEach {
-        val task = Task(date = LocalDate.parse(it.date), task = it.task)
+        val task = Task(date = it.date, task = it.task)
         list.add(task)
     }
     return list

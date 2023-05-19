@@ -42,7 +42,7 @@ class CalendarServiceTest {
 
     private val test = Calendar(
         mapsId = UUID.randomUUID().toString(),
-        listTasks = mutableListOf(Task(date = LocalDate.now(), task = "tarea test"))
+        listTasks = mutableListOf(Task(date = LocalDate.now().toString(), task = "tarea test"))
     )
     private val createTest = CalendarCreateDto(mapsId = UUID.randomUUID().toString(),
         listTasks = mutableListOf(TaskCreateDto(date = LocalDate.now().toString(), task = "tarea test")))

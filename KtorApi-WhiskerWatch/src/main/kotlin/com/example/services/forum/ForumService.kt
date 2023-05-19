@@ -4,6 +4,7 @@ import com.example.dto.ForumCreateDto
 import com.example.error.ForumError
 import com.example.mappers.toListMessages
 import com.example.models.forum.Forum
+import com.example.models.forum.ForumMessages
 import com.example.repositories.forum.ForumRepository
 import com.example.services.maps.MapsService
 import com.github.michaelbull.result.*
@@ -53,11 +54,12 @@ class ForumService(
         mapsService.findMapById(forum.mapsId)
             .onSuccess {
                 forumRepository.findById(idForum)?.let {
-                    val list = it.listMessages
-                    val newList = forum.listMessages.toListMessages()
+                    val listToAdd = mutableSetOf<ForumMessages>()
+                    it.listMessages.forEach { message -> listToAdd.add(message) }
+                    forum.listMessages.toListMessages().forEach { message -> listToAdd.add(message) }
                     val updated = Forum(
                         id = it.id, mapsId = forum.mapsId,
-                        listMessages = (list + newList).toMutableList()
+                        listMessages = listToAdd.toMutableList()
                     )
                     result = Ok(forumRepository.update(updated))
                 } ?: run {
