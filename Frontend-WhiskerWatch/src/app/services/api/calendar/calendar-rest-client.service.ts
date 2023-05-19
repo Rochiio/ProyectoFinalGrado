@@ -11,8 +11,8 @@ export class CalendarRestClientService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public getCalendarByMapsId(token: string, mapsId: string): Observable<Array<CalendarDto>> {
+  public getCalendarByMapsId(token: string, mapsId: string): Observable<CalendarDto> {
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-    return this.httpClient.get<Array<CalendarDto>>(DIR+"/mapsId/"+mapsId, {headers})
+    return this.httpClient.get<CalendarDto>(DIR+"/mapsId/"+mapsId, {headers})
   }
 }

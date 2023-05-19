@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/material/snack-bar';
 
@@ -17,6 +18,8 @@ import { MapsPrincipalComponent } from './views/principal/maps-principal/maps-pr
 import { OlMapComponent } from './views/principal/maps-principal/ol-map/ol-map.component';
 import { ForumPrincipalComponent } from './views/principal/forum-principal/forum-principal.component';
 import { EntriesForumComponent } from './views/principal/forum-principal/entries-forum/entries-forum.component';
+import { CalendarPrincipalComponent } from './views/principal/calendar-principal/calendar-principal.component';
+import { CalendarEntryComponent } from './views/principal/calendar-principal/calendar-entry/calendar-entry.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +33,8 @@ import { EntriesForumComponent } from './views/principal/forum-principal/entries
     OlMapComponent,
     ForumPrincipalComponent,
     EntriesForumComponent,
+    CalendarPrincipalComponent,
+    CalendarEntryComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,6 +43,7 @@ import { EntriesForumComponent } from './views/principal/forum-principal/entries
     FormsModule,
     NoopAnimationsModule,
     MatSnackBarModule,
+    FullCalendarModule
   ],
   providers: [
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 5000}}

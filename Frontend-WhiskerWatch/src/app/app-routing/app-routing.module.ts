@@ -8,6 +8,7 @@ import { AssociationRegisterComponent } from '../views/register/association-regi
 import { CanActivateAuthGuard } from '../guard/can-active-auto-guard.service';
 import { MapsPrincipalComponent } from '../views/principal/maps-principal/maps-principal.component';
 import { ForumPrincipalComponent } from '../views/principal/forum-principal/forum-principal.component';
+import { CalendarPrincipalComponent } from '../views/principal/calendar-principal/calendar-principal.component';
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -16,6 +17,7 @@ const routes: Routes = [
   //{path: 'principal', component: MapsPrincipalComponent},
   {path: 'principal', data: {role:['ADMIN','USER','ASSOCIATION']}, canActivate: [CanActivateAuthGuard], component: MapsPrincipalComponent },
   {path: 'forum', component: ForumPrincipalComponent},
+  {path: 'calendar', component: CalendarPrincipalComponent},
 
   {path:'', redirectTo: '/login', pathMatch:'full'},
   {path: '**', component: PaginaNoEncontradaComponent}
