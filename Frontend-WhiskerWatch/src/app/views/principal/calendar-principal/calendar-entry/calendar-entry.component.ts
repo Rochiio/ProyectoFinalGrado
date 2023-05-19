@@ -30,7 +30,7 @@ export class CalendarEntryComponent implements OnInit{
         console.log(data);
         this.actualCalendar = data;
         for (let event of data.listTasks) {
-          events.push({id:event.id, title:event.task, start:event.date.toDateString()});
+          events.push({id:event.id, title:event.task, start:event.date});
         }
       },
       (err: Error) => {

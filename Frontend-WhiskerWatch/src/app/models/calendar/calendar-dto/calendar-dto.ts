@@ -12,12 +12,12 @@ export class CalendarDto {
 
 export class TaskDto {
   public id: string;
-  public date: Date;
+  public date: string;
   public task: string;
 
   constructor() {
     this.id = '';
-    this.date = new Date();
+    this.date = '';
     this.task = '';
   }
 }
