@@ -7,12 +7,37 @@
   <div class="mx-20">
     <div class="mx-auto max-w-screen-sm text-center mt-5">
       <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900">Calendario</h2>
-      </div>
+    </div>
 
-      <div class="grid grid-cols-2">
-        <p class="font-light text-gray-500 sm:text-xl ">Evento Seleccionado: </p>
-        <p class="font-light text-gray-500 sm:text-xl ">{{ actualEvent }}</p>
-      </div>
+    <div class="grid grid-cols-3">
+      <p class="font-light text-gray-500 col-span-1">Evento Seleccionado: </p>
+      <p class="font-light text-gray-500 col-span-2">{{ actualEvent }}</p>
+    </div>
+
+    <hr class="h-px bg-gray-400 my-10">
+
+    <div class="mx-auto max-w-screen-sm text-center mt-5">
+      <h2 class="mb-4 text-3xl lg:text-xl tracking-tight font-extrabold text-gray-900">Añadir Evento</h2>
+
+      <form (ngSubmit)="sendNewEvent()"  #eventForm="ngForm">
+        <div class="grid grid-cols-3">
+          <label for="date" class="col-span-1">Fecha:</label>
+          <input type="date" name="date" id="date" [(ngModel)]="newDate" #date="ngModel" class="col-span-2 h-10 border mt-1 rounded px-4 w-full bg-gray-50">
+
+          <label for="task" class="col-span-1">Evento:</label>
+          <input type="text" name="task" id="task" [(ngModel)]="newTask" #task="ngModel" class="col-span-2 h-10 border mt-1 rounded px-4 w-full bg-gray-50">
+
+          <div class="col-span-3 text-right mt-5">
+            <div class="inline-flex items-end">
+              <button type="submit" class="flex w-full justify-center rounded-md bg-cyan-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 disabled:bg-gray-400 disabled:cursor-no-drop"
+              [disabled]="!dateIsCorrect()">Añadir</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+    </div>
+
   </div>
 
 </div>
