@@ -1,1 +1,9 @@
-<p>association-principal works!</p>
+<div class="mx-auto max-w-screen-sm text-center mt-5">
+  <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900">Asociaciones</h2>
+</div>
+
+<div class="mx-10 my-10">
+  <app-entry-association *ngFor="let association of associations"
+  [entry]="association"
+  ></app-entry-association>
+</div>

@@ -1,1 +1,21 @@
-<p>entry-association works!</p>
+<article class="p-6 bg-sky-100 rounded-lg border border-gray-200 shadow-md mx-10 my-10">
+  <div class="">
+    <!--Image-->
+      <div class="flex items-center">
+        <img src="assets/icons/image.png" alt="placeholder" class="w-40 h-40 mr-10">
+
+        <!--Data-->
+        <div>
+          <h1 class="mb-5 text-2xl font-extrabold leading-none tracking-tight md:text-2xl lg:text-4xl text-gray-600">{{entry.name}}</h1>
+
+          <hr class="h-px bg-gray-400 border-0">
+
+          <p class="mt-5 font-light text-gray-700">{{entry.description}}</p>
+          <div class="flex items-center group mt-4">
+            <img class="w-4 h-4" src="assets/icons/link.png" alt="Link" />
+            <a href="{{entry.url}}" class="hover:text-cyan-500">{{entry.url}}</a>
+          </div>
+        </div>
+      </div>
+  </div>
+</article>

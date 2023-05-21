@@ -15,16 +15,21 @@ export class AssociationRestClientService {
   constructor(private httpClient: HttpClient) { }
 
   public associationLogin(login: Login): Observable<AssociationToken> {
-    return this.httpClient.post<AssociationToken>(DIR + '/login', login)
+    return this.httpClient.post<AssociationToken>(DIR + '/login', login);
   }
 
   public associationRegister(register: AssociationCreate): Observable<AssociationToken> {
-    return this.httpClient.post<AssociationToken>(DIR + '/register', register)
+    return this.httpClient.post<AssociationToken>(DIR + '/register', register);
   }
 
   public getAllAssociations(token: string): Observable<Array<AssociationDto>> {
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-    return this.httpClient.get<Array<AssociationDto>>(DIR, {headers})
+    return this.httpClient.get<Array<AssociationDto>>(DIR, {headers});
+  }
+
+  public getAssociationImage(token: string, id: string): Observable<Blob>{
+    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    return this.httpClient.get<Blob>(DIR+"/image/"+id, {headers});
   }
 
 }

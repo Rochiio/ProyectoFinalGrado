@@ -8,7 +8,7 @@ import {Router} from '@angular/router';
 })
 export class AppComponent {
   title = 'Front-WhiskerWatch';
-  private routes = ['/login', '/user-register', '/association'];
+  private routes = ['/login', '/user-register', '/association-register'];
 
   constructor(private router :Router){}
 
