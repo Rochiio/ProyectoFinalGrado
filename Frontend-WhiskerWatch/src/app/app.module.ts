@@ -20,6 +20,8 @@ import { ForumPrincipalComponent } from './views/principal/forum-principal/forum
 import { EntriesForumComponent } from './views/principal/forum-principal/entries-forum/entries-forum.component';
 import { CalendarPrincipalComponent } from './views/principal/calendar-principal/calendar-principal.component';
 import { CalendarEntryComponent } from './views/principal/calendar-principal/calendar-entry/calendar-entry.component';
+import { AssociationPrincipalComponent } from './views/principal/association-principal/association-principal.component';
+import { EntryAssociationComponent } from './views/principal/association-principal/entry-association/entry-association.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import { CalendarEntryComponent } from './views/principal/calendar-principal/cal
     EntriesForumComponent,
     CalendarPrincipalComponent,
     CalendarEntryComponent,
+    AssociationPrincipalComponent,
+    EntryAssociationComponent,
   ],
   imports: [
     BrowserModule,

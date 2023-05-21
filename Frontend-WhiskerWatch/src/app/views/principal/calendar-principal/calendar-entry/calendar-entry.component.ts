@@ -27,10 +27,9 @@ export class CalendarEntryComponent implements OnInit{
 
     this.calendarService.getCalendarByMapsId(localStorage.getItem('access_token')! ,localStorage.getItem('actual_maps_id')!).subscribe(
       (data: CalendarDto) => {
-        console.log(data);
         this.actualCalendar = data;
         for (let event of data.listTasks) {
-          events.push({id:event.id, title:event.task, start:event.date});
+          events.push({id:''+event.id, title:''+event.task, start:''+event.date});
         }
       },
       (err: Error) => {
@@ -38,6 +37,7 @@ export class CalendarEntryComponent implements OnInit{
       }
     );
 
+    console.log(events);
     this.calendarOptions = {
       initialView: 'dayGridMonth',
       locale: 'es',

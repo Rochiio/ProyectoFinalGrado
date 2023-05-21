@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AssociationCreate } from 'src/app/models/association/association-create/association-create';
+import { AssociationDto } from 'src/app/models/association/association-dto/association-dto';
 import { AssociationToken } from 'src/app/models/association/association-token/association-token';
 import { Login } from 'src/app/models/login/login';
 
@@ -19,6 +20,11 @@ export class AssociationRestClientService {
 
   public associationRegister(register: AssociationCreate): Observable<AssociationToken> {
     return this.httpClient.post<AssociationToken>(DIR + '/register', register)
+  }
+
+  public getAllAssociations(token: string): Observable<Array<AssociationDto>> {
+    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    return this.httpClient.get<Array<AssociationDto>>(DIR, {headers})
   }
 
 }
