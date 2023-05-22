@@ -140,7 +140,6 @@ fun Application.associationRoutes(){
                     val auth = call.principal<JWTPrincipal>()
                     val rol = Rol.valueOf(auth?.payload?.getClaim("rol").toString().replace("\"", ""))
                     val multipart = call.receiveMultipart()
-                    logger.info { rol.toString() }
                     if(rol == Rol.USER){
                         call.respond(HttpStatusCode.Unauthorized, "No tienes permisos para realizar esta acción")
                     }else {
@@ -148,7 +147,10 @@ fun Application.associationRoutes(){
                             multipart.forEachPart { partData ->
                                 if (partData is PartData.FileItem) {
                                     service.changeImageAssociation(partData, id)
-                                        .onSuccess { call.respond(HttpStatusCode.Created, it.toString()) }
+                                        .onSuccess {
+                                            logger.debug { "Devolviendo correcto" }
+                                            logger.debug {it.toString()}
+                                            call.respond(HttpStatusCode.Created, it.toString()) }
                                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                                 }
                             }

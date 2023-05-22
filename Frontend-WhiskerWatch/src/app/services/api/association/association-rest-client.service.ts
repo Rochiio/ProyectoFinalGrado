@@ -27,9 +27,19 @@ export class AssociationRestClientService {
     return this.httpClient.get<Array<AssociationDto>>(DIR, {headers});
   }
 
-  public getAssociationImage(token: string, id: string): Observable<Blob>{
+  public deleteAssociation(token: string, id: string): Observable<{}> {
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-    return this.httpClient.get<Blob>(DIR+"/image/"+id, {headers});
+    return this.httpClient.delete<{}>(DIR+"/"+id, {headers});
+  }
+
+  //public getAssociationImage(token: string, id: string): Observable<Blob>{
+    //let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    //return this.httpClient.get<Blob>(DIR+"/image/"+id, {headers});
+  //}
+
+  public postAssociationImage(token: string, id: string, image:any): Observable<string>{
+    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    return this.httpClient.post<string>(DIR+"/image/"+id, image, {headers});
   }
 
 }

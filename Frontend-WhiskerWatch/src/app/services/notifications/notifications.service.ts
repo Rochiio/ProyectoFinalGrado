@@ -24,6 +24,13 @@ export class NotificationsService {
     });
   }
 
+  showCorrect(message: string): void {
+    this.snackBar.open('✅ ' + message, '', {
+      verticalPosition: this.verticalPosition,
+      horizontalPosition: this.horizontalPosition
+    });
+  }
+
 }
 
 

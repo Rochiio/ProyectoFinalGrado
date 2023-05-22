@@ -22,6 +22,7 @@ import { CalendarPrincipalComponent } from './views/principal/calendar-principal
 import { CalendarEntryComponent } from './views/principal/calendar-principal/calendar-entry/calendar-entry.component';
 import { AssociationPrincipalComponent } from './views/principal/association-principal/association-principal.component';
 import { EntryAssociationComponent } from './views/principal/association-principal/entry-association/entry-association.component';
+import { ProfilePrincipalComponent } from './views/principal/profile-principal/profile-principal.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { EntryAssociationComponent } from './views/principal/association-princip
     CalendarEntryComponent,
     AssociationPrincipalComponent,
     EntryAssociationComponent,
+    ProfilePrincipalComponent,
   ],
   imports: [
     BrowserModule,

@@ -10,6 +10,7 @@ import { MapsPrincipalComponent } from '../views/principal/maps-principal/maps-p
 import { ForumPrincipalComponent } from '../views/principal/forum-principal/forum-principal.component';
 import { CalendarPrincipalComponent } from '../views/principal/calendar-principal/calendar-principal.component';
 import { AssociationPrincipalComponent } from '../views/principal/association-principal/association-principal.component';
+import { ProfilePrincipalComponent } from '../views/principal/profile-principal/profile-principal.component';
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -17,9 +18,10 @@ const routes: Routes = [
   {path: 'association-register', component: AssociationRegisterComponent},
   //{path: 'principal', component: MapsPrincipalComponent},
   {path: 'principal', data: {role:['ADMIN','USER','ASSOCIATION']}, canActivate: [CanActivateAuthGuard], component: MapsPrincipalComponent },
-  {path: 'forum', component: ForumPrincipalComponent},
-  {path: 'calendar', component: CalendarPrincipalComponent},
-  {path: 'associations', component: AssociationPrincipalComponent},
+  {path: 'forum', data: {role:['ADMIN','USER','ASSOCIATION']}, canActivate: [CanActivateAuthGuard], component: ForumPrincipalComponent},
+  {path: 'calendar', data: {role:['ADMIN','USER','ASSOCIATION']}, canActivate: [CanActivateAuthGuard], component: CalendarPrincipalComponent},
+  {path: 'associations', data: {role:['ADMIN','USER','ASSOCIATION']}, canActivate: [CanActivateAuthGuard], component: AssociationPrincipalComponent},
+  {path: 'profile', data: {role:['ADMIN','USER','ASSOCIATION']}, canActivate: [CanActivateAuthGuard], component: ProfilePrincipalComponent},
 
   {path:'', redirectTo: '/login', pathMatch:'full'},
   {path: '**', component: PaginaNoEncontradaComponent}
