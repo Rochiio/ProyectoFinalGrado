@@ -24,6 +24,7 @@
   <div class="mt-10">
     <app-entries-forum *ngFor="let message of forum.listMessages"
     [entry]="message"
+    (messageIdToDelete)="deleteForumMessage($event)"
     ></app-entries-forum>
   </div>
 

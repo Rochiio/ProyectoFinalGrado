@@ -2,11 +2,14 @@ package com.example.repositories.calendar
 
 import com.example.db.MongoDbManager
 import com.example.models.calendar.Calendar
+import com.example.models.calendar.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import mu.KotlinLogging
 import org.koin.core.annotation.Single
 import org.litote.kmongo.eq
+import org.litote.kmongo.pull
+import org.litote.kmongo.unset
 import java.util.*
 
 @Single
@@ -59,4 +62,5 @@ class CalendarRepositoryImpl: CalendarRepository {
             .deleteMany("{}")
             .wasAcknowledged()
     }
+
 }

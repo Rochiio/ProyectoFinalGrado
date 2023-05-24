@@ -57,7 +57,6 @@ class CalendarService(
             .onSuccess {
                 calendarRepository.findById(idCalendar)?.let {
                     val newListAdd = mutableSetOf<Task>()
-                    it.listTasks.forEach { task -> newListAdd.add(task) }
                     calendar.listTasks.toListTasks().forEach { task -> newListAdd.add(task) }
                     val updated = Calendario(id = it.id, mapsId = calendar.mapsId,
                         listTasks = newListAdd.toMutableList())

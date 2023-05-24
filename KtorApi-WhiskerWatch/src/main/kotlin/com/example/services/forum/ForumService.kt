@@ -55,7 +55,6 @@ class ForumService(
             .onSuccess {
                 forumRepository.findById(idForum)?.let {
                     val listToAdd = mutableSetOf<ForumMessages>()
-                    it.listMessages.forEach { message -> listToAdd.add(message) }
                     forum.listMessages.toListMessages().forEach { message -> listToAdd.add(message) }
                     val updated = Forum(
                         id = it.id, mapsId = forum.mapsId,

@@ -52,4 +52,33 @@ export class ForumPrincipalComponent implements OnInit{
       }
     )
   }
+
+  public deleteForumMessage(idMessage: string): void {
+    let list: ForumMessagesDto[] = this.forum.listMessages.filter(message => message.id != idMessage);
+    let listMapper: ForumMessagesCreate[] = [];
+
+    list.forEach((message : ForumMessagesDto) => {
+      let mapper = new ForumMessagesCreate();
+      mapper.message = message.message;
+      mapper.username = message.username;
+      listMapper.push(mapper);
+    });
+
+
+    let forumUpdate = new ForumCreate();
+    forumUpdate.mapsId = this.forum.mapsId;
+    forumUpdate.listMessages = listMapper;
+
+    this.forumService.updateForum(localStorage.getItem('access_token')!, this.forum.id, forumUpdate).subscribe(
+      (data: ForumDto) => {
+        this.notificationService.showCorrect('Mensaje eliminado correctamente');
+      },
+      (err: Error) => {
+        this.notificationService.showError(err.message);
+      }
+    )
+  }
+
+
+
 }

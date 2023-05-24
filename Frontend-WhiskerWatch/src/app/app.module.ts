@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/material/snack-bar';
 
@@ -23,6 +25,7 @@ import { CalendarEntryComponent } from './views/principal/calendar-principal/cal
 import { AssociationPrincipalComponent } from './views/principal/association-principal/association-principal.component';
 import { EntryAssociationComponent } from './views/principal/association-principal/entry-association/entry-association.component';
 import { ProfilePrincipalComponent } from './views/principal/profile-principal/profile-principal.component';
+import { DeleteAccountComponent } from './views/principal/profile-principal/delete-account/delete-account.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +44,7 @@ import { ProfilePrincipalComponent } from './views/principal/profile-principal/p
     AssociationPrincipalComponent,
     EntryAssociationComponent,
     ProfilePrincipalComponent,
+    DeleteAccountComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,7 +53,9 @@ import { ProfilePrincipalComponent } from './views/principal/profile-principal/p
     FormsModule,
     NoopAnimationsModule,
     MatSnackBarModule,
-    FullCalendarModule
+    FullCalendarModule,
+    MatDialogModule,
+    MatButtonModule,
   ],
   providers: [
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 5000}}
