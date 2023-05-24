@@ -6,6 +6,7 @@ import com.example.models.users.Association
 import com.example.models.users.Rol
 import com.example.repositories.users.AssociationRepositoryImpl
 import com.example.services.password.BcryptService
+import com.example.services.storage.StorageServiceImpl
 import com.github.michaelbull.result.get
 import com.github.michaelbull.result.getError
 import io.mockk.MockKAnnotations
@@ -26,6 +27,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 class AssociationServiceTest {
     @MockK
     private lateinit var repository: AssociationRepositoryImpl
+
+    @MockK
+    private lateinit var storageService: StorageServiceImpl
 
     @MockK
     private lateinit var bcryptService: BcryptService

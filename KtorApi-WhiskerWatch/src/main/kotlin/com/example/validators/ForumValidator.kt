@@ -27,7 +27,7 @@ fun RequestValidationConfig.forumValidation(){
 fun ForumCreateDto.forumListValidation(): Boolean{
     var result = true
     this.listMessages.forEach {
-        if(it.message.isEmpty() || it.username.isEmpty()){
+        if(it.message.isEmpty() || it.username.isEmpty() || !it.created_At.matches(Regex("^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])\$"))){
             result  = false
         }
     }

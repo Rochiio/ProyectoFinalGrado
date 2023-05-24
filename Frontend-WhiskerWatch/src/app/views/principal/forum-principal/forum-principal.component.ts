@@ -61,6 +61,7 @@ export class ForumPrincipalComponent implements OnInit{
       let mapper = new ForumMessagesCreate();
       mapper.message = message.message;
       mapper.username = message.username;
+      mapper.created_At = message.created_At;
       listMapper.push(mapper);
     });
 

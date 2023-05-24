@@ -38,7 +38,7 @@ class ForumRoutesTest {
     )
 
     private val createTest = ForumCreateDto(mapsId = "3544e9ee-42f0-43f5-b39e-436c9d8828c9", listMessages =
-    mutableListOf(ForumMessagesCreateDto(username = "pepe", message = "test")))
+    mutableListOf(ForumMessagesCreateDto(username = "pepe", message = "test", created_At = "2023-03-15")))
 
 
     @Test

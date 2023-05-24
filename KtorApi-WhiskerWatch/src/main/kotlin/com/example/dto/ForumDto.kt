@@ -12,5 +12,6 @@ data class ForumCreateDto(
 data class ForumMessagesCreateDto(
     var username: String,
     var message: String,
+    var created_At: String
 )
 

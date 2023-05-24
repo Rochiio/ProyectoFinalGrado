@@ -45,7 +45,7 @@ class ForumServiceTest {
     )
 
     private val createTest = ForumCreateDto(mapsId = UUID.randomUUID().toString(), listMessages =
-    mutableListOf(ForumMessagesCreateDto(username = "pepe", message = "test")))
+    mutableListOf(ForumMessagesCreateDto(username = "pepe", message = "test", created_At = "2023-05-15")))
 
     private val map = Maps(latitude = "12.3", longitude = "1.23")
 

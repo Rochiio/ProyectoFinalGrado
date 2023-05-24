@@ -11,9 +11,11 @@ export class ForumCreate {
 export class ForumMessagesCreate {
   public username: string;
   public message: string;
+  public created_At: string;
 
   constructor() {
     this.username = '';
     this.message = '';
+    this.created_At = '';
   }
 }
