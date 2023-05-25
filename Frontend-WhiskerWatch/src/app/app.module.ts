@@ -21,11 +21,11 @@ import { OlMapComponent } from './views/principal/maps-principal/ol-map/ol-map.c
 import { ForumPrincipalComponent } from './views/principal/forum-principal/forum-principal.component';
 import { EntriesForumComponent } from './views/principal/forum-principal/entries-forum/entries-forum.component';
 import { CalendarPrincipalComponent } from './views/principal/calendar-principal/calendar-principal.component';
-import { CalendarEntryComponent } from './views/principal/calendar-principal/calendar-entry/calendar-entry.component';
 import { AssociationPrincipalComponent } from './views/principal/association-principal/association-principal.component';
 import { EntryAssociationComponent } from './views/principal/association-principal/entry-association/entry-association.component';
 import { ProfilePrincipalComponent } from './views/principal/profile-principal/profile-principal.component';
 import { DeleteAccountComponent } from './views/principal/profile-principal/delete-account/delete-account.component';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -40,7 +40,6 @@ import { DeleteAccountComponent } from './views/principal/profile-principal/dele
     ForumPrincipalComponent,
     EntriesForumComponent,
     CalendarPrincipalComponent,
-    CalendarEntryComponent,
     AssociationPrincipalComponent,
     EntryAssociationComponent,
     ProfilePrincipalComponent,
@@ -58,7 +57,8 @@ import { DeleteAccountComponent } from './views/principal/profile-principal/dele
     MatButtonModule,
   ],
   providers: [
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 5000}}
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 5000}},
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

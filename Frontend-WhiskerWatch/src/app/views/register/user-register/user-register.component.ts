@@ -25,6 +25,7 @@ export class UserRegisterComponent {
   public registerUser(): void {
     this.userRest.userRegister(this.userCreate).subscribe(
       (data: UserToken) => {
+        this.notificationService.showCorrect('Cuenta creada correctamente');
         this.router.navigate(['/login']);
       },
       (err: Error) => {

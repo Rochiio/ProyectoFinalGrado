@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { DatePipe, formatDate } from '@angular/common';
 import { ForumCreate, ForumMessagesCreate } from 'src/app/models/forum/forum-create/forum-create';
 import { ForumDto, ForumMessagesDto } from 'src/app/models/forum/forum-dto/forum-dto';
 import { ForumRestClientService } from 'src/app/services/api/forum/forum-rest-client.service';
 import { NotificationsService } from 'src/app/services/notifications/notifications.service';
+import { DateFormatterService } from 'src/app/utils/date-formatter/date-formatter.service';
+import { MappersService } from 'src/app/mappers/mappers.service';
 
 @Component({
   selector: 'app-forum-principal',
@@ -15,7 +18,9 @@ export class ForumPrincipalComponent implements OnInit{
 
   constructor(
     private forumService: ForumRestClientService,
-    private notificationService: NotificationsService
+    private notificationService: NotificationsService,
+    private mapperService: MappersService,
+    private formatterService: DateFormatterService
   ){
     this.forum = new ForumDto();
     this.newMessage = '';
@@ -25,6 +30,10 @@ export class ForumPrincipalComponent implements OnInit{
       this.getAllMessages();
   }
 
+
+  /**
+   * Coonseguir el foro.
+   */
   private getAllMessages(): void {
     this.forumService.getForumByMapsId(localStorage.getItem('access_token')!, localStorage.getItem('actual_maps_id')!).subscribe(
       (data: ForumDto) => {
@@ -36,16 +45,26 @@ export class ForumPrincipalComponent implements OnInit{
     )
   }
 
+  /**
+   * Enviar un nuevo mensaje al foro.
+   */
   public sendNewMessage(): void {
-    let newMessage = new ForumMessagesCreate();
+    let newMessage = new ForumMessagesDto();
     newMessage.message = this.newMessage;
     newMessage.username = localStorage.getItem('actual_username')!;
+    newMessage.created_At = this.formatterService.transformDate(new Date());
+
+    let newList: ForumMessagesDto[] = this.forum.listMessages
+    newList.push(newMessage);
+
     let forumCreate = new ForumCreate();
     forumCreate.mapsId = this.forum.mapsId;
-    forumCreate.listMessages = [newMessage];
+    forumCreate.listMessages = this.mapperService.forumMessagesDtoToCreate(newList);
+
     this.forumService.updateForum(localStorage.getItem('access_token')!, this.forum.id, forumCreate).subscribe(
       (data: ForumDto) => {
         this.forum = data;
+        this.notificationService.showCorrect('Mensaje creado correctamente');
       },
       (err: Error) => {
         this.notificationService.showError(err.message);
@@ -53,18 +72,14 @@ export class ForumPrincipalComponent implements OnInit{
     )
   }
 
+  /**
+   * Eliminar un mensaje del foro.
+   * @param idMessage id del mensaje a eliminar.
+   */
   public deleteForumMessage(idMessage: string): void {
     let list: ForumMessagesDto[] = this.forum.listMessages.filter(message => message.id != idMessage);
-    let listMapper: ForumMessagesCreate[] = [];
 
-    list.forEach((message : ForumMessagesDto) => {
-      let mapper = new ForumMessagesCreate();
-      mapper.message = message.message;
-      mapper.username = message.username;
-      mapper.created_At = message.created_At;
-      listMapper.push(mapper);
-    });
-
+    let listMapper: ForumMessagesCreate[] = this.mapperService.forumMessagesDtoToCreate(list);
 
     let forumUpdate = new ForumCreate();
     forumUpdate.mapsId = this.forum.mapsId;
@@ -72,6 +87,7 @@ export class ForumPrincipalComponent implements OnInit{
 
     this.forumService.updateForum(localStorage.getItem('access_token')!, this.forum.id, forumUpdate).subscribe(
       (data: ForumDto) => {
+        this.forum.listMessages = data.listMessages;
         this.notificationService.showCorrect('Mensaje eliminado correctamente');
       },
       (err: Error) => {
@@ -79,6 +95,8 @@ export class ForumPrincipalComponent implements OnInit{
       }
     )
   }
+
+
 
 
 

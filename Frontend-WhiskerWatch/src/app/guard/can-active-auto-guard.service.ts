@@ -26,7 +26,6 @@ export class CanActivateAuthGuard implements CanActivate {
         return roles.includes(association.association.rol);
       }else{
         let user: UserToken = JSON.parse(localStorage.getItem('currentUser')!);
-        console.log(user.user.rol);
         return roles.includes(user.user.rol);
       }
     }else {

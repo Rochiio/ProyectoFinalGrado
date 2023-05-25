@@ -14,7 +14,6 @@ export class MenuPrincipalComponent {
   ) {}
 
   public closeSession() {
-    localStorage.clear();
     this.router.navigate(['/login']);
   }
 }

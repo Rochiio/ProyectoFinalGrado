@@ -37,7 +37,7 @@ export class AssociationRestClientService {
     //return this.httpClient.get<Blob>(DIR+"/image/"+id, {headers});
   //}
 
-  public postAssociationImage(token: string, id: string, image:any): Observable<string>{
+  public postAssociationImage(token: string, id: string, image:any): Observable<{}>{
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
     return this.httpClient.post<string>(DIR+"/image/"+id, image, {headers});
   }

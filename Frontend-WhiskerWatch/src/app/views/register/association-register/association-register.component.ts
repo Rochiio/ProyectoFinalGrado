@@ -25,6 +25,7 @@ export class AssociationRegisterComponent {
   public registerAssociation(): void {
     this.associationRest.associationRegister(this.associationCreate).subscribe(
       (data: AssociationToken) => {
+        this.notificationService.showCorrect('Cuenta creada correctamente');
         this.router.navigate(['/login']);
       },
       (err: Error) => {

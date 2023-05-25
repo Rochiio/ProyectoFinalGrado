@@ -98,6 +98,10 @@ export class ProfilePrincipalComponent implements OnInit{
     });
   }
 
+
+  /**
+   * Eliminar la cuenta de la API
+   */
   public deleteAccountAction () : void {
     if(this.isAssociationProfile){
       console.log('Entro')
@@ -151,7 +155,7 @@ export class ProfilePrincipalComponent implements OnInit{
 
       //TODO lo hace pero aperece como si lo estuviese haciendo mal, pero en el back no da ningun problema ni error
       this.associationService.postAssociationImage(localStorage.getItem("access_token")!, this.actualAssociation.association.id!, data).subscribe(
-        (data: string) => {
+        (data: any) => {
           this.loading = false;
           this.previousImg = '';
           this.notificationService.showCorrect("Imagen actualizada correctamente");
