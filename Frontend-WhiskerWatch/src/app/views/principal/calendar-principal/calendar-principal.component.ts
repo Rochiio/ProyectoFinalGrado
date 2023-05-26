@@ -6,7 +6,8 @@ import { CalendarRestClientService } from 'src/app/services/api/calendar/calenda
 import { NotificationsService } from 'src/app/services/notifications/notifications.service';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { MappersService } from 'src/app/mappers/mappers.service';
-import { CalendarCreate } from 'src/app/models/calendar/calendar-create/calendar-create';
+import { CalendarCreate, TaskCreate } from 'src/app/models/calendar/calendar-create/calendar-create';
+import { UserToken } from 'src/app/models/user/user-token/user-token';
 
 @Component({
   selector: 'app-calendar-principal',
@@ -14,14 +15,16 @@ import { CalendarCreate } from 'src/app/models/calendar/calendar-create/calendar
   styleUrls: ['./calendar-principal.component.css']
 })
 export class CalendarPrincipalComponent implements OnInit {
-  private actualIdEvent: string;
+  public actualIdEvent: string;
   public actualEvent: string;
-
   public newDate: string;
   public newTask: string;
-  actualCalendar!: CalendarDto;
-  calendarOptions!: CalendarOptions;
-  events!: EventsCalendarInt[];
+  public actualCalendar!: CalendarDto;
+  public calendarOptions!: CalendarOptions;
+  public events!: EventsCalendarInt[];
+  public isAdmin = false;
+
+
 
   constructor(
     private calendarService: CalendarRestClientService,
@@ -37,6 +40,7 @@ export class CalendarPrincipalComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.getRol();
     this.getEvents();
 
     this.calendarOptions = {
@@ -46,6 +50,18 @@ export class CalendarPrincipalComponent implements OnInit {
       plugins: [dayGridPlugin],
       eventClick: (event) => this.onClick(event)
     };
+
+  }
+
+
+  /**
+   * Saber el rol del usuario loggeado.
+   */
+  private getRol(): void{
+    if (localStorage.getItem('isAssociation') == 'false'){
+      let user: UserToken = JSON.parse(localStorage.getItem('currentUser')!);
+      (user.user.rol == 'ADMIN') ? this.isAdmin = true : this.isAdmin = false;
+    }
 
   }
 
@@ -98,6 +114,31 @@ export class CalendarPrincipalComponent implements OnInit {
         this.actualCalendar = data;
         this.events = this.mapperService.eventsToCalendarInt(data.listTasks);
         this.notificationService.showCorrect('Evento creado correctamente');
+      },
+      (err: Error) => {
+        this.notificationService.showError(err.message);
+      }
+    )
+  }
+
+
+  /**
+   * Eliminar un elemento del calendiario
+   */
+  public deleteEntry() :void{
+    let list: TaskDto[] = this.actualCalendar.listTasks.filter(task => task.id != this.actualIdEvent);
+
+    let listMapper: TaskCreate[] = this.mapperService.calendarTasksDtoToCreate(list);
+
+    let calendarUpdate = new CalendarCreate();
+    calendarUpdate.mapsId = this.actualCalendar.mapsId;
+    calendarUpdate.listTasks = listMapper;
+
+    this.calendarService.updateCalendar(localStorage.getItem('access_token')!, this.actualCalendar.id, calendarUpdate).subscribe(
+      (data: CalendarDto) => {
+        this.actualCalendar = data;
+        this.events = this.mapperService.eventsToCalendarInt(data.listTasks);
+        this.notificationService.showCorrect('Evento eliminado correctamente');
       },
       (err: Error) => {
         this.notificationService.showError(err.message);

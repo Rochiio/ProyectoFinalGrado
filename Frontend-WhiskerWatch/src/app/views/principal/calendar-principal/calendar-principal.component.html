@@ -9,9 +9,15 @@
       <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900">Calendario</h2>
     </div>
 
-    <div class="grid grid-cols-3">
-      <p class="font-light text-gray-500 col-span-1">Evento Seleccionado: </p>
-      <p class="font-light text-gray-500 col-span-2">{{ actualEvent }}</p>
+    <div>
+      <p class="font-light text-gray-500 ">Evento Seleccionado: </p>
+      <p class="font-light text-gray-500 ">{{ actualEvent }}</p>
+    </div>
+
+    <div *ngIf="isAdmin && actualIdEvent.length>0">
+      <button (click)="deleteEntry()" class="inline-flex items-center justify-center w-10 h-10 mr-2 bg-cyan-600 rounded-full hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600">
+        <img src="assets/icons/delete-entry.png" alt="Maps image" class="w-4 h-4 fill-current">
+      </button>
     </div>
 
     <hr class="h-px bg-gray-400 my-10">

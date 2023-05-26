@@ -52,8 +52,10 @@ export class OlMapComponent implements OnInit, AfterViewInit{
   }
 
   ngAfterViewInit(): void {
-     let center = Proj.fromLonLat([this.lon, this.lat]);
-     if(navigator.geolocation){
+    this.permitGeolocation();
+
+    let center = Proj.fromLonLat([this.lon, this.lat]);
+    if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition((pos) => {
         center = Proj.fromLonLat([pos.coords.longitude, pos.coords.latitude]);
       })
@@ -150,6 +152,33 @@ export class OlMapComponent implements OnInit, AfterViewInit{
     })
   }
 
+
+  private permitGeolocation(): void{
+    if (!navigator.geolocation) {
+      return alert("Tu navegador no soporta el acceso a la ubicación. Intenta con otro");
+    }
+
+    const onUbicacionConcedida = (ubicacion: GeolocationPosition) => {
+        console.log('Ubicación conseguida '+ ubicacion);
+        const coordenadas = ubicacion.coords;
+        this.lat = coordenadas.latitude;
+        this.lon = coordenadas.longitude;
+    }
+
+    const onErrorDeUbicacion = (err: GeolocationPositionError) => {
+        console.log("Error obteniendo ubicación: ", err);
+    }
+
+    const opcionesDeSolicitud = {
+      enableHighAccuracy: true, // Alta precisión
+      maximumAge: 0, // No queremos caché
+      timeout: 10000 // Esperar solo 5 segundos
+    }
+
+
+    navigator.geolocation.getCurrentPosition(onUbicacionConcedida, onErrorDeUbicacion, opcionesDeSolicitud);
+
+  }
 
 }
 
