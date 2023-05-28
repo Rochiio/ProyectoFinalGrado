@@ -2,7 +2,10 @@
   <div class="">
     <!--Image-->
       <div class="flex items-center">
-        <img src="assets/icons/image.png" alt="placeholder" class="w-40 h-40 mr-10">
+        <img *ngIf="isImage" [src]=image class="w-40 h-40 mr-10"alt="img">
+        <img *ngIf="!isImage" src="/assets/icons/image.png" class="w-40 h-40 mr-10"alt="img">
+
+        <!--<img src="assets/icons/image.png" alt="placeholder" class="w-40 h-40 mr-10">-->
 
         <!--Data-->
         <div>

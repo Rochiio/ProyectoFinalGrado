@@ -136,9 +136,10 @@ export class CalendarPrincipalComponent implements OnInit {
 
     this.calendarService.updateCalendar(localStorage.getItem('access_token')!, this.actualCalendar.id, calendarUpdate).subscribe(
       (data: CalendarDto) => {
-        this.actualCalendar = data;
-        this.events = this.mapperService.eventsToCalendarInt(data.listTasks);
+        //this.actualCalendar = data;
+        //this.events = this.mapperService.eventsToCalendarInt(data.listTasks);
         this.notificationService.showCorrect('Evento eliminado correctamente');
+        window.location.reload();
       },
       (err: Error) => {
         this.notificationService.showError(err.message);

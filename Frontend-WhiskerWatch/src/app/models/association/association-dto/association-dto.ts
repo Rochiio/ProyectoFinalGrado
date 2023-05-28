@@ -6,7 +6,7 @@ export class AssociationDto {
   public rol: string;
   public description: string;
   public url: string;
-  public img: string;
+  public image: string;
 
   constructor(){
     this.id = '';
@@ -16,6 +16,6 @@ export class AssociationDto {
     this.rol = 'ASSOCIATION';
     this.description = '';
     this.url = '';
-    this.img = '';
+    this.image = '';
   }
 }

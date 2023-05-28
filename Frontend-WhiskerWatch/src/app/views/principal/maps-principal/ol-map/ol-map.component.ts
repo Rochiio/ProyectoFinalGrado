@@ -55,12 +55,6 @@ export class OlMapComponent implements OnInit, AfterViewInit{
     this.permitGeolocation();
 
     let center = Proj.fromLonLat([this.lon, this.lat]);
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition((pos) => {
-        center = Proj.fromLonLat([pos.coords.longitude, pos.coords.latitude]);
-      })
-    }
-
 
     this.map = new Map({
       target: 'map',

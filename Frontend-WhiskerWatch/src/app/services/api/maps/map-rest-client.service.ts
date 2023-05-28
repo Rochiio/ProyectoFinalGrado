@@ -13,11 +13,21 @@ export class MapRestClientService {
 
   public getAllMaps(token: string): Observable<Array<MapDto>> {
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-    return this.httpClient.get<Array<MapDto>>(DIR, {headers})
+    return this.httpClient.get<Array<MapDto>>(DIR, {headers});
   }
 
   public getById(id: string, token: string): Observable<MapDto> {
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-    return this.httpClient.get<MapDto>(DIR+'/'+id, {headers})
+    return this.httpClient.get<MapDto>(DIR+'/'+id, {headers});
+  }
+
+  public deleteMap(id: string, token: string): Observable<{}> {
+    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    return this.httpClient.delete<{}>(DIR+"/"+id, {headers});
+  }
+
+  public deleteMapAssociation(id: string, token: string ): Observable<{}> {
+    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    return this.httpClient.delete<{}>(DIR+"/adoption/"+id, {headers});
   }
 }

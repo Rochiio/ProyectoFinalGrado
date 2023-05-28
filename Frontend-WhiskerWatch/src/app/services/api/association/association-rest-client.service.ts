@@ -32,10 +32,10 @@ export class AssociationRestClientService {
     return this.httpClient.delete<{}>(DIR+"/"+id, {headers});
   }
 
-  //public getAssociationImage(token: string, id: string): Observable<Blob>{
-    //let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-    //return this.httpClient.get<Blob>(DIR+"/image/"+id, {headers});
-  //}
+  public getAssociationImage(token: string, id: string): Observable<Blob> {
+    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    return this.httpClient.get(DIR+"/image/"+id, { headers:headers, responseType: 'blob' });
+  }
 
   public postAssociationImage(token: string, id: string, image:any): Observable<{}>{
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
