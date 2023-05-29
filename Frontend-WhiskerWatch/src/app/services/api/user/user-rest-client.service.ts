@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Login } from 'src/app/models/login/login';
 import { UserCreate } from 'src/app/models/user/user-create/user-create';
+import { UserDto } from 'src/app/models/user/user-dto/user-dto';
 import { UserToken } from 'src/app/models/user/user-token/user-token';
 
 const DIR = 'http://127.0.0.1:6969/user'
@@ -19,6 +20,11 @@ export class UserRestClientService {
 
   public userRegister(register: UserCreate): Observable<UserToken> {
     return this.httpClient.post<UserToken>(DIR + '/register', register)
+  }
+
+  public putUser(token: string, id: string, newData: UserCreate): Observable<UserDto> {
+    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    return this.httpClient.put<UserDto>(DIR+"/"+id, newData, {headers});
   }
 
   public deleteUser(token: string, id: string): Observable<{}> {

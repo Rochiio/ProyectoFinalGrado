@@ -32,6 +32,11 @@ export class AssociationRestClientService {
     return this.httpClient.delete<{}>(DIR+"/"+id, {headers});
   }
 
+  public putAssociation(token: string, id: string, newData: AssociationCreate): Observable<AssociationDto> {
+    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    return this.httpClient.put<AssociationDto>(DIR+"/"+id, newData, {headers});
+  }
+
   public getAssociationImage(token: string, id: string): Observable<Blob> {
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
     return this.httpClient.get(DIR+"/image/"+id, { headers:headers, responseType: 'blob' });
@@ -41,5 +46,6 @@ export class AssociationRestClientService {
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
     return this.httpClient.post<string>(DIR+"/image/"+id, image, {headers});
   }
+
 
 }

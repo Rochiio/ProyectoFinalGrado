@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MapDto } from 'src/app/models/maps/map-dto/map-dto';
 import { Observable } from 'rxjs';
+import { MapCreate } from 'src/app/models/maps/map-create/map-create';
 
 const DIR = 'http://127.0.0.1:6969/map'
 @Injectable({
@@ -24,6 +25,11 @@ export class MapRestClientService {
   public deleteMap(id: string, token: string): Observable<{}> {
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
     return this.httpClient.delete<{}>(DIR+"/"+id, {headers});
+  }
+
+  public postMap(token: string, newData: MapCreate): Observable<MapDto> {
+    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    return this.httpClient.post<MapDto>(DIR, newData, {headers});
   }
 
   public deleteMapAssociation(id: string, token: string ): Observable<{}> {

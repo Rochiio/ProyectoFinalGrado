@@ -10,6 +10,11 @@ import { AssociationRestClientService } from 'src/app/services/api/association/a
 import { UserRestClientService } from 'src/app/services/api/user/user-rest-client.service';
 import { NotificationsService } from 'src/app/services/notifications/notifications.service';
 import { Router } from '@angular/router';
+import { AssociationCreate } from 'src/app/models/association/association-create/association-create';
+import { AssociationDto } from 'src/app/models/association/association-dto/association-dto';
+import { UserCreate } from 'src/app/models/user/user-create/user-create';
+import { UserDto } from 'src/app/models/user/user-dto/user-dto';
+import { er } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-profile-principal',
@@ -23,8 +28,8 @@ export class ProfilePrincipalComponent implements OnInit{
   public loading: boolean = false;
 
   private image: any;
-  private actualAssociation!: AssociationToken;
-  private actualUser!: UserToken;
+  private actualAssociation!: AssociationDto;
+  private actualUser!: UserDto;
 
 
   constructor(
@@ -60,12 +65,12 @@ export class ProfilePrincipalComponent implements OnInit{
   private putActualData(): void{
     if(this.isAssociationProfile == true){
       let actualAssociation: AssociationToken = JSON.parse(localStorage.getItem('currentAssociation')!);
-      this.actualAssociation = actualAssociation;
+      this.actualAssociation = actualAssociation.association;
       this.actualProfile = {name: actualAssociation.association.name, email: actualAssociation.association.email, username: actualAssociation.association.username,
          password:'', repeat_password: '', description:actualAssociation.association.description, url:actualAssociation.association.url, img:''};
     }else{
       let actualUser: UserToken = JSON.parse(localStorage.getItem('currentUser')!);
-      this.actualUser = actualUser;
+      this.actualUser = actualUser.user;
       this.actualProfile = {name: actualUser.user.name, email: actualUser.user.email, username: actualUser.user.username,
          password:'', repeat_password: '', description:'', url:'', img:''};
     }
@@ -81,8 +86,40 @@ export class ProfilePrincipalComponent implements OnInit{
   }
 
 
-
-  public updateProfile(): void {}
+  /**
+   * Actualizar el perfil del usuario loggeado.
+   */
+  public updateProfile(): void {
+    if(this.isAssociationProfile){
+      let updateAssociation: AssociationCreate = {name: this.actualProfile.name, email: this.actualProfile.email, username: this.actualProfile.username,
+        password: this.actualProfile.password, rol: this.actualAssociation.rol, description: this.actualProfile.description, url: this.actualProfile.url}
+      this.associationService.putAssociation(localStorage.getItem('access_token')!, this.actualAssociation.id, updateAssociation).subscribe(
+        (data: AssociationDto) => {
+          this.actualAssociation = data;
+          this.actualProfile = {name: data.name, email: data.email, username: data.username,
+            password:'', repeat_password: '', description:data.description, url:data.url, img:''};
+          this.notificationService.showCorrect("Perfil modificado correctamente");
+        },
+        (err: Error) => {
+          this.notificationService.showError(err.message);
+        }
+      );
+    }else{
+      let updateUser: UserCreate = {name: this.actualProfile.name, email: this.actualProfile.email, username: this.actualProfile.username,
+        password: this.actualProfile.password, rol: this.actualUser.rol}
+      this.userService.putUser(localStorage.getItem('access_token')!, this.actualUser.id, updateUser).subscribe(
+        (data: UserDto) => {
+          this.actualUser = data;
+          this.actualProfile = {name: data.name, email: data.email, username: data.username,
+            password:'', repeat_password: '', description:'', url:'', img:''};
+          this.notificationService.showCorrect("Perfil modificado correctamente");
+        },
+        (err: Error) => {
+          this.notificationService.showError(err.message);
+        }
+      );
+    }
+  }
 
 
   /**
@@ -105,7 +142,7 @@ export class ProfilePrincipalComponent implements OnInit{
   public deleteAccountAction () : void {
     if(this.isAssociationProfile){
       console.log('Entro')
-      this.associationService.deleteAssociation(localStorage.getItem('access_token')!, this.actualAssociation.association.id).subscribe(
+      this.associationService.deleteAssociation(localStorage.getItem('access_token')!, this.actualAssociation.id).subscribe(
         (data: any) => {
         console.log('Entro');
           this.notificationService.showCorrect('Cuenta eliminada correctamente');
@@ -116,7 +153,7 @@ export class ProfilePrincipalComponent implements OnInit{
         }
       )
     }else{
-      this.userService.deleteUser(localStorage.getItem('access_token')!, this.actualUser.user.id).subscribe(
+      this.userService.deleteUser(localStorage.getItem('access_token')!, this.actualUser.id).subscribe(
         (data: any) => {
           this.notificationService.showCorrect('Cuenta eliminada correctamente');
           this.router.navigate(['/login']);
@@ -154,7 +191,7 @@ export class ProfilePrincipalComponent implements OnInit{
       data.append('', this.image);
 
       //TODO lo hace pero aperece como si lo estuviese haciendo mal, pero en el back no da ningun problema ni error
-      this.associationService.postAssociationImage(localStorage.getItem("access_token")!, this.actualAssociation.association.id!, data).subscribe(
+      this.associationService.postAssociationImage(localStorage.getItem("access_token")!, this.actualAssociation.id!, data).subscribe(
         (data: any) => {
           this.loading = false;
           this.previousImg = '';

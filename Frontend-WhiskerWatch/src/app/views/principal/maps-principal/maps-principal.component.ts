@@ -1,4 +1,6 @@
 import { Component, OnInit, AfterViewInit, Input, ElementRef } from '@angular/core';
+import { MapCreate } from 'src/app/models/maps/map-create/map-create';
+import { MapDto } from 'src/app/models/maps/map-dto/map-dto';
 import { UserToken } from 'src/app/models/user/user-token/user-token';
 import { MapRestClientService } from 'src/app/services/api/maps/map-rest-client.service';
 import { NotificationsService } from 'src/app/services/notifications/notifications.service';
@@ -14,6 +16,9 @@ export class MapsPrincipalComponent implements OnInit {
   public disabled!: boolean;
   public isAdmin: boolean = false;
   public isAssociation: boolean = false;
+
+  public newLatitude!: string;
+  public newLongitude!: string;
 
   constructor(
     private mapService: MapRestClientService,
@@ -59,8 +64,8 @@ export class MapsPrincipalComponent implements OnInit {
   deleteLocation(): void {
     this.mapService.deleteMap(localStorage.getItem('actual_maps_id')!, localStorage.getItem('access_token')!).subscribe(
       (data: any) => {
-        this.notificationService.showCorrect('Localización eliminada correctamente');
         window.location.reload();
+        this.notificationService.showCorrect('Localización eliminada correctamente');
       },
       (err: Error) => {
         this.notificationService.showError(err.message);
@@ -70,13 +75,13 @@ export class MapsPrincipalComponent implements OnInit {
 
 
   /**
-   * Eliminar un localizacion por recogida de asociacion
+   * Eliminar un localizacion por recogida de asociacion.
    */
   deleteLocationAssociation(): void {
     this.mapService.deleteMapAssociation(localStorage.getItem('actual_maps_id')!, localStorage.getItem('access_token')!).subscribe(
       (data: any) => {
-        this.notificationService.showCorrect('Localización eliminada por recogida correctamente');
         window.location.reload();
+        this.notificationService.showCorrect('Localización eliminada por recogida correctamente');
       },
       (err: Error) => {
         this.notificationService.showError(err.message);
@@ -84,6 +89,37 @@ export class MapsPrincipalComponent implements OnInit {
     );
   }
 
+  /**
+   * Crear una nueva localizacion en el mapa.
+   */
+  sendNewLocation(): void {
+    if(this.areCoordinatesCorrect()){
+      let createMap: MapCreate = {latitude: this.newLatitude, longitude: this.newLongitude};
+      this.mapService.postMap(localStorage.getItem('access_token')!, createMap).subscribe(
+        (data: MapDto) => {
+          window.location.reload();
+          this.notificationService.showCorrect('Localización creada correctamente');
+        },
+        (err: Error) => {
+          this.notificationService.showError(err.message);
+        }
+      );
+    }else{
+      this.notificationService.showError('Latitud o Longitud incorrecta (máximo decimales: 9)');
+    }
+  }
+
+  /**
+   * Comprueba si los nuevos datos de longitud y latitud son correctos.
+   */
+  private areCoordinatesCorrect() :boolean {
+    if (this.newLatitude.length == 0 || this.newLongitude.length == 0
+      || !this.newLatitude.match('^([+-])?(?:90(?:\.0{1,6})?|((?:|[1-8])[0-9])(?:\.[0-9]{1,9})?)$')
+      || !this.newLongitude.match('^([+-])?(?:180(?:\.0{1,6})?|((?:|[1-9]|1[0-7])[0-9])(?:\.[0-9]{1,9})?)$')){
+        return false;
+      }
+      return true;
+  }
 
 
 }
