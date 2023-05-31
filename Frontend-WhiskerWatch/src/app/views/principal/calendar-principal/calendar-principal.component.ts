@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CalendarOptions, EventClickArg } from '@fullcalendar/core';
 import { CalendarDto, TaskDto } from 'src/app/models/calendar/calendar-dto/calendar-dto';
 import { EventsCalendarInt } from 'src/app/models/fullcalendar/events-calendar-int';
@@ -86,8 +86,8 @@ export class CalendarPrincipalComponent implements OnInit {
         this.events = this.mapperService.eventsToCalendarInt(data.listTasks);
         this.calendarOptions.events = this.events;
       },
-      (err: Error) => {
-        this.notificationService.showError(err.message);
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
     );
   }
@@ -116,8 +116,8 @@ export class CalendarPrincipalComponent implements OnInit {
         this.calendarOptions.events = this.events;
         this.notificationService.showCorrect('Evento creado correctamente');
       },
-      (err: Error) => {
-        this.notificationService.showError(err.message);
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
     )
   }
@@ -142,8 +142,8 @@ export class CalendarPrincipalComponent implements OnInit {
         this.calendarOptions.events = this.events;
         this.notificationService.showCorrect('Evento eliminado correctamente');
       },
-      (err: Error) => {
-        this.notificationService.showError(err.message);
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
     )
   }

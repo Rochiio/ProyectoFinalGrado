@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ElementRef } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { MapCreate } from 'src/app/models/maps/map-create/map-create';
 import { MapDto } from 'src/app/models/maps/map-dto/map-dto';
 import { UserToken } from 'src/app/models/user/user-token/user-token';
@@ -67,8 +67,8 @@ export class MapsPrincipalComponent implements OnInit {
         window.location.reload();
         this.notificationService.showCorrect('Localización eliminada correctamente');
       },
-      (err: Error) => {
-        this.notificationService.showError(err.message);
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
     );
   }
@@ -83,8 +83,8 @@ export class MapsPrincipalComponent implements OnInit {
         window.location.reload();
         this.notificationService.showCorrect('Localización eliminada por recogida correctamente');
       },
-      (err: Error) => {
-        this.notificationService.showError(err.message);
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
     );
   }
@@ -100,8 +100,8 @@ export class MapsPrincipalComponent implements OnInit {
           window.location.reload();
           this.notificationService.showCorrect('Localización creada correctamente');
         },
-        (err: Error) => {
-          this.notificationService.showError(err.message);
+        (err: ErrorEvent) => {
+          this.notificationService.showError(err.error);
         }
       );
     }else{

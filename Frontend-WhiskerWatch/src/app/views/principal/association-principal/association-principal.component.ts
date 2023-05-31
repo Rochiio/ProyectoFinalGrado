@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';   
+import { Component, OnInit } from '@angular/core';
 import { AssociationDto } from 'src/app/models/association/association-dto/association-dto';
 import { AssociationRestClientService } from 'src/app/services/api/association/association-rest-client.service';
 import { NotificationsService } from 'src/app/services/notifications/notifications.service';
@@ -27,8 +27,8 @@ export class AssociationPrincipalComponent implements OnInit {
       (data: AssociationDto[]) => {
         this.associations = data;
       },
-      (err: Error) => {
-        this.notificationService.showError(err.message);
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
     )
   }

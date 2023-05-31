@@ -1,5 +1,4 @@
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
-import { DatePipe, formatDate } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { ForumCreate, ForumMessagesCreate } from 'src/app/models/forum/forum-create/forum-create';
 import { ForumDto, ForumMessagesDto } from 'src/app/models/forum/forum-dto/forum-dto';
 import { ForumRestClientService } from 'src/app/services/api/forum/forum-rest-client.service';
@@ -39,8 +38,8 @@ export class ForumPrincipalComponent implements OnInit{
       (data: ForumDto) => {
         this.forum = data;
       },
-      (err: Error) => {
-        this.notificationService.showError(err.message);
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
     )
   }
@@ -66,8 +65,8 @@ export class ForumPrincipalComponent implements OnInit{
         this.forum = data;
         this.notificationService.showCorrect('Mensaje creado correctamente');
       },
-      (err: Error) => {
-        this.notificationService.showError(err.message);
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
     )
   }
@@ -90,8 +89,8 @@ export class ForumPrincipalComponent implements OnInit{
         this.forum.listMessages = data.listMessages;
         this.notificationService.showCorrect('Mensaje eliminado correctamente');
       },
-      (err: Error) => {
-        this.notificationService.showError(err.message);
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
     )
   }

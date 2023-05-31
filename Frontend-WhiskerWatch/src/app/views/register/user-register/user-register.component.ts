@@ -28,8 +28,8 @@ export class UserRegisterComponent {
         this.notificationService.showCorrect('Cuenta creada correctamente');
         this.router.navigate(['/login']);
       },
-      (err: Error) => {
-        this.notificationService.showError(err.message);
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
     )
   }

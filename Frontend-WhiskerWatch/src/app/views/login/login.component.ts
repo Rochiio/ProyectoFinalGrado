@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AssociationToken } from 'src/app/models/association/association-token/association-token';
@@ -43,8 +44,8 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('actual_username', data.association.username);
             this.router.navigate(['/principal']);
           },
-          (err: Error) => {
-            this.notificationService.showError(err.message);
+          (err: ErrorEvent) => {
+            this.notificationService.showError(err.error);
           }
         )
     }else{
@@ -56,8 +57,8 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('actual_username', data.user.username);
           this.router.navigate(['/principal']);
         },
-        (err: Error) => {
-          this.notificationService.showError(err.message);
+        (err: ErrorEvent) => {
+          this.notificationService.showError(err.error);
         }
       )
     }

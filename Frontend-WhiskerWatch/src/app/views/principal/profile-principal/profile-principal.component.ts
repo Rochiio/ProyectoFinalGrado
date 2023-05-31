@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteAccountComponent } from './delete-account/delete-account.component';
-import { async } from 'rxjs';
 import { AssociationToken } from 'src/app/models/association/association-token/association-token';
 import { Profile } from 'src/app/models/profile/profile';
 import { UserToken } from 'src/app/models/user/user-token/user-token';
@@ -14,7 +13,6 @@ import { AssociationCreate } from 'src/app/models/association/association-create
 import { AssociationDto } from 'src/app/models/association/association-dto/association-dto';
 import { UserCreate } from 'src/app/models/user/user-create/user-create';
 import { UserDto } from 'src/app/models/user/user-dto/user-dto';
-import { er } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-profile-principal',
@@ -100,8 +98,8 @@ export class ProfilePrincipalComponent implements OnInit{
             password:'', repeat_password: '', description:data.description, url:data.url, img:''};
           this.notificationService.showCorrect("Perfil modificado correctamente");
         },
-        (err: Error) => {
-          this.notificationService.showError(err.message);
+        (err: ErrorEvent) => {
+          this.notificationService.showError(err.error);
         }
       );
     }else{
@@ -114,8 +112,8 @@ export class ProfilePrincipalComponent implements OnInit{
             password:'', repeat_password: '', description:'', url:'', img:''};
           this.notificationService.showCorrect("Perfil modificado correctamente");
         },
-        (err: Error) => {
-          this.notificationService.showError(err.message);
+        (err: ErrorEvent) => {
+          this.notificationService.showError(err.error);
         }
       );
     }
@@ -148,8 +146,8 @@ export class ProfilePrincipalComponent implements OnInit{
           this.notificationService.showCorrect('Cuenta eliminada correctamente');
           this.router.navigate(['/login']);
         },
-        (err: Error) => {
-          this.notificationService.showError(err.message);
+        (err: ErrorEvent) => {
+          this.notificationService.showError(err.error);
         }
       )
     }else{
@@ -158,8 +156,8 @@ export class ProfilePrincipalComponent implements OnInit{
           this.notificationService.showCorrect('Cuenta eliminada correctamente');
           this.router.navigate(['/login']);
         },
-        (err: Error) => {
-          this.notificationService.showError(err.message);
+        (err: ErrorEvent) => {
+          this.notificationService.showError(err.error);
         }
       )
     }
@@ -197,9 +195,8 @@ export class ProfilePrincipalComponent implements OnInit{
           this.previousImg = '';
           this.notificationService.showCorrect("Imagen actualizada correctamente");
         },
-        (err: Error) => {
-          this.loading = false;
-          this.notificationService.showError(err.message);
+        (err: ErrorEvent) => {
+          this.notificationService.showError(err.error);
         }
       );
     }catch (e) {
