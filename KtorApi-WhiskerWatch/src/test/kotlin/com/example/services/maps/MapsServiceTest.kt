@@ -68,6 +68,7 @@ class MapsServiceTest {
 
     @Test
     fun saveMap() = runTest {
+        coEvery { repository.findMapByLatLon(any(), any()) } returns null
         coEvery { repository.save(any()) } returns test
 
         val created = service.saveMap(createTest)
@@ -79,10 +80,28 @@ class MapsServiceTest {
         )
 
         coVerify(exactly=1) { repository.save(any()) }
+        coVerify(exactly=1) { repository.findMapByLatLon(any(), any()) }
+    }
+
+    @Test
+    fun saveMapLatLonExist() = runTest {
+        coEvery { repository.findMapByLatLon(any(), any()) } returns test
+
+        val res = service.saveMap(createTest)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is MapsError.MapsBadRequestError)},
+            { assertEquals("Ya existe un mapa con la latitud ${test.latitude} y la longitud ${test.longitude}", res.getError()?.message) }
+        )
+
+        coVerify(exactly=1) { repository.findMapByLatLon(any(), any()) }
     }
 
     @Test
     fun updateMap() = runTest {
+        coEvery { repository.findMapByLatLon(any(), any()) } returns null
         coEvery { repository.findById(test.id) } returns test
         coEvery { repository.update(test) } returns test
 
@@ -95,6 +114,7 @@ class MapsServiceTest {
         )
 
         coVerify(exactly=1) { repository.findById(test.id) }
+        coVerify(exactly=1) { repository.findMapByLatLon(any(), any()) }
         coVerify(exactly=1) { repository.update(test) }
     }
 
@@ -112,6 +132,24 @@ class MapsServiceTest {
         )
 
         coVerify(exactly=1) { repository.findById(test.id) }
+    }
+
+    @Test
+    fun updateMapLatLonExist() = runTest {
+        coEvery { repository.findById(test.id) } returns test
+        coEvery { repository.findMapByLatLon(any(), any()) } returns test
+
+        val res = service.updateMap(createTest, test.id)
+        assertAll(
+            { assertNotNull(res) },
+            { assertTrue(res.get()==null) },
+            { assertTrue(res.getError() != null) },
+            { assertTrue(res.getError() is MapsError.MapsBadRequestError)},
+            { assertEquals("Ya existe un mapa con la latitud ${test.latitude} y la longitud ${test.longitude}", res.getError()?.message) }
+        )
+
+        coVerify(exactly=1) { repository.findById(test.id) }
+        coVerify(exactly=1) { repository.findMapByLatLon(any(), any()) }
     }
 
     @Test

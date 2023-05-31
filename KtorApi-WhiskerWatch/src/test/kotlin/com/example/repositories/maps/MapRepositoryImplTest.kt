@@ -44,6 +44,18 @@ class MapRepositoryImplTest {
 
     @Test
     @Order(3)
+    fun findByLatLong() = runTest {
+        val find = repository.findMapByLatLon(test.latitude, test.longitude)
+
+        assertAll(
+            { assertNotNull(find) },
+            { assertEquals(test.latitude, find?.latitude) },
+            { assertEquals(test.longitude, find?.longitude)}
+        )
+    }
+
+    @Test
+    @Order(4)
     fun findAll() = runTest {
         val find = repository.findAll().toList()
 
@@ -55,7 +67,7 @@ class MapRepositoryImplTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     fun update() = runTest {
         val update = test.copy(latitude = "123")
         val updated = repository.update(update)
@@ -67,7 +79,7 @@ class MapRepositoryImplTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     fun delete() =runTest {
         val deleted = repository.delete(test)
 
@@ -75,7 +87,7 @@ class MapRepositoryImplTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     fun deleteAll() = runTest {
         val deleted = repository.deleteAll()
 

@@ -36,16 +36,24 @@ class MapsService(
     }
 
     suspend fun saveMap(map: MapsCreateDto): Result<Maps, MapsError>{
-        val created = Maps(latitude = map.latitude, longitude = map.longitude)
-        cache.put(created.id, created)
-        return Ok(mapRepository.save(created))
+        return mapRepository.findMapByLatLon(map.latitude, map.longitude)?.let {
+            Err(MapsError.MapsBadRequestError("Ya existe un mapa con la latitud ${map.latitude} y la longitud ${map.longitude}"))
+        }?: run{
+            val created = Maps(latitude = map.latitude, longitude = map.longitude)
+            cache.put(created.id, created)
+            Ok(mapRepository.save(created))
+        }
     }
 
     suspend fun updateMap(map: MapsCreateDto, idMap: String): Result<Maps, MapsError>{
         return mapRepository.findById(idMap)?.let {
-            val updated = Maps(id = it.id, latitude = map.latitude, longitude = map.longitude)
-            cache.put(idMap, updated)
-            Ok(mapRepository.update(updated))
+            mapRepository.findMapByLatLon(map.latitude, map.longitude)?.let {
+                Err(MapsError.MapsBadRequestError("Ya existe un mapa con la latitud ${map.latitude} y la longitud ${map.longitude}"))
+            }?: run {
+                val updated = Maps(id = it.id, latitude = map.latitude, longitude = map.longitude)
+                cache.put(idMap, updated)
+                Ok(mapRepository.update(updated))
+            }
         }?: run{
             Err(MapsError.MapsNotFoundError("No se ha encontrado un mapa con el id $idMap"))
         }

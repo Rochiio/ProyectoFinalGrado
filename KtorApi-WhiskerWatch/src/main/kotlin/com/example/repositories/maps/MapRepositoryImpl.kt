@@ -13,6 +13,11 @@ import java.util.*
 class MapRepositoryImpl: MapRepository {
     private val logger = KotlinLogging.logger{}
     private val dbMongo = MongoDbManager.database
+    override suspend fun findMapByLatLon(latitude: String, longitude: String): Maps? {
+        logger.info { "Buscando mapa por latitud y longitud" }
+        return dbMongo.getCollection<Maps>()
+            .findOne(Maps::latitude eq latitude, Maps::longitude eq longitude)
+    }
 
     override suspend fun findById(id: String): Maps? {
         logger.info { "Buscando mapa por UUID" }
