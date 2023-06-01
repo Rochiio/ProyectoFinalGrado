@@ -1,11 +1,16 @@
 package com.example.routing
 
 import com.example.dto.CalendarCreateDto
+import com.example.models.calendar.Calendar
 import com.example.models.users.Rol
 import com.example.services.calendar.CalendarService
 import com.example.validators.taskListValidation
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import io.github.smiley4.ktorswaggerui.dsl.delete
+import io.github.smiley4.ktorswaggerui.dsl.get
+import io.github.smiley4.ktorswaggerui.dsl.post
+import io.github.smiley4.ktorswaggerui.dsl.put
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -26,15 +31,43 @@ fun Application.calendarRoutes(){
     routing {
         route(CAL){
 
+
             authenticate {
 
-                get(){
+
+                get("", {
+                  description = "Conseguir todos los calendarios"
+                  response {
+                      HttpStatusCode.OK to {
+                          description = "Lista con todos los calendarios que hay almacenados"
+                          body<List<Calendar>> { description = "Lista de calendarios"}
+                      }
+                  }
+                }){
+
                     logger.info { "Get All Calendar Route" }
                     val list = service.findAllCalendars()
                     call.respond(HttpStatusCode.OK, list)
                 }
 
-                get("/{id}"){
+
+                get("/{id}", {
+                    description = "Conseguir calendario por el id"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id por el que buscar el calendario"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Se ha encontrado el calendario"
+                            body<Calendar> { description = "Calendario encontrado"}
+                        }
+                        HttpStatusCode.NotFound to { description= "No se ha encontrado el calendario" }
+                    }
+                }){
+
                     logger.info { "Get Calendar By Id"}
                     val id = call.parameters["id"].toString()
                     service.findCalendarById(id)
@@ -42,7 +75,24 @@ fun Application.calendarRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
-                get("/mapsId/{id}"){
+
+                get("/mapsId/{id}", {
+                    description = "Conseguir un calendario por el id del mapa asociado"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id del mapa por el que buscar el calendario"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Se ha encontrado el calednario"
+                            body<Calendar> {description="Calendario encontrado"}
+                        }
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado el calendario con el id del mapa"}
+                    }
+                }){
+
                     logger.info { "Get Calendar By Maps Id"}
                     val id = call.parameters["id"].toString()
                     service.findCalendarByMapsId(id)
@@ -50,7 +100,20 @@ fun Application.calendarRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
-                post(){
+                post("", {
+                  description = "Salvar un calendario"
+                  request {
+                      body<CalendarCreateDto> { description = "Datos necesarios para crear el calendario"}
+                  }
+                  response {
+                      HttpStatusCode.Created to {
+                          description = "Calendario creado correctamente"
+                          body<Calendar> { description = "Calendario creado"}
+                      }
+                      HttpStatusCode.BadRequest to { description= "Validacion de datos incorrecta"}
+                  }
+                }){
+
                     logger.info { "Save Calendar" }
                     try{
                         val post = call.receive<CalendarCreateDto>()
@@ -67,7 +130,26 @@ fun Application.calendarRoutes(){
                     }
                 }
 
-                put("/{id}"){
+
+                put("/{id}", {
+                    description = "Actualizar el calendario"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id del calendario a actualizar"
+                            required = true
+                        }
+                        body<CalendarCreateDto> { description = "Datos necesarios para actualizar el calendario" }
+                    }
+                    response {
+                        HttpStatusCode.Created to {
+                            description = "Calendario actualizado correctamenete"
+                            body<Calendar> { description = "Calendario actualizado"}
+                        }
+                        HttpStatusCode.BadRequest to { description = "Validacion de datos incorrecto"}
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado el calendario"}
+                    }
+                }){
+
                     logger.info { "Update Calendar" }
                     try {
                         val id = call.parameters["id"].toString()
@@ -86,7 +168,21 @@ fun Application.calendarRoutes(){
                     }
                 }
 
-                delete("/{id}"){
+
+                delete("/{id}", {
+                    description = "Eliminar un calendario por su ID"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id por el que buscar el calendario"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.NoContent to { description = "Se ha eliminado correctamente el calendario"}
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado el calendario a eliminar"}
+                    }
+                }){
+
                     logger.info { "Delete Calendar" }
                     val id = call.parameters["id"].toString()
                     val auth = call.principal<JWTPrincipal>()
@@ -100,7 +196,21 @@ fun Application.calendarRoutes(){
                     }
                 }
 
-                delete("/mapsId/{id}"){
+
+                delete("/mapsId/{id}", {
+                    description = "Eliminar un calendario por el id del mapa asociado"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id del mapa por el que eliminar el calendario"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.NoContent to { description = "Se ha elimiando correctamente el calendario" }
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado el calendario" }
+                    }
+                }){
+
                     logger.info { "Delete Calendar By Maps Id" }
                     val id = call.parameters["id"].toString()
                     val auth = call.principal<JWTPrincipal>()
