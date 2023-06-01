@@ -1,11 +1,16 @@
 package com.example.routing
 
 import com.example.dto.ForumCreateDto
+import com.example.models.forum.Forum
 import com.example.models.users.Rol
 import com.example.services.forum.ForumService
 import com.example.validators.forumListValidation
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import io.github.smiley4.ktorswaggerui.dsl.delete
+import io.github.smiley4.ktorswaggerui.dsl.get
+import io.github.smiley4.ktorswaggerui.dsl.post
+import io.github.smiley4.ktorswaggerui.dsl.put
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -27,15 +32,43 @@ fun Application.forumRoutes(){
     routing {
         route(FOR){
 
+
             authenticate {
 
-                get(){
+
+                get("", {
+                    description = "Conseguir todos los foros"
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Todos los foros almacenados"
+                            body<List<Forum>> { description = "Lista de foros"}
+                        }
+                    }
+                }){
+
                     logger.info { "Get All Forum Route" }
                     val list = service.findAllForums()
                     call.respond(HttpStatusCode.OK, list)
                 }
 
-                get("/{id}"){
+
+                get("/{id}", {
+                    description = "Conseguir un foro por el ID"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id por el que buscar el foro"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Se ha encontrado el foro"
+                            body<Forum> { description = "Foro encontrado"}
+                        }
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado el foro" }
+                    }
+                }){
+
                     logger.info { "Get Forum By Id"}
                     val id = call.parameters["id"].toString()
                     service.findById(id)
@@ -43,7 +76,24 @@ fun Application.forumRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
-                get("/mapsId/{id}"){
+
+                get("/mapsId/{id}", {
+                    description = "Conseguir un foro por el id del mapa asociado"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id del mapa asociado al foro"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Se ha encontrado el foro asociado a ese id del mapa"
+                            body<Forum> { description = "Foro encontrado"}
+                        }
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado el foro"}
+                    }
+                }){
+
                     logger.info { "Get Forum By Map Id"}
                     val id = call.parameters["id"].toString()
                     service.findByMapsId(id)
@@ -51,7 +101,21 @@ fun Application.forumRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
-                post(){
+
+                post("" , {
+                    description = "Salvar foro"
+                    request{
+                        body<ForumCreateDto> {description = "Datos necesarios para crear el foro"}
+                    }
+                    response {
+                        HttpStatusCode.Created to {
+                            description = "Se ha creado correctamente el foro"
+                            body<Forum> { description = "Foro creado"}
+                        }
+                        HttpStatusCode.BadRequest to { description="Validacion de datos incorrecta"}
+                    }
+                }){
+
                     logger.info { "Save Forum" }
                     try{
                         val post = call.receive<ForumCreateDto>()
@@ -68,7 +132,26 @@ fun Application.forumRoutes(){
                     }
                 }
 
-                put("/{id}"){
+
+                put("/{id}", {
+                    description = "Actualizar foro"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id del foro a actualizar"
+                            required = true
+                        }
+                        body<ForumCreateDto> {description="Datos necesarios para actualizar el foro"}
+                    }
+                    response {
+                        HttpStatusCode.Created to {
+                            description = "Foro actualizado correctamente"
+                            body<Forum> { description = "Foro actualizado"}
+                        }
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado el foro"}
+                        HttpStatusCode.BadRequest to { description = "Validacion de datos incorrecta"}
+                    }
+                }){
+
                     logger.info { "Update Forum" }
                     try {
                         val id = call.parameters["id"].toString()
@@ -87,7 +170,21 @@ fun Application.forumRoutes(){
                     }
                 }
 
-                delete("/{id}"){
+
+                delete("/{id}", {
+                    description = "Eliminar foro por el ID"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id por el que buscar el foro a eliminar"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.NoContent to { description = "Foro eliminado correctamente"}
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado el foro a eliminar"}
+                    }
+                }){
+
                     logger.info { "Delete Forum" }
                     val id = call.parameters["id"].toString()
                     val auth = call.principal<JWTPrincipal>()
@@ -101,7 +198,21 @@ fun Application.forumRoutes(){
                     }
                 }
 
-                delete("/mapsId/{id}"){
+
+                delete("/mapsId/{id}", {
+                    description = "Eliminar foro por el id del mapa asociado"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id del mapa por el que buscar el foro a eliminar"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.NoContent to { description = "Foro eliminado correctamente"}
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado el foro a eliminar"}
+                    }
+                }){
+
                     logger.info { "Delete Forum By Maps Id" }
                     val id = call.parameters["id"].toString()
                     val auth = call.principal<JWTPrincipal>()
