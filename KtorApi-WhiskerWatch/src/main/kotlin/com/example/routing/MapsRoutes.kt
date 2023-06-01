@@ -3,12 +3,17 @@ package com.example.routing
 import com.example.dto.CalendarCreateDto
 import com.example.dto.ForumCreateDto
 import com.example.dto.MapsCreateDto
+import com.example.models.Maps
 import com.example.models.users.Rol
 import com.example.services.calendar.CalendarService
 import com.example.services.forum.ForumService
 import com.example.services.maps.MapsService
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import io.github.smiley4.ktorswaggerui.dsl.delete
+import io.github.smiley4.ktorswaggerui.dsl.get
+import io.github.smiley4.ktorswaggerui.dsl.post
+import io.github.smiley4.ktorswaggerui.dsl.put
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -34,15 +39,43 @@ fun Application.mapRoutes(){
     routing {
         route(MAP){
 
+
             authenticate {
 
-                get(){
+
+                get("", {
+                    description = "Conseguir todas las localizaciones"
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Lista de todas las localizaciones almacenadas"
+                            body<List<Maps>> { description = "Lista de localizaciones"}
+                        }
+                    }
+                }){
+
                     logger.info { "Get All Map Route" }
                     val list = service.findAllMaps()
                     call.respond(HttpStatusCode.OK, list)
                 }
 
-                get("/{id}"){
+
+                get("/{id}", {
+                    description = "Conseguir localizacion por ID"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id por el que buscar la localizacion"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Se ha encontrado la localizacion"
+                            body<Maps> { description = "Localizacion encontrada"}
+                        }
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado la localizacion"}
+                    }
+                }){
+
                     logger.info { "Get Map By Id"}
                     val id = call.parameters["id"].toString()
                     service.findMapById(id)
@@ -50,7 +83,21 @@ fun Application.mapRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
-                post(){
+
+                post("", {
+                    description = "Salvar localizacion"
+                    request {
+                        body<MapsCreateDto> { description = "Datos necesarios para crear la localizacion" }
+                    }
+                    response {
+                        HttpStatusCode.Created to {
+                            description = "Se ha creado la localizacion correctamente"
+                            body<Maps>{ description = "Localizacion creada"}
+                        }
+                        HttpStatusCode.BadRequest to { description = "Validacion de datos incorrecta"}
+                    }
+                }){
+
                     logger.info { "Save Map" }
                     try{
                         val post = call.receive<MapsCreateDto>()
@@ -64,7 +111,26 @@ fun Application.mapRoutes(){
                     }
                 }
 
-                put("/{id}"){
+
+                put("/{id}", {
+                    description = "Actualizar una localizacion"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id de la localizacion a buscar para actualizar"
+                            required = true
+                        }
+                        body<MapsCreateDto> { description = "Datos necesarios para actualizar la localizacion" }
+                    }
+                    response {
+                        HttpStatusCode.Created to {
+                            description = "Se ha actualizado la localizacion correctamente"
+                            body<Maps> { description = "Localizacion actualizada"}
+                        }
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado la localizacion a actualizar"}
+                        HttpStatusCode.BadRequest to { description = "Validacion de datos incorrecta"}
+                    }
+                }){
+
                     logger.info { "Update Map" }
                     try {
                         val id = call.parameters["id"].toString()
@@ -83,7 +149,21 @@ fun Application.mapRoutes(){
                     }
                 }
 
-                delete("/{id}"){
+
+                delete("/{id}", {
+                    description = "Eliminar localizacion"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id por el que buscar la localizacion a eliminar"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.NoContent to { description = "Se ha eliminado la localizacion correctamente"}
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado la localizacion a eliminar"}
+                    }
+                }){
+
                     logger.info { "Delete Map" }
                     val id = call.parameters["id"].toString()
                     val auth = call.principal<JWTPrincipal>()
@@ -100,7 +180,21 @@ fun Application.mapRoutes(){
                     }
                 }
 
-                delete("/adoption/{id}"){
+
+                delete("/adoption/{id}", {
+                    description = "Eliminar una localizacion por recogida de colonia"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id por el que buscar la localizacion a eliminar"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.NoContent to { description = "Se ha eliminado la localizacion correctamente"}
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado la localizacion a eliminar"}
+                    }
+                }){
+
                     logger.info { "Delete Map Association Adoption" }
                     val id = call.parameters["id"].toString()
                     val auth = call.principal<JWTPrincipal>()
