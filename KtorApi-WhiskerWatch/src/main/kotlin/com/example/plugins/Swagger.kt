@@ -12,9 +12,9 @@ fun Application.configureSwagger(){
             forwardRoot = false
         }
         info {
-            title = "Departamento - Empleado Rocio.P.F"
-            version = "latest"
-            description = "Ejercicio API con Ktor"
+            title = "Whisker Watch API"
+            version = "1.0"
+            description = "IES Luis Vives, Desarrollo de Aplicaciones Multiplataforma TFG"
             contact {
                 name = "Rocío P.F"
                 url = "https://github.com/Rochiio"
@@ -27,12 +27,12 @@ fun Application.configureSwagger(){
         schemasInComponentSection = true
         examplesInComponentSection = true
         automaticTagGenerator = { url -> url.firstOrNull() }
-        pathFilter = { method, url ->
-            url.contains("departamentos")
-            // Habiltamos el GET para todas y completo para test
-            //(method == HttpMethod.Get && url.firstOrNull() == "api")
-            // || url.contains("test")
-        }
+//        pathFilter = { method, url ->
+//            url.contains("departamentos")
+//            // Habiltamos el GET para todas y completo para test
+//            //(method == HttpMethod.Get && url.firstOrNull() == "api")
+//            // || url.contains("test")
+//        }
 
 
         securityScheme("JWT-Auth") {
