@@ -4,6 +4,9 @@ import com.example.dto.UserDto
 import com.example.dto.UserWithTokenDto
 import com.example.models.users.User
 
+/**
+ * Mapper para pasar de usuario a usuarioDTO
+ */
 fun User.toUserDto():UserDto{
     return UserDto(
         id = this.id,
@@ -15,6 +18,9 @@ fun User.toUserDto():UserDto{
 }
 
 
+/**
+ * Mapper para pasar de usuario a usuario con token DTO
+ */
 fun User.toUserWithToken(token:String):UserWithTokenDto{
     return UserWithTokenDto(
         user = this.toUserDto(),

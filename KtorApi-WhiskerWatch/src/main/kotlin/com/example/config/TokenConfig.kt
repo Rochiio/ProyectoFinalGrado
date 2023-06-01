@@ -3,6 +3,9 @@ package com.example.config
 import org.koin.core.annotation.InjectedParam
 import org.koin.core.annotation.Single
 
+/**
+ * Variables de configuracion para los token
+ */
 @Single
 data class TokenConfig(
     @InjectedParam private val config: Map<String, String>

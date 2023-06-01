@@ -17,11 +17,10 @@ object MongoDbManager {
     private val properties = Properties()
 
     init {
-
         logger.info("Inicializando conexion a MongoDB")
         properties.load(javaClass.classLoader.getResourceAsStream("mongo.properties"))
-        println("Inicializando conexion a MongoDB -> ${properties.getProperty("mongo.conection.local")}")
 
+        println("Inicializando conexion a MongoDB -> ${properties.getProperty("mongo.conection.local")}")
         mongoClient = KMongo.createClient(properties.getProperty("mongo.conection.local").toString()).coroutine
 
         database = mongoClient.getDatabase("whiskerwatchdb")

@@ -6,6 +6,9 @@ import com.example.dto.AssociationTokenDto
 import com.example.models.users.Association
 import com.example.models.users.Rol
 
+/**
+ * Mapper para pasar la asociacion a asociacionDTO
+ */
 fun Association.toAssociationDto(): AssociationDto {
     return AssociationDto(
         id = this.id,
@@ -20,6 +23,9 @@ fun Association.toAssociationDto(): AssociationDto {
 
 }
 
+/**
+ * Mapper para pasar de asociation a asociationTokenDTO
+ */
 fun Association.toAssociationTokenDto(token: String): AssociationTokenDto {
     return AssociationTokenDto(
         association = this.toAssociationDto(),
@@ -27,6 +33,9 @@ fun Association.toAssociationTokenDto(token: String): AssociationTokenDto {
     )
 }
 
+/**
+ * Mapper para pasar asociacionCreateDto a asociacion
+ */
 fun AssociationCreateDto.toAssociation(): Association{
     return Association(
         name = this.name,

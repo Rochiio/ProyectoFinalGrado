@@ -40,6 +40,9 @@ data class  AssociationTokenDto(
     var token: String
 )
 
+/**
+ * Clase DTO Serializable para hacer el inicio de sesion
+ */
 @Serializable
 data class AssociationLogin(
     var email: String,
