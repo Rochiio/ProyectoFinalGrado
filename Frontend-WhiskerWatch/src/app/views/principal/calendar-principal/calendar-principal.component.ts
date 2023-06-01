@@ -114,6 +114,8 @@ export class CalendarPrincipalComponent implements OnInit {
         this.actualCalendar = data;
         this.events = this.mapperService.eventsToCalendarInt(data.listTasks);
         this.calendarOptions.events = this.events;
+        this.newTask ="";
+        this.newDate="";
         this.notificationService.showCorrect('Evento creado correctamente');
       },
       (err: ErrorEvent) => {

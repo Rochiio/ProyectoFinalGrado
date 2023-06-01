@@ -17,7 +17,7 @@ export class DateFormatterService {
    * @returns fecha formateada
    */
   public transformDate(date: Date): string {
-    return formatDate(date, 'yyyy-MM-dd', this.locale);
+    return formatDate(date, 'dd-MM-yyyy', this.locale);
   }
 
 }

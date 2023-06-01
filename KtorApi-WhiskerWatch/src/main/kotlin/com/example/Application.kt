@@ -19,7 +19,7 @@ fun Application.module() = runBlocking{
     configureRouting()
     configureCors()
     configureValidation()
-    //configureSwagger()
+    configureSwagger()
 
 
     dataUtil.cleanData()

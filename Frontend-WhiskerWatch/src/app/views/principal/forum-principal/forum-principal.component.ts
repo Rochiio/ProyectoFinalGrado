@@ -63,6 +63,7 @@ export class ForumPrincipalComponent implements OnInit{
     this.forumService.updateForum(localStorage.getItem('access_token')!, this.forum.id, forumCreate).subscribe(
       (data: ForumDto) => {
         this.forum = data;
+        this.newMessage = "";
         this.notificationService.showCorrect('Mensaje creado correctamente');
       },
       (err: ErrorEvent) => {

@@ -18,13 +18,13 @@ export class EntriesForumComponent implements OnInit{
   constructor(){}
 
   ngOnInit(): void {
-    this.entry.created_At = this.entry.created_At+".";
     if(localStorage.getItem('isAssociation')! == 'false'){
       let user: UserToken = JSON.parse(localStorage.getItem('currentUser')!);
       if(user.user.rol == 'ADMIN'){
         this.isAdmin = true;
       }
     }
+
   }
 
   public deleteEntry(){
