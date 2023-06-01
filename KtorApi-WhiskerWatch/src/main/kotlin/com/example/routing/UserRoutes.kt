@@ -1,7 +1,9 @@
 package com.example.routing
 
 import com.example.dto.UserCreateDto
+import com.example.dto.UserDto
 import com.example.dto.UserLogin
+import com.example.dto.UserWithTokenDto
 import com.example.error.UserError
 import com.example.mappers.toUserDto
 import com.example.mappers.toUserWithToken
@@ -11,6 +13,10 @@ import com.example.services.token.TokenService
 import com.example.services.users.UserService
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import io.github.smiley4.ktorswaggerui.dsl.delete
+import io.github.smiley4.ktorswaggerui.dsl.get
+import io.github.smiley4.ktorswaggerui.dsl.post
+import io.github.smiley4.ktorswaggerui.dsl.put
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -33,7 +39,21 @@ fun Application.userRoutes(){
     routing {
         route(US){
 
-            post("/register"){
+
+            post("/register", {
+                description =" Registro usuario"
+                request {
+                    body<UserCreateDto> { description = "Datos necesarios para registrar a el usuario"}
+                }
+                response {
+                    HttpStatusCode.Created to {
+                        description = "El usuario se ha creado correctamente"
+                        body<UserWithTokenDto> { description = "Usuario creado con el token"}
+                    }
+                    HttpStatusCode.BadRequest to { description = "Validacion de datos incorrecta"}
+                }
+            }){
+
                 logger.info { "Register User" }
                 try {
                     val post = call.receive<UserCreateDto>()
@@ -48,7 +68,22 @@ fun Application.userRoutes(){
                 }
             }
 
-            post("/login"){
+
+            post("/login", {
+                description = "Inicio de sesion usuario"
+                request {
+                    body<UserLogin> {description = "Datos necesarios para el inicio de sesion"}
+                }
+                response {
+                    HttpStatusCode.OK to {
+                        description = "Inicio de sesion del usuario correcto"
+                        body<UserWithTokenDto> { description = "Usuario con el token"}
+                    }
+                    HttpStatusCode.BadRequest to { description = "Validacion de datos del usuario incorrecto"}
+                    HttpStatusCode.NotFound to { description = "No se ha encontrado un usuario con esos datos de inicio de sesion"}
+                }
+            }){
+
                 logger.info { "Login User" }
                 try{
                     val post = call.receive<UserLogin>()
@@ -67,15 +102,43 @@ fun Application.userRoutes(){
                 }
             }
 
+
             authenticate {
 
-                get(){
+
+                get("", {
+                    description = "Conseguir todos los usuarios almacenados"
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Lista de todos los usuarios almacenados"
+                            body<List<UserDto>> { description = "Lista de usuarios"}
+                        }
+                    }
+                }){
+
                     logger.info { "Get All User Route" }
                     val list = service.findAllUsers().map { it.toUserDto() }
                     call.respond(HttpStatusCode.OK, list)
                 }
 
-                get("/{id}"){
+
+                get("/{id}", {
+                    description = "Conseguir usuario por el ID"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id por el que buscar a el usuario"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Se ha encontrado correctamenete a el usuario"
+                            body<UserDto> { description = "Usuario encontrado"}
+                        }
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado a el usuario"}
+                    }
+                }){
+
                     logger.info { "Get User By Id"}
                     val id = call.parameters["id"].toString()
                     service.findUserById(id)
@@ -83,7 +146,26 @@ fun Application.userRoutes(){
                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                 }
 
-                put("/{id}"){
+
+                put("/{id}", {
+                    description = "Actualizar usuario"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id del usuario a actualizar"
+                            required = true
+                        }
+                        body<UserCreateDto> { description ="Datos necesarios para actualizar el usuario"}
+                    }
+                    response {
+                        HttpStatusCode.Created to {
+                            description = "Se ha actualizado correctamente el usuario"
+                            body<UserDto> { description ="Usuario actualizado"}
+                        }
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado a el usuario a actualizar"}
+                        HttpStatusCode.BadRequest to { description = "Validacion de datos incorrecta"}
+                    }
+                }){
+
                     logger.info { "Update User" }
                     try {
                         val id = call.parameters["id"].toString()
@@ -114,7 +196,21 @@ fun Application.userRoutes(){
                     }
                 }
 
-                delete("/{id}"){
+
+                delete("/{id}", {
+                    description = "Eliminar usuario"
+                    request {
+                        pathParameter<String>("id"){
+                            description = "Id por el que buscar el usuario a eliminar"
+                            required = true
+                        }
+                    }
+                    response {
+                        HttpStatusCode.NoContent to { description = "Se ha eliminado correctamente el usuario"}
+                        HttpStatusCode.NotFound to { description = "No se ha encontrado el usuario a eliminar"}
+                    }
+                }){
+
                     logger.info { "Delete User" }
                     val id = call.parameters["id"].toString()
                     val auth = call.principal<JWTPrincipal>()
