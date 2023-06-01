@@ -29,6 +29,8 @@ Y registro, modificación y eliminación de cuenta para usuarios y asociaciones.
 [![Mongo][Mongo]][Mongo-url]
 ### Framework.
 [![Ktor][Ktor]][Ktor-url]
+[![Angular][Angular]][Angular-url]
+
 
 
 
@@ -42,3 +44,5 @@ Y registro, modificación y eliminación de cuenta para usuarios y asociaciones.
 [Mongo-url]: https://www.mongodb.com/
 [Ktor]: https://img.shields.io/badge/ktor-orange?style=for-the-badge&logo=kotlin&logoColor=white
 [Ktor-url]:https://ktor.io/
+[Angular]:https://img.shields.io/badge/angular-red?style=for-the-badge&logo=angular&logoColor=white
+[Angular-url]:https://angular.io/
