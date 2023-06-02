@@ -44,9 +44,9 @@ export class MapsPrincipalComponent implements OnInit {
    */
   addItem(newItem: number, isLat: boolean) {
     if(isLat){
-      this.lat = newItem;
+      this.newLatitude = newItem.toString();
     }else{
-      this.lon = newItem;
+      this.newLongitude = newItem.toString();
     }
   }
 
@@ -55,6 +55,19 @@ export class MapsPrincipalComponent implements OnInit {
    */
   changeDisabled(item: boolean): void{
     this.disabled = item;
+  }
+
+
+  /**
+   * Comprobar si se puede enviar para añadir una nueva localizacion
+   * @returns si es correcto o no.
+   */
+  public correctToSend(): boolean {
+    if(this.newLatitude && this.newLongitude){
+      return true;
+    }else{
+      return false;
+    }
   }
 
 
@@ -93,32 +106,16 @@ export class MapsPrincipalComponent implements OnInit {
    * Crear una nueva localizacion en el mapa.
    */
   sendNewLocation(): void {
-    if(this.areCoordinatesCorrect()){
-      let createMap: MapCreate = {latitude: this.newLatitude, longitude: this.newLongitude};
-      this.mapService.postMap(localStorage.getItem('access_token')!, createMap).subscribe(
-        (data: MapDto) => {
-          window.location.reload();
-          this.notificationService.showCorrect('Localización creada correctamente');
-        },
-        (err: ErrorEvent) => {
-          this.notificationService.showError(err.error);
-        }
-      );
-    }else{
-      this.notificationService.showError('Latitud o Longitud incorrecta (máximo decimales: 9)');
-    }
-  }
-
-  /**
-   * Comprueba si los nuevos datos de longitud y latitud son correctos.
-   */
-  private areCoordinatesCorrect() :boolean {
-    if (this.newLatitude.length == 0 || this.newLongitude.length == 0
-      || !this.newLatitude.match('^([+-])?(?:90(?:\.0{1,6})?|((?:|[1-8])[0-9])(?:\.[0-9]{1,9})?)$')
-      || !this.newLongitude.match('^([+-])?(?:180(?:\.0{1,6})?|((?:|[1-9]|1[0-7])[0-9])(?:\.[0-9]{1,9})?)$')){
-        return false;
+    let createMap: MapCreate = {latitude: this.newLatitude, longitude: this.newLongitude};
+    this.mapService.postMap(localStorage.getItem('access_token')!, createMap).subscribe(
+      (data: MapDto) => {
+         window.location.reload();
+        this.notificationService.showCorrect('Localización creada correctamente');
+       },
+      (err: ErrorEvent) => {
+        this.notificationService.showError(err.error);
       }
-      return true;
+    );
   }
 
 

@@ -7,7 +7,7 @@ import XYZ from 'ol/source/XYZ';
 import * as Proj from 'ol/proj';
 import {defaults as defaultControls} from 'ol/control';
 import { Feature } from 'ol';
-import { Point } from 'ol/geom';
+import { Circle, Point } from 'ol/geom';
 import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
 import VectorLayer from 'ol/layer/Vector';
@@ -15,6 +15,8 @@ import VectorSource from 'ol/source/Vector';
 import { MapRestClientService } from 'src/app/services/api/maps/map-rest-client.service';
 import { MapDto } from 'src/app/models/maps/map-dto/map-dto';
 import { NotificationsService } from 'src/app/services/notifications/notifications.service';
+import Select, { SelectEvent } from 'ol/interaction/Select';
+
 
 export const DEFAULT_HEIGHT = '500px';
 export const DEFAULT_WIDTH = '100%';
@@ -32,6 +34,7 @@ export class OlMapComponent implements OnInit, AfterViewInit{
   private lon: number = -3.7455721740194017;
   private zoom: number = 16;
   private icon = 'assets/icons/marker.png'
+
   private listaMapas:MapDto[] = [];
 
   marcadores: Feature<Point>[] = [];
@@ -52,7 +55,7 @@ export class OlMapComponent implements OnInit, AfterViewInit{
   }
 
   ngAfterViewInit(): void {
-    this.permitGeolocation();
+    //this.permitGeolocation();
 
     let center = Proj.fromLonLat([this.lon, this.lat]);
 
@@ -75,7 +78,8 @@ export class OlMapComponent implements OnInit, AfterViewInit{
 
 
     this.addMarkers();
-    this.addMapEvents(this.map);
+    this.addMapEvents();
+    this.addSelection();
 
     this.acutalLat.emit(this.lat);
     this.acutalLng.emit(this.lon);
@@ -133,17 +137,26 @@ export class OlMapComponent implements OnInit, AfterViewInit{
    * Añadir los eventos del mapa.
    * @param map mapa añadir el evento.
    */
-  private addMapEvents(map: Map) {
-    map.on('singleclick', (evt) => {
-      map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
-        var lonLat = Proj.toLonLat(evt.coordinate);
-        this.acutalLat.emit(lonLat[1]);
-        this.acutalLng.emit(lonLat[0]);
+  private addMapEvents() {
+    this.map.on('singleclick', (evt) => {
+      this.map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
         this.disabledButton.emit(false);
         localStorage.setItem('actual_maps_id', feature.getId()!.toString());
         console.log(feature.getId()!.toString());
       });
     })
+  }
+
+
+  /**
+   * Añadir seleccion al mapa para poder añadirlo como localizacion.
+   */
+  private addSelection() {
+    this.map.on('click', (evt) => {
+       var lonLat = Proj.toLonLat(evt.coordinate);
+       this.acutalLat.emit(lonLat[1]);
+       this.acutalLng.emit(lonLat[0]);
+    });
   }
 
 
