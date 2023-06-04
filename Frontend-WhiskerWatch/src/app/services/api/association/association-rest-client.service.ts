@@ -42,9 +42,9 @@ export class AssociationRestClientService {
     return this.httpClient.get(DIR+"/image/"+id, { headers:headers, responseType: 'blob' });
   }
 
-  public postAssociationImage(token: string, id: string, image:any): Observable<{}>{
+  public postAssociationImage(token: string, id: string, image:any): Observable<Map<string, string>>{
     let headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-    return this.httpClient.post<string>(DIR+"/image/"+id, image, {headers});
+    return this.httpClient.post<Map<string, string>>(DIR+"/image/"+id, image, {headers});
   }
 
 

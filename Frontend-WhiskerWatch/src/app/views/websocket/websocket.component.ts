@@ -16,9 +16,9 @@ export class WebsocketComponent implements OnInit{
 
   ngOnInit(): void {
     this.subject.subscribe(
-      msg => this.notificationService.showAdoption('Se acaba de recoger una colonia de gatos'), // Called whenever there is a message from the server.
-      err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
-      () => console.log('complete') // Called when connection is closed (for whatever reason).
+      msg => this.notificationService.showAdoption('Se acaba de recoger una colonia de gatos'),
+      err => console.log(err),
+      () => console.log('complete') 
     );
   }
 

@@ -50,13 +50,12 @@ export class OlMapComponent implements OnInit, AfterViewInit{
     }
 
   ngOnInit(): void {
+    this.permitGeolocation();
     this.mapEl = this.element.nativeElement.querySelector('#map');
     this.setSize();
   }
 
   ngAfterViewInit(): void {
-    //this.permitGeolocation();
-
     let center = Proj.fromLonLat([this.lon, this.lat]);
 
     this.map = new Map({
@@ -161,31 +160,23 @@ export class OlMapComponent implements OnInit, AfterViewInit{
 
 
   private permitGeolocation(): void{
-    if (!navigator.geolocation) {
-      return alert("Tu navegador no soporta el acceso a la ubicación. Intenta con otro");
-    }
-
-    const onUbicacionConcedida = (ubicacion: GeolocationPosition) => {
-        console.log('Ubicación conseguida '+ ubicacion);
-        const coordenadas = ubicacion.coords;
-        this.lat = coordenadas.latitude;
-        this.lon = coordenadas.longitude;
-    }
-
-    const onErrorDeUbicacion = (err: GeolocationPositionError) => {
-        console.log("Error obteniendo ubicación: ", err);
-    }
-
-    const opcionesDeSolicitud = {
-      enableHighAccuracy: true, // Alta precisión
-      maximumAge: 0, // No queremos caché
-      timeout: 10000 // Esperar solo 5 segundos
-    }
-
-
-    navigator.geolocation.getCurrentPosition(onUbicacionConcedida, onErrorDeUbicacion, opcionesDeSolicitud);
+    this.getPosition().then(pos => {
+      this.lat = pos.lat;
+      this.lon = pos.lng;
+  });
 
   }
+
+  getPosition(): Promise<any> {
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resp => {
+                resolve({lng: resp.coords.longitude, lat: resp.coords.latitude});
+            },
+            err => {
+                reject(err);
+          });
+    });
+}
 
 }
 

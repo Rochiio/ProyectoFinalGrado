@@ -175,7 +175,6 @@ export class ProfilePrincipalComponent implements OnInit{
     });
 
     this.image = captureImage;
-    console.log(this.image);
   }
 
 
@@ -190,7 +189,7 @@ export class ProfilePrincipalComponent implements OnInit{
 
       //TODO lo hace pero aperece como si lo estuviese haciendo mal, pero en el back no da ningun problema ni error
       this.associationService.postAssociationImage(localStorage.getItem("access_token")!, this.actualAssociation.id!, data).subscribe(
-        (data: any) => {
+        (data: Map<string, string>) => {
           this.loading = false;
           this.previousImg = '';
           this.notificationService.showCorrect("Imagen actualizada correctamente");

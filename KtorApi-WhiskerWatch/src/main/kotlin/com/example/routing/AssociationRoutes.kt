@@ -261,10 +261,7 @@ fun Application.associationRoutes(){
                             multipart.forEachPart { partData ->
                                 if (partData is PartData.FileItem) {
                                     service.changeImageAssociation(partData, id)
-                                        .onSuccess {
-                                            logger.debug { "Devolviendo correcto" }
-                                            logger.debug {it.toString()}
-                                            call.respond(HttpStatusCode.Created, it.toString()) }
+                                        .onSuccess {call.respond(HttpStatusCode.Created, it) }
                                         .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                                 }
                             }
