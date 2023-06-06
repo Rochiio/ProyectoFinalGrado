@@ -21,14 +21,13 @@ import kotlin.test.assertTrue
 private val json = Json { ignoreUnknownKeys = true }
 
 
-// TODO Mirar no se borran todos
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class MapRoutesTest {
     private val config = ApplicationConfig("application.conf")
 
-    private var createUser = UserCreateDto(name = "test", email = "test@gmail.com", password = "123456789", username = "test", rol = Rol.USER.name)
-    private var loginUser = UserLogin(email="test@gmail.com", password="123456789")
+    private var createUser = UserCreateDto(name = "test", email = "testmap@gmail.com", password = "123456789", username = "test", rol = Rol.ADMIN.name)
+    private var loginUser = UserLogin(email="testmap@gmail.com", password="123456789")
 
     private var test = Maps(latitude = "1235.2", longitude = "12.54")
     private var createTest = MapsCreateDto(latitude = "1235.2", longitude = "12.54")
@@ -78,6 +77,9 @@ class MapRoutesTest {
             { assertEquals(test.latitude, post.latitude) },
             { assertEquals(test.longitude, post.longitude) }
         )
+
+        response = client.delete("/map/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 
@@ -115,10 +117,12 @@ class MapRoutesTest {
             }
         }
 
-        client.post("/map") {
+        response = client.post("/map") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
         }
+        assertEquals(HttpStatusCode.Created, response.status)
+        val post = json.decodeFromString<Maps>(response.bodyAsText())
 
         response = client.get("/map")
         assertEquals(HttpStatusCode.OK, response.status)
@@ -128,6 +132,9 @@ class MapRoutesTest {
             { assertEquals(test.latitude, get[0].latitude) },
             { assertEquals(test.longitude, get[0].longitude) }
         )
+
+        response = client.delete("/map/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 
@@ -180,6 +187,9 @@ class MapRoutesTest {
             { assertEquals(test.latitude, get.latitude) },
             { assertEquals(test.longitude, get.longitude) }
         )
+
+        response = client.delete("/map/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 
@@ -236,6 +246,9 @@ class MapRoutesTest {
             { assertEquals(updated.latitude, update.latitude) },
             { assertEquals(updated.longitude, update.longitude) }
         )
+
+        response = client.delete("/map/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 

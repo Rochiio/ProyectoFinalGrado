@@ -124,6 +124,7 @@ fun Application.forumRoutes(){
                         if (correct){
                             service.saveForum(post)
                                 .onSuccess { call.respond(HttpStatusCode.Created, it) }
+                                .onFailure { call.respond(HttpStatusCode.NotFound, it.message) }
                         }else{
                             call.respond(HttpStatusCode.BadRequest, "Mensajes incorrectos")
                         }

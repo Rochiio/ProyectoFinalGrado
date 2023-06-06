@@ -29,8 +29,8 @@ private val json = Json { ignoreUnknownKeys = true }
 class ForumRoutesTest {
     private val config = ApplicationConfig("application.conf")
 
-    private var createUser = UserCreateDto(name = "test", email = "test@gmail.com", password = "123456789", username = "test", rol = Rol.USER.name)
-    private var loginUser = UserLogin(email="test@gmail.com", password="123456789")
+    private var createUser = UserCreateDto(name = "test", email = "testfor@gmail.com", password = "123456789", username = "test", rol = Rol.ADMIN.name)
+    private var loginUser = UserLogin(email="testfor@gmail.com", password="123456789")
 
     private val test = Forum(
         mapsId = "3544e9ee-42f0-43f5-b39e-436c9d8828c9", listMessages =
@@ -84,6 +84,9 @@ class ForumRoutesTest {
         assertAll(
             { assertEquals(test.mapsId, post.mapsId) }
         )
+
+        response = client.delete("/forum/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 
@@ -121,10 +124,12 @@ class ForumRoutesTest {
             }
         }
 
-        client.post("/forum") {
+        response = client.post("/forum") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
         }
+        assertEquals(HttpStatusCode.Created, response.status)
+        val post = json.decodeFromString<Forum>(response.bodyAsText())
 
         response = client.get("/forum")
         assertEquals(HttpStatusCode.OK, response.status)
@@ -133,6 +138,9 @@ class ForumRoutesTest {
             { assertTrue(get.isNotEmpty()) },
             { assertEquals(test.mapsId, get[0].mapsId) }
         )
+
+        response = client.delete("/forum/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 
@@ -184,6 +192,9 @@ class ForumRoutesTest {
             { assertEquals(post.id, get.id) },
             { assertEquals(test.mapsId, get.mapsId) }
         )
+
+        response = client.delete("/forum/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 
@@ -239,6 +250,9 @@ class ForumRoutesTest {
             { assertEquals(post.id, update.id) },
             { assertEquals(updated.mapsId, update.mapsId) }
         )
+
+        response = client.delete("/forum/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 

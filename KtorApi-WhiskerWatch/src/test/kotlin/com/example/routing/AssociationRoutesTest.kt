@@ -24,9 +24,9 @@ private val json = Json { ignoreUnknownKeys = true }
 class AssociationRoutesTest {
     private val config = ApplicationConfig("application.conf")
 
-    private var createTest = AssociationCreateDto(name = "test", email = "test@example.com", username = "test",
+    private var createTest = AssociationCreateDto(name = "test", email = "testaso@example.com", username = "test",
         password = "123456", description = "test description", url = "http://example.com", rol = Rol.ASSOCIATION.name)
-    private var loginTest = AssociationLogin(email="test@example.com", password="123456")
+    private var loginTest = AssociationLogin(email="testaso@example.com", password="123456")
 
     @Test
     @Order(1)

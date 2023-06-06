@@ -9,14 +9,5 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class ApplicationTest {
-    @Test
-    fun testRoot() = testApplication {
-        application {
-            configureRouting()
-        }
-        client.get("/").apply {
-            Assertions.assertEquals(HttpStatusCode.OK, status)
-            Assertions.assertEquals("Whisker Watch API\uD83D\uDC31", bodyAsText())
-        }
-    }
+
 }

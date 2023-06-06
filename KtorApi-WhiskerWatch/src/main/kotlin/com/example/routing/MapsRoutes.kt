@@ -106,6 +106,7 @@ fun Application.mapRoutes(){
                                 launch { forumService.saveForum(ForumCreateDto(it.id, listOf())) }
                                 launch { calendarService.saveCalendar(CalendarCreateDto(it.id, mutableListOf())) }
                                 call.respond(HttpStatusCode.Created, it) }
+                            .onFailure { call.respond(HttpStatusCode.BadRequest, it.message) }
                     }catch (e: RequestValidationException){
                         call.respond(HttpStatusCode.BadRequest, e.message.toString())
                     }
