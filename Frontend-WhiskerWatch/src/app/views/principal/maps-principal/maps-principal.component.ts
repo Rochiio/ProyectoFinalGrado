@@ -93,8 +93,8 @@ export class MapsPrincipalComponent implements OnInit {
   deleteLocationAssociation(): void {
     this.mapService.deleteMapAssociation(localStorage.getItem('actual_maps_id')!, localStorage.getItem('access_token')!).subscribe(
       (data: any) => {
-        window.location.reload();
         this.notificationService.showCorrect('Localización eliminada por recogida correctamente');
+        window.location.reload();
       },
       (err: ErrorEvent) => {
         this.notificationService.showError(err.error);
@@ -109,8 +109,8 @@ export class MapsPrincipalComponent implements OnInit {
     let createMap: MapCreate = {latitude: this.newLatitude, longitude: this.newLongitude};
     this.mapService.postMap(localStorage.getItem('access_token')!, createMap).subscribe(
       (data: MapDto) => {
-         window.location.reload();
         this.notificationService.showCorrect('Localización creada correctamente');
+        window.location.reload();
        },
       (err: ErrorEvent) => {
         this.notificationService.showError(err.error);

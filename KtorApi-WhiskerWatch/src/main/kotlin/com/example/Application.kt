@@ -23,4 +23,5 @@ fun Application.module() = runBlocking{
 
 
     dataUtil.cleanData()
+    dataUtil.firstUseData()
 }

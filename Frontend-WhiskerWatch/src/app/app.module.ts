@@ -60,7 +60,7 @@ import { WebsocketComponent } from './views/websocket/websocket.component';
     MatButtonModule,
   ],
   providers: [
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 5000}},
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 10000}},
     DatePipe
   ],
   bootstrap: [AppComponent]

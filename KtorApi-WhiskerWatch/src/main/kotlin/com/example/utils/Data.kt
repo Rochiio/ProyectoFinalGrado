@@ -1,10 +1,13 @@
 package com.example.utils
 
+import com.example.models.users.Rol
+import com.example.models.users.User
 import com.example.repositories.calendar.CalendarRepositoryImpl
 import com.example.repositories.forum.ForumRepositoryImpl
 import com.example.repositories.maps.MapRepositoryImpl
 import com.example.repositories.users.AssociationRepositoryImpl
 import com.example.repositories.users.UserRepositoryImpl
+import com.example.services.password.BcryptService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,7 +21,8 @@ class Data(
     private val associationRep: AssociationRepositoryImpl,
     private val mapsRep: MapRepositoryImpl,
     private val calendarsRep: CalendarRepositoryImpl,
-    private val forumRep: ForumRepositoryImpl
+    private val forumRep: ForumRepositoryImpl,
+    private val passwordEncoder: BcryptService
 ) {
     private val props: Properties = Properties()
     private val logger = KotlinLogging.logger {}
@@ -43,6 +47,16 @@ class Data(
             launch {
                 forumRep.deleteAll()
             }
+        }
+    }
+
+    suspend fun firstUseData() = withContext(Dispatchers.IO) {
+        props.load(javaClass.classLoader.getResourceAsStream("data.properties"))
+        val first = props.getProperty("first.use").toBoolean()
+        if(first){
+            val admin: User = User(name = "admin", email = "admin@gmail.com", password = passwordEncoder.encryptPassword("123456789"), username="admin", rol = Rol.ADMIN)
+            userRep.save(admin)
+            props.setProperty("first.use", "false")
         }
     }
 }
