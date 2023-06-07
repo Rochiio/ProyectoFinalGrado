@@ -12,5 +12,5 @@ data class ForumMessages(
     val id: String = newId<ForumMessages>().toString(),
     var username: String,
     var message: String,
-    var created_At: String = LocalDate.now().toString()
+    var created_At: String
 )

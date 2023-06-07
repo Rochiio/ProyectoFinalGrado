@@ -1,6 +1,7 @@
 package com.example.routing
 
 import com.example.dto.*
+import com.example.models.Maps
 import com.example.models.calendar.Calendar
 import com.example.models.calendar.Task
 import com.example.models.users.Rol
@@ -23,8 +24,6 @@ import kotlin.test.assertTrue
 
 private val json = Json { ignoreUnknownKeys = true }
 
-
-// TODO Mirar no se borran todos
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class CalendarRoutesTest {
@@ -40,6 +39,7 @@ class CalendarRoutesTest {
     private val createTest = CalendarCreateDto(mapsId = "5dc236c1-ef36-439e-b9c6-04b7dd145d36",
         listTasks = mutableListOf(TaskCreateDto(date = LocalDate.now().toString(), task = "tarea test")))
 
+    private var createMap = MapsCreateDto(latitude = "1235.2", longitude = "12.54")
 
     @Test
     @Order(1)
@@ -75,6 +75,15 @@ class CalendarRoutesTest {
             }
         }
 
+        response = client.post("/map") {
+            contentType(ContentType.Application.Json)
+            setBody(createMap)
+        }
+        assertEquals(HttpStatusCode.Created, response.status)
+        val postMap = json.decodeFromString<Maps>(response.bodyAsText())
+
+        createTest.mapsId = postMap.id
+
         response = client.post("/calendar") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
@@ -82,8 +91,14 @@ class CalendarRoutesTest {
         assertEquals(HttpStatusCode.Created, response.status)
         val post = json.decodeFromString<Calendar>(response.bodyAsText())
         assertAll(
-            { assertEquals(test.mapsId, post.mapsId) }
+            { assertEquals(postMap.id, post.mapsId) }
         )
+
+        response = client.delete("/calendar/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
+
+        response = client.delete("/map/${postMap.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 
@@ -121,6 +136,15 @@ class CalendarRoutesTest {
             }
         }
 
+        response = client.post("/map") {
+            contentType(ContentType.Application.Json)
+            setBody(createMap)
+        }
+        assertEquals(HttpStatusCode.Created, response.status)
+        val postMap = json.decodeFromString<Maps>(response.bodyAsText())
+
+        createTest.mapsId = postMap.id
+
         client.post("/calendar") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
@@ -131,8 +155,14 @@ class CalendarRoutesTest {
         val get = json.decodeFromString<List<Calendar>>(response.bodyAsText())
         assertAll(
             { assertTrue(get.isNotEmpty()) },
-            { assertEquals(test.mapsId, get[0].mapsId) }
+            { assertEquals(postMap.id, get[0].mapsId) }
         )
+
+        response = client.delete("/calendar/${get[0].id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
+
+        response = client.delete("/map/${postMap.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 
@@ -170,6 +200,15 @@ class CalendarRoutesTest {
             }
         }
 
+        response = client.post("/map") {
+            contentType(ContentType.Application.Json)
+            setBody(createMap)
+        }
+        assertEquals(HttpStatusCode.Created, response.status)
+        val postMap = json.decodeFromString<Maps>(response.bodyAsText())
+
+        createTest.mapsId = postMap.id
+
         response = client.post("/calendar") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
@@ -182,8 +221,14 @@ class CalendarRoutesTest {
         val get = json.decodeFromString<Calendar>(response.bodyAsText())
         assertAll(
             { assertEquals(post.id, get.id) },
-            { assertEquals(test.mapsId, get.mapsId) }
+            { assertEquals(postMap.id, get.mapsId) }
         )
+
+        response = client.delete("/calendar/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
+
+        response = client.delete("/map/${postMap.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 
@@ -221,6 +266,15 @@ class CalendarRoutesTest {
             }
         }
 
+        response = client.post("/map") {
+            contentType(ContentType.Application.Json)
+            setBody(createMap)
+        }
+        assertEquals(HttpStatusCode.Created, response.status)
+        val postMap = json.decodeFromString<Maps>(response.bodyAsText())
+
+        createTest.mapsId = postMap.id
+
         response = client.post("/calendar") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
@@ -228,7 +282,7 @@ class CalendarRoutesTest {
         assertEquals(HttpStatusCode.Created, response.status)
         val post = json.decodeFromString<Calendar>(response.bodyAsText())
 
-        val updated = createTest.copy(mapsId = "da0b0753-312b-4126-812a-d388ca3c305b")
+        val updated = createTest.copy(mapsId = postMap.id)
         response = client.put("/calendar/${post.id}"){
             contentType(ContentType.Application.Json)
             setBody(updated)
@@ -239,6 +293,12 @@ class CalendarRoutesTest {
             { assertEquals(post.id, update.id) },
             { assertEquals(updated.mapsId, update.mapsId) }
         )
+
+        response = client.delete("/calendar/${post.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
+
+        response = client.delete("/map/${postMap.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 
 
@@ -276,6 +336,15 @@ class CalendarRoutesTest {
             }
         }
 
+        response = client.post("/map") {
+            contentType(ContentType.Application.Json)
+            setBody(createMap)
+        }
+        assertEquals(HttpStatusCode.Created, response.status)
+        val postMap = json.decodeFromString<Maps>(response.bodyAsText())
+
+        createTest.mapsId = postMap.id
+
         response = client.post("/calendar") {
             contentType(ContentType.Application.Json)
             setBody(createTest)
@@ -287,5 +356,8 @@ class CalendarRoutesTest {
         assertEquals(HttpStatusCode.NoContent, response.status)
 
         client.delete("/user/${res.user.id}")
+
+        response = client.delete("/map/${postMap.id}")
+        assertEquals(HttpStatusCode.NoContent, response.status)
     }
 }

@@ -41,11 +41,11 @@ class ForumServiceTest {
 
     private val test = Forum(
         mapsId = UUID.randomUUID().toString(), listMessages =
-        mutableListOf(ForumMessages(username = "pepe", message = "test"))
+        mutableListOf(ForumMessages(username = "pepe", message = "test", created_At = "15-05-2023"))
     )
 
     private val createTest = ForumCreateDto(mapsId = UUID.randomUUID().toString(), listMessages =
-    mutableListOf(ForumMessagesCreateDto(username = "pepe", message = "test", created_At = "2023-05-15")))
+    mutableListOf(ForumMessagesCreateDto(username = "pepe", message = "test", created_At = "15-05-2023")))
 
     private val map = Maps(latitude = "12.3", longitude = "1.23")
 

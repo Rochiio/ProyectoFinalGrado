@@ -17,7 +17,7 @@ class ForumRepositoryImplTest {
     private val repository = ForumRepositoryImpl()
     private val test = Forum(
         mapsId = UUID.randomUUID().toString(), listMessages =
-        mutableListOf(ForumMessages(username = "pepe", message = "test"))
+        mutableListOf(ForumMessages(username = "pepe", message = "test", created_At = "15-03-2023"))
     )
 
     @Test
@@ -71,7 +71,7 @@ class ForumRepositoryImplTest {
     @Order(5)
     fun update() = runTest{
         val lista = test.listMessages
-        lista.add(ForumMessages(username = "nuevo", message = "test"))
+        lista.add(ForumMessages(username = "nuevo", message = "test", created_At ="15-03-2023"))
 
         val update = test.copy(listMessages = lista)
         val updated = repository.update(update)
