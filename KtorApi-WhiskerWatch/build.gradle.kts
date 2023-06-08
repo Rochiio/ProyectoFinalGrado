@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 // Ktor y Kotlin
 val ktor_version: String by project
 val kotlin_version: String by project
@@ -42,6 +44,12 @@ application {
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+
+ktor {
+    fatJar{
+        archiveFileName.set("whiskerwatch-back.jar")
+    }
 }
 
 repositories {
@@ -135,4 +143,16 @@ tasks.test {
 sourceSets.main {
     java.srcDirs("build/generated/ksp/main/kotlin")
 }
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
+
+
+
 
