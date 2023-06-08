@@ -1,0 +1,47 @@
+<nav class="bg-sky-100">
+  <div class="">
+    <div class="flex h-16 items-center justify-between">
+      <div class="flex items-center">
+        <div class="flex items-center p-4">
+          <img src="{{imgUrl}}/kitty.png" class="h-8 mr-3" alt="Kitty" />
+          <span class="self-center text-2xl font-semibold whitespace-nowrap">Whisker Watch</span>
+        </div>
+
+        <div>
+          <div class="ml-10 flex items-baseline space-x-4">
+            <!--Maps-->
+            <a routerLink="/principal" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="flex items-center text-gray-500 group rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">
+              <span class="sr-only">Maps</span>
+              <img src="assets/icons/maps.png" alt="Maps image" class="w-4 h-4 mr-2">
+              Maps
+            </a>
+            <!--Associations-->
+            <a routerLink="/associations" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="flex items-center text-gray-500 group rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">
+              <span class="sr-only">Associations</span>
+              <img src="assets/icons/cat.png" alt="Maps image" class="w-4 h-4 mr-2">
+              Associations
+            </a>
+            <!--Profile-->
+            <a routerLink="/profile" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="flex items-center text-gray-500 group rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">
+              <span class="sr-only">Profile</span>
+              <img src="assets/icons/person.png" alt="Maps image" class="w-4 h-4 mr-2">
+              Profile
+            </a>
+            <!--Log Out-->
+            <a (click)="closeSession()" class="flex items-center text-gray-500 group rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">
+              <span class="sr-only">Log Out</span>
+              <img src="assets/icons/logout.png" alt="Maps image" class="w-4 h-4 mr-2">
+              Log Out
+            </a>
+            <!--<a routerLink="/principal" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">Maps</a>
+            <a routerLink="" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">Associations</a>
+            <a routerLink="" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">Profile</a>
+            <a (click)="closeSession()" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}" class="rounded-md px-3 py-2 text-sm font-medium hover:cursor-pointer hover:bg-cyan-500 hover:text-white">Log Out</a>
+            -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+

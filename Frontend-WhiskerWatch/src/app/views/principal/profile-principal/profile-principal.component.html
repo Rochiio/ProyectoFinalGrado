@@ -1,0 +1,136 @@
+<div class="grid grid-cols-3 mt-10 mx-10">
+
+  <div class="bg-sky-100 rounded-lg shadow mr-10 col-span-1 px-10 py-10">
+
+    <img src="assets/icons/person.png" alt="Person" class="h-20 w-20 mx-auto">
+
+    <!--Delete Account-->
+    <div class="mt-10">
+      <button (click)="deleteAccount()" class="flex w-full justify-center rounded-md bg-cyan-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600">
+        <span class="sr-only">Eliminar Cuenta</span>
+        <img src="assets/icons/delete.png" alt="Maps image" class="w-4 h-4 mr-2">
+        Eliminar Cuenta
+      </button>
+    </div>
+
+    <!--Change Image-->
+    <div class="mt-10" *ngIf="isAssociationProfile">
+      <label for="cover-photo" class="block text-sm font-medium leading-6 text-gray-900">Cambiar Imagen</label>
+      <div class="mt-2 flex justify-center">
+        <div class="text-center">
+          <div class="mt-4 flex text-sm leading-6 text-gray-600">
+            <input (change)="postImage($event)" id="file-upload" name="file-upload" type="file" accept=".png">
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="previousImg" class="mt-2 flex justify-center mt-5">
+        <img [src]="previousImg" alt="" class="w-20 h-20">
+      </div>
+
+      <div class="mt-10" *ngIf="previousImg">
+        <button (click)="sentUpdatedImage()" [disabled]="loading" class="flex w-full justify-center rounded-md bg-cyan-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 disabled:bg-gray-400 disabled:cursor-no-drop">
+        {{(loading) ? 'Cargando ...' : 'Subir Archivo'}}
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="bg-sky-100 rounded-lg shadow col-span-2 px-10 py-10">
+
+    <form (ngSubmit)="updateProfile()"  #registerForm="ngForm">
+      <div class="lg:col-span-2">
+         <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+
+           <!--Name-->
+           <div class="md:col-span-5">
+              <label for="name">Nombre Completo</label>
+              <input type="text" [(ngModel)]="actualProfile.name" name="name" #name="ngModel" id="name" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50" required/>
+
+              <div  *ngIf="name.invalid && name.dirty"  class="rounded-md text-sm mt-5 bg-red-700 text-center text-white">
+               <div  *ngIf="name.errors?.['required']">Campo requerido</div>
+             </div>
+           </div>
+
+           <!--username-->
+           <div class="md:col-span-5">
+             <label for="username">Nombre de Usuario</label>
+             <input type="text" name="username" id="username" [(ngModel)]="actualProfile.username" #username="ngModel" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50" required />
+
+             <div  *ngIf="username.invalid && username.dirty"  class="rounded-md text-sm mt-5 bg-red-700 text-center text-white">
+               <div  *ngIf="username.errors?.['required']">Campo requerido</div>
+             </div>
+           </div>
+
+           <!--Email-->
+           <div class="md:col-span-5">
+             <label for="email">Email</label>
+             <input type="email" name="email" id="email" [(ngModel)]="actualProfile.email" #email="ngModel" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50" required/>
+
+             <div  *ngIf="email.invalid && email.dirty"  class="rounded-md text-sm mt-5 bg-red-700 text-center text-white">
+               <div  *ngIf="email.errors?.['required']">Campo requerido</div>
+               <div  *ngIf="email.errors?.['email']">Email incorrecto</div>
+             </div>
+
+           </div>
+
+           <!--Password-->
+           <div class="md:col-span-2">
+            <label for="password">Contraseña</label>
+            <input type="password" name="password" id="password" [(ngModel)]="actualProfile.password" #password="ngModel" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50" required minlength="6"/>
+
+            <div  *ngIf="password.invalid && password.dirty"  class="rounded-md text-sm mt-5 bg-red-700 text-center text-white">
+             <div  *ngIf="password.errors?.['required']">Campo requerido</div>
+             <div  *ngIf="password.errors?.['minlength']">Mínimo 6 caracteres</div>
+           </div>
+
+           </div>
+
+           <!--Repeat Password-->
+           <div class="md:col-span-2">
+             <label for="repeatPass">Repetir Contraseña</label>
+             <input type="password" name="repeatPass" id="repeatPass" [(ngModel)]="actualProfile.repeat_password" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50" required/>
+
+             <div  *ngIf="!checkCorrectPassword()"  class="rounded-md text-sm mt-5 bg-red-700 text-center text-white">
+               <div>Contraseña Incorrecta</div>
+             </div>
+
+           </div>
+
+            <!--Description-->
+            <div class="md:col-span-5" *ngIf="isAssociationProfile">
+              <label for="description">Descripción</label>
+              <textarea name="description" id="description" rows="4" [(ngModel)]="actualProfile.description" #description="ngModel" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border mt-1 rounded resize-none" required></textarea>
+
+              <div  *ngIf="description.invalid && description.dirty"  class="rounded-md text-sm mt-5 bg-red-700 text-center text-white">
+                <div  *ngIf="description.errors?.['required']">Campo requerido</div>
+              </div>
+
+            </div>
+
+            <!--Url-->
+            <div class="md:col-span-5" *ngIf="isAssociationProfile">
+              <label for="url">Enlace</label>
+              <input type="url" name="url" id="url" [(ngModel)]="actualProfile.url" #url="ngModel" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50" required/>
+
+              <div  *ngIf="url.invalid && url.dirty"  class="rounded-md text-sm mt-5 bg-red-700 text-center text-white">
+                <div  *ngIf="url.errors?.['required']">Campo requerido</div>
+              </div>
+
+            </div>
+
+           <div class="md:col-span-5 text-right mt-5">
+             <div class="inline-flex items-end">
+               <button type="submit" class="flex w-full justify-center rounded-md bg-cyan-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 disabled:bg-gray-400 disabled:cursor-no-drop"
+               [disabled]="!registerForm.form.valid || !checkCorrectPassword()">Actualizar</button>
+             </div>
+           </div>
+
+         </div>
+       </div>
+     </form>
+  </div>
+
+</div>
