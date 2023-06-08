@@ -1,10 +1,10 @@
-#Indicamos la versión
+#VERSION
 #version: '3.7'
 
-# Mis servicios
-# Iniciamos los servicios
+#SERVICIOS
 services:
 
+  #FRONT-END
   angular-service:
     container_name: front-whisker
     build: ./Frontend-WhiskerWatch
@@ -12,7 +12,7 @@ services:
       - "4200:4200"
     depends_on:
       - back
-
+  # BACK-END
   back:
     build: ./KtorApi-WhiskerWatch
     container_name: api-whisker
@@ -40,9 +40,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: mongoadmin
       MONGO_INITDB_ROOT_PASSWORD: mongopass
       MONGO_INITDB_DATABASE: test
-      # ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
     command: --auth
-    # Monto la unidad y le cargo unos datos
     volumes:
       - ./init:/docker-entrypoint-initdb.d
       - mongo-vol:/data/db
@@ -66,19 +64,13 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongodb-server
     restart: unless-stopped
 
-# Mi volumenes de datos compartidos
+# VOLUMENES
 volumes:
   mongo-vol:
 
-# Si queremos que tengan una red propia a otros contenedores
+# RED
 networks:
   mongo-network:
     driver: bridge
-#version: "3.7"
-#services:
-#  angular-service:
-#    container_name: ng-docker-example
-#    build: ./Frontend-WhiskerWatch
-#    ports:
-#      - "4200:80"
+
 
