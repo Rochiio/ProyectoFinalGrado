@@ -1,23 +1,37 @@
-# Use an official Node.js runtime as a parent image
-FROM node:20-alpine
+#FROM node:18.16.0-alpine AS build-step
+#WORKDIR /app
+#COPY package*.json ./
+#RUN npm install --force
+#COPY . .
+#RUN npm run build
+#EXPOSE 4200:80
+#CMD ["npm", "start"]
 
-# Set the working directory to /app
+#FROM nginx:1.20.1
+#COPY --from=build-step /app/dist/frontend-whisker-watch /usr/share/nginx/html
+#COPY ./ /usr/share/nginx/html
+#EXPOSE 4200:80
+
+# Create image based on the official Node 10 image from dockerhub
+FROM node:18.16.0-alpine
+
+# Create a directory where our app will be placed
+RUN mkdir -p /app
+
+# Change directory so that our commands run inside this new directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json to /app
-COPY package*.json ./
+# Copy dependency definitions
+COPY package*.json /app/
 
-# Install app dependencies
+# Install dependecies
 RUN npm install --force
 
-# Copy app source code to /app
-COPY . .
+# Get all the code needed to run the app
+COPY . /app/
 
-# Build the app for production
-RUN npm run build
-
-# Expose port 80 for the container
+# Expose the port the app runs in
 EXPOSE 4200
 
-# Start the app
+# Serve the app
 CMD ["npm", "start"]

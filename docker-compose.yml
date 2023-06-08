@@ -1,9 +1,18 @@
-# Indicamos la versión
-version: '3.7'
+#Indicamos la versión
+#version: '3.7'
 
 # Mis servicios
 # Iniciamos los servicios
 services:
+
+  angular-service:
+    container_name: front-whisker
+    build: ./Frontend-WhiskerWatch
+    ports:
+      - "4200:4200"
+    depends_on:
+      - back
+
   back:
     build: ./KtorApi-WhiskerWatch
     container_name: api-whisker
@@ -65,3 +74,11 @@ volumes:
 networks:
   mongo-network:
     driver: bridge
+#version: "3.7"
+#services:
+#  angular-service:
+#    container_name: ng-docker-example
+#    build: ./Frontend-WhiskerWatch
+#    ports:
+#      - "4200:80"
+
