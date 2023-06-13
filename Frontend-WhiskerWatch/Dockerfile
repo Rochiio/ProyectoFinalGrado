@@ -1,23 +1,23 @@
-# Use an official Node.js runtime as a parent image
-FROM node:20-alpine
+#FROM node:18.16.0-alpine AS build-step
+#WORKDIR /app
+#COPY package*.json ./
+#RUN npm install --force
+#COPY . .
+#RUN npm run build
+#EXPOSE 4200:80
+#CMD ["npm", "start"]
 
-# Set the working directory to /app
+#FROM nginx:1.20.1
+#COPY --from=build-step /app/dist/frontend-whisker-watch /usr/share/nginx/html
+#COPY ./ /usr/share/nginx/html
+#EXPOSE 4200:80
+
+
+FROM node:18.16.0-alpine
+RUN mkdir -p /app
 WORKDIR /app
-
-# Copy package.json and package-lock.json to /app
-COPY package*.json ./
-
-# Install app dependencies
+COPY package*.json /app/
 RUN npm install --force
-
-# Copy app source code to /app
-COPY . .
-
-# Build the app for production
-RUN npm run build
-
-# Expose port 80 for the container
+COPY . /app/
 EXPOSE 4200
-
-# Start the app
 CMD ["npm", "start"]
